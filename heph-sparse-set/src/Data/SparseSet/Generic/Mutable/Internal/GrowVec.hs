@@ -38,7 +38,7 @@ import Data.Vector.Generic.Mutable qualified as VGM
 import GHC.Generics (Generic)
 import Prelude hiding (length, mapM_, maximum)
 
-data GrowVec v s a = GrowVec !Int !(v s a)
+data GrowVec v s a = GrowVec {-# UNPACK #-} !Int (v s a)
   deriving (Show, Generic, Typeable)
 
 instance (NFData (v s a)) => NFData (GrowVec v s a)

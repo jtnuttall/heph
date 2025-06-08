@@ -54,9 +54,9 @@ import Data.SparseSet.Generic.Mutable.Internal.MutableSparseArray (MutableSparse
 import Data.SparseSet.Generic.Mutable.Internal.MutableSparseArray qualified as MSA
 
 data MutableSparseSet v s a = MutableSparseSet
-  { ssDense :: !(MutVar s (GrowVec v s a))
-  , ssIndices :: !(MutVar s (GrowVec MVP.MVector s Int))
-  , ssSparse :: !(MutVar s (MutableSparseArray s))
+  { ssDense :: {-# UNPACK #-} !(MutVar s (GrowVec v s a))
+  , ssIndices :: {-# UNPACK #-} !(MutVar s (GrowVec MVP.MVector s Int))
+  , ssSparse :: {-# UNPACK #-} !(MutVar s (MutableSparseArray s))
   }
   deriving (Generic, Typeable)
 
@@ -197,6 +197,7 @@ clear MutableSparseSet{..} = do
 
   atomicModifyMutVar' ssDense ((,()) . GrowVec.cleared)
   atomicModifyMutVar' ssIndices ((,()) . GrowVec.cleared)
+{-# INLINE clear #-}
 
 -- | O(n) Shrink the capacity of the set to fit exactly the current number of elements.
 --
@@ -213,6 +214,7 @@ compact MutableSparseSet{..} = do
     Just maxIndex -> do
       sparse <- readMutVar ssSparse
       writeMutVar ssSparse =<< MSA.unsafeCompactTo sparse (maxIndex + 1)
+{-# INLINE compact #-}
 
 -- | O(n) Iterate over the values of the set with an accumulator.
 --
