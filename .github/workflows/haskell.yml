@@ -16,49 +16,80 @@ jobs:
     strategy:
       matrix:
         include:
-          - resolver: "lts-23.24"
-            ghc: "9.8.4"
-          - resolver: "lts-22.20"
-            ghc: "9.6.5"
-          - resolver: "lts-18.28"
-            ghc: "8.10.7"
-          - resolver: "lts-18.0"
-            ghc: "8.10.4"
+          - ghc: "9.8.4"
+            resolver: "lts-23.24"
+            build_tool: stack
+          - ghc: "9.6.5"
+            resolver: "lts-22.20"
+            build_tool: stack
+          - ghc: "8.10.7"
+            resolver: "lts-18.28" # Using an LTS for context, but Cabal will resolve from Hackage
+            build_tool: cabal
+          - ghc: "8.10.4"
+            resolver: "lts-18.0" # Using an LTS for context, but Cabal will resolve from Hackage
+            build_tool: cabal
 
-    name: ${{ matrix.ghc_display }} (${{ matrix.resolver }})
+    name: GHC ${{ matrix.ghc }} (${{ matrix.resolver }}) - ${{ matrix.build_tool }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Haskell
+      - name: Setup Haskell environment (${{ matrix.build_tool }})
         uses: haskell-actions/setup@v2
         with:
           ghc-version: ${{ matrix.ghc }}
-          enable-stack: true
-          stack-no-global: true
-          stack-setup-ghc: true
+          enable-stack: ${{ matrix.build_tool == 'stack' }}
+          stack-no-global: ${{ matrix.build_tool == 'stack' }}
+          stack-setup-ghc: ${{ matrix.build_tool == 'stack' }}
+          enable-cabal: ${{ matrix.build_tool == 'cabal' }}
+          cabal-update: ${{ matrix.build_tool == 'cabal' }}
 
-      - name: Cache Stack work directory
+      - name: Cache dependencies (${{ matrix.build_tool }})
         uses: actions/cache@v4
         with:
           path: |
-            ~/.stack
-            .stack-work
-          key: ${{ runner.os }}-stack-${{ hashFiles('stack.yaml') }}-${{ matrix.ghc }}-${{ matrix.resolver }}-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/*.hs') }}
+            # Paths are conditional based on the build tool
+            ${{ (matrix.build_tool == 'stack' && '~/.stack') || '' }}
+            ${{ (matrix.build_tool == 'stack' && '.stack-work') || '' }}
+            ${{ (matrix.build_tool == 'cabal' && '~/.cabal') || '' }}
+            ${{ (matrix.build_tool == 'cabal' && 'dist-newstyle') || '' }}
+          key: ${{ runner.os }}-${{ matrix.build_tool }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('cabal.project') }}-${{ matrix.ghc }}-${{ matrix.resolver }}-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/*.hs') }}
           restore-keys: |
-            ${{ runner.os }}-stack-${{ hashFiles('stack.yaml') }}-${{ matrix.resolver }}-
+            ${{ runner.os }}-${{ matrix.build_tool }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('cabal.project') }}-${{ matrix.ghc }}-${{ matrix.resolver }}-
+            ${{ runner.os }}-${{ matrix.build_tool }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('cabal.project') }}-${{ matrix.ghc }}-
 
-      - name: Install dependencies (and heph-sparse-set)
+      - name: Install dependencies & Build (Stack)
+        if: matrix.build_tool == 'stack'
         run: stack build --resolver ${{ matrix.resolver }} --test --bench --only-dependencies
 
-      - name: Build and run tests
+      - name: Install dependencies & Build (Cabal)
+        if: matrix.build_tool == 'cabal'
+        run: |
+          cabal configure --enable-tests --enable-benchmarks
+          cabal build all --only-dependencies # 'all' builds all packages in cabal.project
+
+      - name: Run Tests (Stack)
+        if: matrix.build_tool == 'stack'
         run: stack test --resolver ${{ matrix.resolver }} --no-build
 
-      - name: Install fourmolu
+      - name: Run Tests (Cabal)
+        if: matrix.build_tool == 'cabal'
+        # Specify the package name for tests if you have multiple test suites.
+        # Assuming 'heph-sparse-set' contains the tests.
+        run: cabal test all --show-details=always
+
+      - name: Install fourmolu (${{ matrix.build_tool }})
         run: |
-          stack install fourmolu
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+          # Install fourmolu using the chosen build tool
+          ${{ matrix.build_tool == 'stack' && format('stack install fourmolu --resolver {0}', matrix.resolver) || '' }}
+          ${{ matrix.build_tool == 'cabal' && 'cabal install fourmolu' || '' }}
+          # Add the appropriate bin path to GITHUB_PATH
+          echo "$HOME/.local/bin" >> $GITHUB_PATH # For Stack
+          echo "$HOME/.cabal/bin" >> $GITHUB_PATH # For Cabal
+          # Combine paths to ensure both are available, as some runners might use one or the other
+          # or if it's the same path, it's harmless to add twice.
+          # More robust way: if the bin dir is not found, it won't add to PATH, but this handles most cases.
 
       - name: Check formatting with fourmolu
         run: fourmolu --check heph-sparse-set/src heph-sparse-set/test heph-sparse-set/bench
