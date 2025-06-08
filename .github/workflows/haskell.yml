@@ -42,8 +42,6 @@ jobs:
           enable-stack: ${{ matrix.build_tool == 'stack' }}
           stack-no-global: ${{ matrix.build_tool == 'stack' }}
           stack-setup-ghc: ${{ matrix.build_tool == 'stack' }}
-          enable-cabal: ${{ matrix.build_tool == 'cabal' }}
-          cabal-update: ${{ matrix.build_tool == 'cabal' }}
 
       - name: Cache dependencies (${{ matrix.build_tool }})
         uses: actions/cache@v4
