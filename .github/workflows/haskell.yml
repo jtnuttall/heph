@@ -15,18 +15,25 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        resolver: ["lts-23.24", "lts-22.20", "lts-18.28", "lts-18.0"]
+        include:
+          - resolver: "lts-23.24"
+            ghc_display: "9.8.4"
+          - resolver: "lts-22.20"
+            ghc_display: "9.6.5"
+          - resolver: "lts-18.28"
+            ghc_display: "8.10.7"
+
+    name: ${{ matrix.ghc_display }} (${{ matrix.resolver }})
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Haskell
-        uses: haskell/actions/setup@v2
+        uses: haskell-actions/setup@v2
         with:
           resolver: ${{ matrix.resolver }}
           stack-version: 'latest'
-          cache-key: ${{ runner.os }}-haskell-stack-${{ hashFiles('stack.yaml') }}-${{ matrix.resolver }}
 
       - name: Cache Stack work directory
         uses: actions/cache@v4
@@ -44,7 +51,7 @@ jobs:
       - name: Build and run tests
         run: stack test --no-build
 
-      - name: Install fourmolu (for formatting check)
+      - name: Install fourmolu
         run: |
           stack install fourmolu
           echo "$HOME/.local/bin" >> $GITHUB_PATH
