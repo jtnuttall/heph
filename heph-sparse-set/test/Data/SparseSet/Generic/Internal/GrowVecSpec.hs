@@ -1,8 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
-{-# HLINT ignore "Redundant do" #-}
-
 module Data.SparseSet.Generic.Internal.GrowVecSpec where
 
 import Control.Monad (foldM, forM)
