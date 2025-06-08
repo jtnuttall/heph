@@ -73,21 +73,14 @@ jobs:
 
       - name: Run Tests (Cabal)
         if: matrix.build_tool == 'cabal'
-        # Specify the package name for tests if you have multiple test suites.
-        # Assuming 'heph-sparse-set' contains the tests.
-        run: cabal test all --show-details=always
+        run: cabal test all
 
       - name: Install fourmolu (${{ matrix.build_tool }})
         run: |
-          # Install fourmolu using the chosen build tool
           ${{ matrix.build_tool == 'stack' && format('stack install fourmolu --resolver {0}', matrix.resolver) || '' }}
           ${{ matrix.build_tool == 'cabal' && 'cabal install fourmolu' || '' }}
-          # Add the appropriate bin path to GITHUB_PATH
           echo "$HOME/.local/bin" >> $GITHUB_PATH # For Stack
           echo "$HOME/.cabal/bin" >> $GITHUB_PATH # For Cabal
-          # Combine paths to ensure both are available, as some runners might use one or the other
-          # or if it's the same path, it's harmless to add twice.
-          # More robust way: if the bin dir is not found, it won't add to PATH, but this handles most cases.
 
       - name: Check formatting with fourmolu
         run: fourmolu --check heph-sparse-set/src heph-sparse-set/test heph-sparse-set/bench
