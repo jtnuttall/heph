@@ -52,6 +52,7 @@ import Data.SparseSet.Generic.Mutable.Internal.GrowVec (GrowVec)
 import Data.SparseSet.Generic.Mutable.Internal.GrowVec qualified as GrowVec
 import Data.SparseSet.Generic.Mutable.Internal.MutableSparseArray (MutableSparseArray)
 import Data.SparseSet.Generic.Mutable.Internal.MutableSparseArray qualified as MSA
+import Data.Vector.Internal.Check (HasCallStack)
 
 data MutableSparseSet v s a = MutableSparseSet
   { ssDense :: {-# UNPACK #-} !(MutVar s (GrowVec v s a))
@@ -140,13 +141,13 @@ lookup MutableSparseSet{..} i = do
 -- @since 0.1.0.0
 insert
   :: forall a v m
-   . (PrimMonad m, MVG.MVector v a)
+   . (HasCallStack, PrimMonad m, MVG.MVector v a)
   => MutableSparseSet v (PrimState m) a
   -> Int
   -> a
   -> m ()
 insert MutableSparseSet{..} i v
-  | i < 0 = error "Key cannot be negative"
+  | i < 0 = error $ "Key cannot be negative, got: " <> show i
   | otherwise =
       readMutVar ssSparse >>= (`MSA.lookup` i) >>= \case
         Just di -> do
