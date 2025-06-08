@@ -36,8 +36,8 @@ default-extensions:
   - LambdaCase
   - RecordWildCards
 
-description: Please see the README on GitHub at <https://github.com/jtnuttall/heph/heph-sparse-set#readme>
-homepage: https://github.com/jtnuttall/heph/heph-sparse-set#readme
+description: Please see the README on GitHub at <https://github.com/jtnuttall/heph/tree/main/heph-sparse-set#readme>
+homepage: https://github.com/jtnuttall/heph/tree/main/heph-sparse-set#readme
 bug-reports: https://github.com/jtnuttall/heph/issues
 
 dependencies:
