@@ -1,0 +1,104 @@
+name: heph-sparse-set
+version: 0.1.0.0
+github: "jtnuttall/heph"
+license: BSD-3-Clause
+author: "Jeremy Nuttall"
+maintainer: "jeremy@jeremy-nuttall.com"
+copyright: "2025 Jeremy Nuttall"
+
+extra-doc-files:
+  - README.md
+  - LICENSE
+  - CHANGELOG.md
+
+synopsis: Really fast mutable sparse sets
+category: Data Structures
+tested-with: GHC == 9.8.4 || == 9.6.5 || == 8.10.7
+
+build-type: Simple
+
+default-extensions:
+  # Minimal set from GHC2021 to support GHC <9.2
+  - BangPatterns
+  - DeriveGeneric
+  - GeneralizedNewtypeDeriving
+  - FlexibleContexts
+  - ImportQualifiedPost
+  - NumericUnderscores
+  - RankNTypes
+  - StandaloneDeriving
+  - TupleSections
+  - TypeApplications
+
+  # Other modern extensions
+  - BlockArguments
+  - DerivingStrategies
+  - LambdaCase
+  - RecordWildCards
+
+description: Please see the README on GitHub at <https://github.com/jtnuttall/heph/heph-sparse-set#readme>
+homepage: https://github.com/jtnuttall/heph/heph-sparse-set#readme
+bug-reports: https://github.com/jtnuttall/heph/issues
+
+dependencies:
+  - base >= 4.7 && < 5
+  - deepseq >= 1.4 && < 1.6
+  - primitive >= 0.7 && < 0.10
+  - vector >= 0.12.3.0 && < 0.14
+
+ghc-options:
+  - -Wall
+  - -Wcompat
+
+library:
+  source-dirs: src
+  ghc-options:
+    - -Widentities
+    - -Wincomplete-record-updates
+    - -Wincomplete-uni-patterns
+    - -Wmissing-export-lists
+    - -Wmissing-home-modules
+    - -Wpartial-fields
+    - -Wredundant-constraints
+
+tests:
+  heph-sparse-set-test:
+    main: Driver.hs
+    source-dirs: test
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - heph-sparse-set
+      - containers
+      - hedgehog
+      - nothunks
+      - tasty
+      - tasty-discover
+      - tasty-hedgehog
+      - tasty-hunit
+    build-tools:
+      - tasty-discover
+
+benchmarks:
+  heph-sparse-set-bench:
+    main: Bench.hs
+    source-dirs: bench
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N +RTS -A64m --nonmoving-gc -T -RTS
+      - -O2
+      - -optc-O3
+    dependencies:
+      - heph-sparse-set
+      - containers
+      - deepseq
+      - mtl
+      - mwc-random
+      - random
+      - tasty
+      - tasty-bench
+      - criterion
+      - vector
