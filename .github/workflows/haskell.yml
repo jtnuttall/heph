@@ -39,9 +39,9 @@ jobs:
         uses: haskell-actions/setup@v2
         with:
           ghc-version: ${{ matrix.ghc }}
-          enable-stack: ${{ matrix.build_tool == 'stack' }}
-          stack-no-global: ${{ matrix.build_tool == 'stack' }}
-          stack-setup-ghc: ${{ matrix.build_tool == 'stack' }}
+          enable-stack: false
+          stack-no-global: false
+          stack-setup-ghc: false
 
       - name: Cache dependencies (${{ matrix.build_tool }})
         uses: actions/cache@v4
