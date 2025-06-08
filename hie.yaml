@@ -1,70 +1,13 @@
 cradle:
-  stack:
-    - path: "heph/src"
-      component: "heph:lib"
+  cabal:
+    - path: "./heph-sparse-set/src"
+      component: "lib:heph-sparse-set"
 
-    - path: "heph/app/Main.hs"
-      component: "heph:exe:heph-exe"
-
-    - path: "heph/test"
-      component: "heph:test:heph-test"
-
-    - path: "heph-backend-vulkan/src"
-      component: "heph-backend-vulkan:lib"
-
-    - path: "heph-backend-vulkan/app/Main.hs"
-      component: "heph-backend-vulkan:exe:heph-backend-vulkan-exe"
-
-    - path: "heph-backend-vulkan/test"
-      component: "heph-backend-vulkan:test:heph-backend-vulkan-test"
-
-    - path: "heph-core/src"
-      component: "heph-core:lib"
-
-    - path: "heph-core/test"
-      component: "heph-core:test:heph-core-test"
-
-    - path: "heph-ecs/src"
-      component: "heph-ecs:lib"
-
-    - path: "heph-ecs/app/Main.hs"
-      component: "heph-ecs:exe:heph-ecs-exe"
-
-    - path: "heph-ecs/test"
-      component: "heph-ecs:test:heph-ecs-test"
-
-    - path: "heph-ecs/bench/Bench.hs"
-      component: "heph-ecs:bench:heph-ecs-bench"
-
-    - path: "heph-ecs/bench/BenchLib.hs"
-      component: "heph-ecs:bench:heph-ecs-bench"
-
-    - path: "heph-platform-core/src"
-      component: "heph-platform-core:lib"
-
-    - path: "heph-platform-core/app/Main.hs"
-      component: "heph-platform-core:exe:heph-platform-core-exe"
-
-    - path: "heph-platform-core/test"
-      component: "heph-platform-core:test:heph-platform-core-test"
-
-    - path: "heph-platform-sdl2/src"
-      component: "heph-platform-sdl2:lib"
-
-    - path: "heph-platform-sdl2/app/Main.hs"
-      component: "heph-platform-sdl2:exe:heph-platform-sdl2-exe"
-
-    - path: "heph-platform-sdl2/test"
-      component: "heph-platform-sdl2:test:heph-platform-sdl2-test"
-
-    - path: "heph-sparse-set/src"
-      component: "heph-sparse-set:lib"
-
-    - path: "heph-sparse-set/test"
+    - path: "./heph-sparse-set/test"
       component: "heph-sparse-set:test:heph-sparse-set-test"
 
-    - path: "heph-sparse-set/bench/Bench.hs"
+    - path: "./heph-sparse-set/bench/Bench.hs"
       component: "heph-sparse-set:bench:heph-sparse-set-bench"
 
-    - path: "heph-sparse-set/bench/BenchLib.hs"
+    - path: "./heph-sparse-set/bench/BenchLib.hs"
       component: "heph-sparse-set:bench:heph-sparse-set-bench"

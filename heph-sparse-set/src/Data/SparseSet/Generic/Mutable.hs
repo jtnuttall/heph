@@ -191,18 +191,9 @@ delete MutableSparseSet{..} i = do
 -- @since 0.1.0.0
 clear :: forall a v m. (PrimMonad m) => MutableSparseSet v (PrimState m) a -> m ()
 clear MutableSparseSet{..} = do
-  -- Get the vectors we need to work with
-  indicesGV <- readMutVar ssIndices
-  sparseArr <- readMutVar ssSparse
-
-  let len = GrowVec.length indicesGV
-      go !idx
-        | idx >= len = pure ()
-        | otherwise = do
-            entity <- GrowVec.unsafeRead indicesGV idx
-            _ <- MSA.unsafeDelete sparseArr entity
-            go (idx + 1)
-  go 0
+  indices <- readMutVar ssIndices
+  sparse <- readMutVar ssSparse
+  GrowVec.mapM_ (MSA.unsafeDelete sparse) indices
 
   atomicModifyMutVar' ssDense ((,()) . GrowVec.cleared)
   atomicModifyMutVar' ssIndices ((,()) . GrowVec.cleared)

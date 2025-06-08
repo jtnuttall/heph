@@ -22,6 +22,7 @@ module Data.SparseSet.Generic.Mutable.Internal.GrowVec (
   maximum,
   unsafeWrite,
   unsafeSwapRemove,
+  mapM_,
   cleared,
   compact,
   freeze,
@@ -35,7 +36,7 @@ import Data.Typeable (Typeable)
 import Data.Vector.Generic qualified as VG
 import Data.Vector.Generic.Mutable qualified as VGM
 import GHC.Generics (Generic)
-import Prelude hiding (length, maximum)
+import Prelude hiding (length, mapM_, maximum)
 
 data GrowVec v s a = GrowVec !Int !(v s a)
   deriving (Show, Generic, Typeable)
@@ -139,6 +140,10 @@ unsafeSwapRemove (GrowVec l v) i = do
   VGM.swap v i (l - 1)
   pure (old, GrowVec (l - 1) v)
 {-# INLINE unsafeSwapRemove #-}
+
+mapM_ :: (PrimMonad m, VGM.MVector v a) => (a -> m b) -> GrowVec v (PrimState m) a -> m ()
+mapM_ f (GrowVec l v) = VGM.mapM_ f (VGM.unsafeSlice 0 l v)
+{-# INLINE mapM_ #-}
 
 -- | O(1) Create a new, empty vector by setting logical length to 0. This does not change the
 -- underlying vector in any way.
