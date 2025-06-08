@@ -23,10 +23,10 @@ jobs:
             resolver: "lts-22.20"
             build_tool: stack
           - ghc: "8.10.7"
-            resolver: "lts-18.28" # Using an LTS for context, but Cabal will resolve from Hackage
+            resolver: "lts-18.28"
             build_tool: cabal
           - ghc: "8.10.4"
-            resolver: "lts-18.0" # Using an LTS for context, but Cabal will resolve from Hackage
+            resolver: "lts-18.0"
             build_tool: cabal
 
     name: GHC ${{ matrix.ghc }} (${{ matrix.resolver }}) - ${{ matrix.build_tool }}
@@ -76,11 +76,5 @@ jobs:
         run: cabal test all
 
       - name: Install fourmolu (${{ matrix.build_tool }})
-        run: |
-          ${{ matrix.build_tool == 'stack' && format('stack install fourmolu --resolver {0}', matrix.resolver) || '' }}
-          ${{ matrix.build_tool == 'cabal' && 'cabal install fourmolu' || '' }}
-          echo "$HOME/.local/bin" >> $GITHUB_PATH # For Stack
-          echo "$HOME/.cabal/bin" >> $GITHUB_PATH # For Cabal
-
-      - name: Check formatting with fourmolu
-        run: fourmolu --check heph-sparse-set/src heph-sparse-set/test heph-sparse-set/bench
+        uses: haskell-actions/run-fourmolu@v9
+        version: "0.15.0.0"
