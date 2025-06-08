@@ -69,7 +69,7 @@ jobs:
 
       - name: Run Tests (Stack)
         if: matrix.build_tool == 'stack'
-        run: stack test --resolver ${{ matrix.resolver }} --no-build
+        run: stack test --resolver ${{ matrix.resolver }}
 
       - name: Run Tests (Cabal)
         if: matrix.build_tool == 'cabal'
