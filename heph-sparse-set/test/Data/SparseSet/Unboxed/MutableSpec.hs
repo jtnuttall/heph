@@ -343,7 +343,7 @@ applyOpsToModel ops model = foldl applyOpToModel model ops
 
 -- Apply a list of operations to the MutableSparseSet
 applyOpsToSet
-  :: (Foldable t, PrimMonad f) => MutableSparseSet (PrimState f) TestComponent -> t SparseSetOp -> f ()
+  :: (Foldable t, PrimMonad m) => MutableSparseSet (PrimState m) TestComponent -> t SparseSetOp -> m ()
 applyOpsToSet set ops = for_ ops \case
   OpInsert e c -> SS.insert set e c
   OpDelete e -> void $ SS.delete set e -- Ignore deleted value for this helper

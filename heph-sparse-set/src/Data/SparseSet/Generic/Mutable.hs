@@ -186,7 +186,7 @@ delete MutableSparseSet{..} i = do
     Nothing -> pure Nothing
 {-# INLINE delete #-}
 
--- | O(n) Clear all elements from the set
+-- | O(n) Clear all elements from the set.
 --
 -- @since 0.1.0.0
 clear :: forall a v m. (PrimMonad m) => MutableSparseSet v (PrimState m) a -> m ()

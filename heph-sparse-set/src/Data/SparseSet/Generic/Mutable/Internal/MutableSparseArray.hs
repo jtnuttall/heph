@@ -106,7 +106,7 @@ unsafeInsert (MutableSparseArray arr) i v
       pure $ MutableSparseArray mArr
 {-# INLINE unsafeInsert #-}
 
-delete :: (PrimMonad f) => MutableSparseArray (PrimState f) -> Int -> f (Maybe Int)
+delete :: (PrimMonad m) => MutableSparseArray (PrimState m) -> Int -> m (Maybe Int)
 delete (MutableSparseArray arr) i
   | i < 0 || i >= VPM.length arr = pure Nothing
   | otherwise = msaReprToMaybe <$> VPM.unsafeExchange arr i ABSURD
@@ -126,7 +126,7 @@ clear (MutableSparseArray arr) = VPM.set arr ABSURD
 {-# INLINE clear #-}
 
 unsafeCompactTo
-  :: (PrimMonad f) => MutableSparseArray (PrimState f) -> Int -> f (MutableSparseArray (PrimState f))
+  :: (PrimMonad m) => MutableSparseArray (PrimState m) -> Int -> m (MutableSparseArray (PrimState m))
 unsafeCompactTo (MutableSparseArray arr) len
   | len < 0 = error "Cannot compact to negative capacity"
   | len >= VPM.length arr = pure $ MutableSparseArray arr
