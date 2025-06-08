@@ -35,6 +35,9 @@ jobs:
         uses: haskell-actions/setup@v2
         with:
           ghc-version: ${{ matrix.ghc }}
+          enable-stack: true
+          stack-no-global: true
+          stack-setup-ghc: true
 
       - name: Cache Stack work directory
         uses: actions/cache@v4
