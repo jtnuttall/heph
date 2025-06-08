@@ -1,802 +1,349 @@
-
-Warning: nix (Nix) 2.24.6 is on the PATH (at /nix/var/nix/profiles/default/bin/nix) but Stack's Nix
-         integration is disabled. To mute this message in future, set notify-if-nix-on-path: false
-         in Stack's configuration.
-         
-heph-sparse-set-0.1.0.0: unregistering (local file changes: heph-sparse-set.cabal package.yaml
-src/Data/SparseSet/Orphans.hs)
-heph-sparse-set> configure (lib + bench)
-Configuring heph-sparse-set-0.1.0.0...
-heph-sparse-set> build (lib + bench) with ghc-9.8.4
-Preprocessing library for heph-sparse-set-0.1.0.0..
-Building library for heph-sparse-set-0.1.0.0..
-[3 of 8] Compiling Data.SparseSet.Orphans [Source file changed]
-Preprocessing benchmark 'heph-sparse-set-bench' for heph-sparse-set-0.1.0.0..
-Building benchmark 'heph-sparse-set-bench' for heph-sparse-set-0.1.0.0..
-heph-sparse-set> copy/register
-Installing library in /home/jeremy/distrobox/haskell/heph/heph-sparse-set/.stack-work/install/x86_64-linux/f1693dcabcf98a543d1a90018fc22b7c534f75b2b1fc0481c9e454c33e19b6f9/9.8.4/lib/x86_64-linux-ghc-9.8.4/heph-sparse-set-0.1.0.0-3Iy60q8WGZuHQQhfQIBlLf
-Registering library for heph-sparse-set-0.1.0.0..
-heph-sparse-set> benchmarks
-Running 1 benchmarks...
-Benchmark heph-sparse-set-bench: RUNNING...
-benchmarking Data.SparseSet.Unboxed.Mutable/Insert_DenseIDs_Sequential_AscendingOrder/100
-time                 2.948 μs   (2.823 μs .. 3.171 μs)
-                     0.990 R²   (0.984 R² .. 0.998 R²)
-mean                 2.904 μs   (2.833 μs .. 3.051 μs)
-std dev              212.4 ns   (101.7 ns .. 357.6 ns)
-variance introduced by outliers: 77% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Insert_DenseIDs_Sequential_AscendingOrder/1000
-time                 15.50 μs   (15.35 μs .. 15.68 μs)
-                     0.999 R²   (0.998 R² .. 0.999 R²)
-mean                 15.47 μs   (15.30 μs .. 15.69 μs)
-std dev              424.1 ns   (316.5 ns .. 590.9 ns)
-variance introduced by outliers: 26% (moderately inflated)
-
 benchmarking Data.SparseSet.Unboxed.Mutable/Insert_DenseIDs_Sequential_AscendingOrder/10000
-time                 140.6 μs   (136.1 μs .. 144.7 μs)
-                     0.986 R²   (0.969 R² .. 0.994 R²)
-mean                 147.9 μs   (140.3 μs .. 169.0 μs)
-std dev              29.81 μs   (7.692 μs .. 53.97 μs)
-variance introduced by outliers: 94% (severely inflated)
+time                 133.8 μs   (133.1 μs .. 134.4 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 134.2 μs   (133.7 μs .. 134.8 μs)
+std dev              1.686 μs   (1.328 μs .. 2.407 μs)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Insert_DenseIDs_Sequential_AscendingOrder/100000
-time                 4.463 ms   (3.793 ms .. 5.389 ms)
-                     0.704 R²   (0.545 R² .. 0.870 R²)
-mean                 4.539 ms   (4.093 ms .. 5.393 ms)
-std dev              1.668 ms   (1.244 ms .. 2.423 ms)
-variance introduced by outliers: 97% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Insert_DenseIDs_Sequential_DescendingOrder/100
-time                 3.112 μs   (2.987 μs .. 3.258 μs)
-                     0.986 R²   (0.980 R² .. 0.992 R²)
-mean                 3.193 μs   (3.043 μs .. 3.399 μs)
-std dev              378.1 ns   (284.4 ns .. 540.5 ns)
-variance introduced by outliers: 90% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Insert_DenseIDs_Sequential_DescendingOrder/1000
-time                 15.20 μs   (14.98 μs .. 15.38 μs)
-                     0.999 R²   (0.998 R² .. 1.000 R²)
-mean                 15.21 μs   (15.02 μs .. 15.43 μs)
-std dev              454.6 ns   (347.6 ns .. 632.1 ns)
-variance introduced by outliers: 30% (moderately inflated)
+time                 1.863 ms   (1.859 ms .. 1.869 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 1.868 ms   (1.865 ms .. 1.880 ms)
+std dev              20.01 μs   (6.870 μs .. 39.33 μs)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Insert_DenseIDs_Sequential_DescendingOrder/10000
-time                 129.8 μs   (127.2 μs .. 133.5 μs)
-                     0.995 R²   (0.992 R² .. 0.998 R²)
-mean                 129.7 μs   (127.5 μs .. 132.3 μs)
-std dev              5.601 μs   (4.494 μs .. 7.224 μs)
-variance introduced by outliers: 38% (moderately inflated)
+time                 130.4 μs   (129.7 μs .. 131.1 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 130.5 μs   (129.6 μs .. 131.1 μs)
+std dev              1.945 μs   (1.293 μs .. 3.075 μs)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Insert_DenseIDs_Sequential_DescendingOrder/100000
-time                 2.388 ms   (2.077 ms .. 2.751 ms)
-                     0.812 R²   (0.693 R² .. 0.932 R²)
-mean                 2.667 ms   (2.438 ms .. 3.101 ms)
-std dev              844.1 μs   (515.7 μs .. 1.426 ms)
-variance introduced by outliers: 95% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Insert_SparseIDs_Step100_AscendingOrder (slow)/100
-time                 6.795 μs   (6.705 μs .. 6.899 μs)
-                     0.998 R²   (0.997 R² .. 0.999 R²)
-mean                 6.826 μs   (6.722 μs .. 6.942 μs)
-std dev              260.6 ns   (203.7 ns .. 339.8 ns)
-variance introduced by outliers: 44% (moderately inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Insert_SparseIDs_Step100_AscendingOrder (slow)/1000
-time                 537.8 μs   (483.8 μs .. 587.4 μs)
-                     0.952 R²   (0.931 R² .. 0.983 R²)
-mean                 553.9 μs   (514.7 μs .. 663.3 μs)
-std dev              192.0 μs   (67.51 μs .. 349.5 μs)
-variance introduced by outliers: 97% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Insert_SparseIDs_Step100_AscendingOrder (slow)/10000
-time                 3.946 ms   (3.676 ms .. 4.270 ms)
-                     0.978 R²   (0.969 R² .. 0.988 R²)
-mean                 3.905 ms   (3.784 ms .. 4.088 ms)
-std dev              453.9 μs   (298.9 μs .. 717.0 μs)
-variance introduced by outliers: 68% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Insert_SparseIDs_Step100_AscendingOrder (slow)/100000
-time                 82.41 ms   (81.54 ms .. 83.13 ms)
+time                 1.836 ms   (1.830 ms .. 1.842 ms)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 80.96 ms   (78.65 ms .. 81.75 ms)
-std dev              2.346 ms   (381.0 μs .. 3.950 ms)
+mean                 1.840 ms   (1.837 ms .. 1.847 ms)
+std dev              13.59 μs   (6.805 μs .. 25.52 μs)
 
-benchmarking Data.SparseSet.Unboxed.Mutable/Insert_SparseIDs_Step100_DescendingOrder (fast)/100
-time                 4.664 μs   (4.597 μs .. 4.742 μs)
-                     0.998 R²   (0.997 R² .. 0.999 R²)
-mean                 4.684 μs   (4.614 μs .. 4.737 μs)
-std dev              144.4 ns   (113.6 ns .. 188.3 ns)
-variance introduced by outliers: 35% (moderately inflated)
+benchmarking Data.SparseSet.Unboxed.Mutable/Insert_SparseIDs_Step100_AscendingOrder/10000
+time                 3.157 ms   (3.151 ms .. 3.164 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 3.173 ms   (3.168 ms .. 3.188 ms)
+std dev              25.48 μs   (12.42 μs .. 45.66 μs)
 
-benchmarking Data.SparseSet.Unboxed.Mutable/Insert_SparseIDs_Step100_DescendingOrder (fast)/1000
-time                 178.5 μs   (171.0 μs .. 191.2 μs)
-                     0.956 R²   (0.923 R² .. 0.990 R²)
-mean                 191.8 μs   (177.2 μs .. 216.3 μs)
-std dev              51.23 μs   (25.43 μs .. 81.79 μs)
-variance introduced by outliers: 96% (severely inflated)
+benchmarking Data.SparseSet.Unboxed.Mutable/Insert_SparseIDs_Step100_AscendingOrder/100000
+time                 77.23 ms   (75.80 ms .. 78.49 ms)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 74.72 ms   (72.95 ms .. 75.53 ms)
+std dev              2.065 ms   (948.9 μs .. 3.351 ms)
 
-benchmarking Data.SparseSet.Unboxed.Mutable/Insert_SparseIDs_Step100_DescendingOrder (fast)/10000
-time                 1.988 ms   (1.806 ms .. 2.134 ms)
-                     0.943 R²   (0.899 R² .. 0.980 R²)
-mean                 1.920 ms   (1.793 ms .. 2.173 ms)
-std dev              525.9 μs   (252.1 μs .. 1.024 ms)
-variance introduced by outliers: 94% (severely inflated)
+benchmarking Data.SparseSet.Unboxed.Mutable/Insert_SparseIDs_Step100_DescendingOrder/10000
+time                 1.431 ms   (1.430 ms .. 1.434 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 1.436 ms   (1.435 ms .. 1.436 ms)
+std dev              2.613 μs   (2.129 μs .. 3.254 μs)
 
-benchmarking Data.SparseSet.Unboxed.Mutable/Insert_SparseIDs_Step100_DescendingOrder (fast)/100000
-time                 23.21 ms   (22.77 ms .. 23.91 ms)
-                     0.997 R²   (0.994 R² .. 1.000 R²)
-mean                 22.15 ms   (19.95 ms .. 22.72 ms)
-std dev              2.338 ms   (216.9 μs .. 4.556 ms)
-variance introduced by outliers: 46% (moderately inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Update_DenseIDs_Sequential/100_updates
-time                 1.162 μs   (1.148 μs .. 1.188 μs)
-                     0.997 R²   (0.994 R² .. 0.999 R²)
-mean                 1.189 μs   (1.160 μs .. 1.238 μs)
-std dev              82.40 ns   (54.48 ns .. 121.3 ns)
-variance introduced by outliers: 77% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Update_DenseIDs_Sequential/1000_updates
-time                 3.285 μs   (3.234 μs .. 3.330 μs)
-                     0.999 R²   (0.998 R² .. 0.999 R²)
-mean                 3.265 μs   (3.226 μs .. 3.312 μs)
-std dev              91.35 ns   (69.15 ns .. 116.0 ns)
-variance introduced by outliers: 32% (moderately inflated)
+benchmarking Data.SparseSet.Unboxed.Mutable/Insert_SparseIDs_Step100_DescendingOrder/100000
+time                 14.61 ms   (14.01 ms .. 15.14 ms)
+                     0.993 R²   (0.983 R² .. 0.997 R²)
+mean                 15.42 ms   (14.85 ms .. 16.48 ms)
+std dev              1.974 ms   (912.2 μs .. 3.337 ms)
+variance introduced by outliers: 61% (severely inflated)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Update_DenseIDs_Sequential/10000_updates
-time                 23.45 μs   (23.14 μs .. 23.77 μs)
-                     0.999 R²   (0.998 R² .. 0.999 R²)
-mean                 23.34 μs   (23.00 μs .. 23.64 μs)
-std dev              648.4 ns   (508.8 ns .. 854.0 ns)
-variance introduced by outliers: 25% (moderately inflated)
+time                 16.39 μs   (16.34 μs .. 16.44 μs)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 16.52 μs   (16.50 μs .. 16.54 μs)
+std dev              54.82 ns   (48.91 ns .. 65.14 ns)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Update_DenseIDs_Sequential/100000_updates
-time                 355.8 μs   (310.3 μs .. 440.2 μs)
-                     0.757 R²   (0.644 R² .. 0.881 R²)
-mean                 465.8 μs   (388.9 μs .. 561.4 μs)
-std dev              177.8 μs   (125.8 μs .. 230.3 μs)
-variance introduced by outliers: 98% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Get_Existing_DenseIDs/100
-time                 133.7 ns   (133.4 ns .. 134.1 ns)
-                     1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 134.8 ns   (134.4 ns .. 135.2 ns)
-std dev              1.548 ns   (1.173 ns .. 1.964 ns)
-variance introduced by outliers: 11% (moderately inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Get_Existing_DenseIDs/1000
-time                 1.417 μs   (1.413 μs .. 1.421 μs)
-                     1.000 R²   (0.999 R² .. 1.000 R²)
-mean                 1.426 μs   (1.421 μs .. 1.432 μs)
-std dev              18.17 ns   (14.51 ns .. 24.51 ns)
-variance introduced by outliers: 11% (moderately inflated)
+time                 168.0 μs   (163.1 μs .. 173.6 μs)
+                     0.943 R²   (0.906 R² .. 0.966 R²)
+mean                 202.4 μs   (188.1 μs .. 230.6 μs)
+std dev              51.40 μs   (30.65 μs .. 69.08 μs)
+variance introduced by outliers: 96% (severely inflated)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Get_Existing_DenseIDs/10000
-time                 13.10 μs   (13.05 μs .. 13.16 μs)
-                     0.999 R²   (0.997 R² .. 1.000 R²)
-mean                 13.31 μs   (13.20 μs .. 13.58 μs)
-std dev              609.7 ns   (155.2 ns .. 1.153 μs)
-variance introduced by outliers: 55% (severely inflated)
+time                 13.95 μs   (13.77 μs .. 14.32 μs)
+                     0.980 R²   (0.969 R² .. 0.988 R²)
+mean                 17.12 μs   (16.12 μs .. 17.97 μs)
+std dev              3.420 μs   (3.308 μs .. 3.451 μs)
+variance introduced by outliers: 96% (severely inflated)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Get_Existing_DenseIDs/100000
-time                 134.2 μs   (133.9 μs .. 134.6 μs)
-                     1.000 R²   (0.999 R² .. 1.000 R²)
-mean                 136.1 μs   (135.4 μs .. 137.7 μs)
-std dev              3.374 μs   (1.214 μs .. 6.200 μs)
-variance introduced by outliers: 20% (moderately inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Get_NonExisting_DenseIDs/100
-time                 110.0 ns   (109.8 ns .. 110.4 ns)
-                     1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 110.6 ns   (110.3 ns .. 111.2 ns)
-std dev              1.420 ns   (1.162 ns .. 1.955 ns)
-variance introduced by outliers: 13% (moderately inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Get_NonExisting_DenseIDs/1000
-time                 1.203 μs   (1.200 μs .. 1.206 μs)
-                     1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 1.209 μs   (1.205 μs .. 1.214 μs)
-std dev              15.93 ns   (13.13 ns .. 21.95 ns)
-variance introduced by outliers: 11% (moderately inflated)
+time                 138.0 μs   (137.0 μs .. 138.8 μs)
+                     0.997 R²   (0.995 R² .. 0.998 R²)
+mean                 147.7 μs   (142.8 μs .. 156.5 μs)
+std dev              21.65 μs   (11.98 μs .. 31.62 μs)
+variance introduced by outliers: 90% (severely inflated)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Get_NonExisting_DenseIDs/10000
-time                 11.82 μs   (11.79 μs .. 11.84 μs)
-                     1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 11.86 μs   (11.83 μs .. 11.89 μs)
-std dev              106.2 ns   (90.65 ns .. 128.9 ns)
+time                 13.67 μs   (12.52 μs .. 15.66 μs)
+                     0.895 R²   (0.886 R² .. 0.915 R²)
+mean                 18.40 μs   (17.12 μs .. 19.37 μs)
+std dev              3.903 μs   (3.097 μs .. 4.449 μs)
+variance introduced by outliers: 97% (severely inflated)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Get_NonExisting_DenseIDs/100000
-time                 116.3 μs   (115.6 μs .. 116.7 μs)
-                     0.999 R²   (0.999 R² .. 1.000 R²)
-mean                 118.2 μs   (117.8 μs .. 118.7 μs)
-std dev              1.776 μs   (1.396 μs .. 2.453 μs)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Contains_Existing_DenseIDs/100
-time                 98.19 ns   (97.91 ns .. 98.50 ns)
-                     0.998 R²   (0.997 R² .. 0.999 R²)
-mean                 98.98 ns   (98.71 ns .. 99.32 ns)
-std dev              1.096 ns   (908.2 ps .. 1.349 ns)
-variance introduced by outliers: 10% (moderately inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Contains_Existing_DenseIDs/1000
-time                 1.118 μs   (1.106 μs .. 1.128 μs)
-                     0.999 R²   (0.999 R² .. 1.000 R²)
-mean                 1.126 μs   (1.119 μs .. 1.131 μs)
-std dev              20.67 ns   (14.07 ns .. 31.72 ns)
-variance introduced by outliers: 20% (moderately inflated)
+time                 114.0 μs   (110.7 μs .. 120.6 μs)
+                     0.922 R²   (0.883 R² .. 0.955 R²)
+mean                 171.0 μs   (157.7 μs .. 183.1 μs)
+std dev              49.80 μs   (47.16 μs .. 50.60 μs)
+variance introduced by outliers: 98% (severely inflated)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Contains_Existing_DenseIDs/10000
-time                 10.63 μs   (10.58 μs .. 10.68 μs)
-                     0.998 R²   (0.996 R² .. 0.999 R²)
-mean                 11.01 μs   (10.73 μs .. 11.80 μs)
-std dev              1.677 μs   (134.3 ns .. 3.213 μs)
-variance introduced by outliers: 93% (severely inflated)
+time                 9.716 μs   (9.633 μs .. 9.802 μs)
+                     0.978 R²   (0.963 R² .. 0.988 R²)
+mean                 12.70 μs   (11.61 μs .. 14.11 μs)
+std dev              4.527 μs   (3.809 μs .. 5.014 μs)
+variance introduced by outliers: 99% (severely inflated)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Contains_Existing_DenseIDs/100000
-time                 113.2 μs   (112.6 μs .. 113.6 μs)
-                     0.999 R²   (0.998 R² .. 1.000 R²)
-mean                 114.3 μs   (114.0 μs .. 114.9 μs)
-std dev              1.527 μs   (1.194 μs .. 2.053 μs)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Contains_NonExisting_DenseIDs/100
-time                 98.71 ns   (98.46 ns .. 98.97 ns)
-                     1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 99.47 ns   (99.13 ns .. 99.94 ns)
-std dev              1.549 ns   (994.5 ps .. 2.133 ns)
-variance introduced by outliers: 18% (moderately inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Contains_NonExisting_DenseIDs/1000
-time                 1.201 μs   (1.196 μs .. 1.204 μs)
-                     1.000 R²   (0.999 R² .. 1.000 R²)
-mean                 1.212 μs   (1.208 μs .. 1.218 μs)
-std dev              16.64 ns   (13.18 ns .. 21.38 ns)
-variance introduced by outliers: 12% (moderately inflated)
+time                 110.5 μs   (110.0 μs .. 110.8 μs)
+                     0.999 R²   (0.999 R² .. 1.000 R²)
+mean                 111.8 μs   (111.7 μs .. 111.9 μs)
+std dev              298.0 ns   (188.4 ns .. 442.2 ns)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Contains_NonExisting_DenseIDs/10000
-time                 10.73 μs   (10.69 μs .. 10.76 μs)
-                     0.999 R²   (0.998 R² .. 1.000 R²)
-mean                 10.80 μs   (10.77 μs .. 10.83 μs)
-std dev              107.4 ns   (87.94 ns .. 133.7 ns)
+time                 11.38 μs   (10.54 μs .. 13.00 μs)
+                     0.862 R²   (0.844 R² .. 0.895 R²)
+mean                 16.94 μs   (15.50 μs .. 18.21 μs)
+std dev              4.675 μs   (3.928 μs .. 5.041 μs)
+variance introduced by outliers: 98% (severely inflated)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Contains_NonExisting_DenseIDs/100000
-time                 114.6 μs   (113.4 μs .. 116.7 μs)
-                     0.995 R²   (0.985 R² .. 1.000 R²)
-mean                 116.2 μs   (114.5 μs .. 119.7 μs)
-std dev              8.650 μs   (1.630 μs .. 16.30 μs)
-variance introduced by outliers: 71% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Remove_DenseIDs_AscendingOrder (Swaps)/100_removes
-time                 2.927 μs   (2.790 μs .. 3.078 μs)
-                     0.961 R²   (0.926 R² .. 0.991 R²)
-mean                 3.056 μs   (2.872 μs .. 3.530 μs)
-std dev              601.3 ns   (240.0 ns .. 1.103 μs)
-variance introduced by outliers: 96% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Remove_DenseIDs_AscendingOrder (Swaps)/1000_removes
-time                 14.44 μs   (14.24 μs .. 14.60 μs)
-                     0.999 R²   (0.998 R² .. 1.000 R²)
-mean                 14.41 μs   (14.24 μs .. 14.62 μs)
-std dev              377.9 ns   (270.3 ns .. 477.9 ns)
-variance introduced by outliers: 25% (moderately inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Remove_DenseIDs_AscendingOrder (Swaps)/10000_removes
-time                 118.6 μs   (116.3 μs .. 120.8 μs)
-                     0.995 R²   (0.992 R² .. 0.998 R²)
-mean                 119.9 μs   (117.2 μs .. 125.5 μs)
-std dev              8.435 μs   (4.091 μs .. 13.75 μs)
-variance introduced by outliers: 62% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Remove_DenseIDs_AscendingOrder (Swaps)/100000_removes
-time                 1.289 ms   (1.200 ms .. 1.401 ms)
-                     0.953 R²   (0.921 R² .. 0.980 R²)
-mean                 1.339 ms   (1.278 ms .. 1.413 ms)
-std dev              170.9 μs   (128.1 μs .. 227.2 μs)
-variance introduced by outliers: 74% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Remove_DenseIDs_DescendingOrder (No Swaps)/100_removes
-time                 2.855 μs   (2.778 μs .. 2.945 μs)
-                     0.990 R²   (0.983 R² .. 0.996 R²)
-mean                 3.001 μs   (2.872 μs .. 3.268 μs)
-std dev              390.1 ns   (232.7 ns .. 622.0 ns)
-variance introduced by outliers: 92% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Remove_DenseIDs_DescendingOrder (No Swaps)/1000_removes
-time                 14.48 μs   (14.34 μs .. 14.61 μs)
-                     0.999 R²   (0.998 R² .. 1.000 R²)
-mean                 14.46 μs   (14.36 μs .. 14.61 μs)
-std dev              268.4 ns   (221.1 ns .. 322.6 ns)
-variance introduced by outliers: 14% (moderately inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Remove_DenseIDs_DescendingOrder (No Swaps)/10000_removes
-time                 124.7 μs   (121.6 μs .. 128.6 μs)
-                     0.993 R²   (0.990 R² .. 0.998 R²)
-mean                 126.4 μs   (123.1 μs .. 132.2 μs)
-std dev              9.520 μs   (5.340 μs .. 14.91 μs)
-variance introduced by outliers: 65% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Remove_DenseIDs_DescendingOrder (No Swaps)/100000_removes
-time                 1.302 ms   (1.236 ms .. 1.400 ms)
-                     0.964 R²   (0.932 R² .. 0.985 R²)
-mean                 1.284 ms   (1.230 ms .. 1.366 ms)
-std dev              171.2 μs   (105.6 μs .. 270.9 μs)
-variance introduced by outliers: 77% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Iterate_DenseIDs/100
-time                 185.0 ns   (163.6 ns .. 219.4 ns)
-                     0.825 R²   (0.724 R² .. 0.977 R²)
-mean                 184.7 ns   (169.6 ns .. 220.4 ns)
-std dev              73.04 ns   (41.92 ns .. 125.1 ns)
-variance introduced by outliers: 100% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Iterate_DenseIDs/1000
-time                 1.746 μs   (1.537 μs .. 1.987 μs)
-                     0.878 R²   (0.802 R² .. 0.977 R²)
-mean                 1.603 μs   (1.509 μs .. 1.911 μs)
-std dev              447.1 ns   (188.7 ns .. 856.3 ns)
+time                 108.1 μs   (105.6 μs .. 112.0 μs)
+                     0.933 R²   (0.898 R² .. 0.961 R²)
+mean                 162.8 μs   (148.7 μs .. 176.2 μs)
+std dev              51.45 μs   (50.39 μs .. 51.97 μs)
 variance introduced by outliers: 98% (severely inflated)
+
+benchmarking Data.SparseSet.Unboxed.Mutable/Remove_DenseIDs_AscendingOrder/10000_removes
+time                 109.8 μs   (109.8 μs .. 109.9 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 109.8 μs   (109.8 μs .. 109.9 μs)
+std dev              69.26 ns   (56.56 ns .. 91.17 ns)
+
+benchmarking Data.SparseSet.Unboxed.Mutable/Remove_DenseIDs_AscendingOrder/100000_removes
+time                 1.024 ms   (1.022 ms .. 1.027 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 1.026 ms   (1.025 ms .. 1.029 ms)
+std dev              4.785 μs   (1.736 μs .. 9.211 μs)
+
+benchmarking Data.SparseSet.Unboxed.Mutable/Remove_DenseIDs_DescendingOrder/10000_removes
+time                 112.7 μs   (112.6 μs .. 112.8 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 112.7 μs   (112.6 μs .. 112.8 μs)
+std dev              160.8 ns   (120.9 ns .. 215.4 ns)
+
+benchmarking Data.SparseSet.Unboxed.Mutable/Remove_DenseIDs_DescendingOrder/100000_removes
+time                 1.056 ms   (1.054 ms .. 1.058 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 1.056 ms   (1.055 ms .. 1.057 ms)
+std dev              2.523 μs   (2.004 μs .. 3.427 μs)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Iterate_DenseIDs/10000
-time                 17.64 μs   (15.56 μs .. 21.26 μs)
-                     0.855 R²   (0.793 R² .. 0.972 R²)
-mean                 18.34 μs   (16.76 μs .. 21.52 μs)
-std dev              7.235 μs   (5.105 μs .. 10.09 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 10.37 μs   (10.37 μs .. 10.38 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 10.37 μs   (10.37 μs .. 10.38 μs)
+std dev              18.62 ns   (14.18 ns .. 24.14 ns)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Iterate_DenseIDs/100000
-time                 171.7 μs   (148.8 μs .. 193.3 μs)
-                     0.920 R²   (0.876 R² .. 0.964 R²)
-mean                 204.1 μs   (182.1 μs .. 258.4 μs)
-std dev              111.8 μs   (75.87 μs .. 173.0 μs)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Iterate_Intersection/100
-time                 224.0 ns   (212.9 ns .. 244.7 ns)
-                     0.947 R²   (0.911 R² .. 0.989 R²)
-mean                 234.1 ns   (222.7 ns .. 259.3 ns)
-std dev              56.74 ns   (37.06 ns .. 84.25 ns)
-variance introduced by outliers: 98% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/Iterate_Intersection/1000
-time                 2.057 μs   (1.927 μs .. 2.188 μs)
-                     0.977 R²   (0.964 R² .. 0.994 R²)
-mean                 2.092 μs   (1.985 μs .. 2.220 μs)
-std dev              394.6 ns   (251.3 ns .. 531.1 ns)
-variance introduced by outliers: 97% (severely inflated)
+time                 105.1 μs   (105.0 μs .. 105.2 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 105.1 μs   (105.1 μs .. 105.2 μs)
+std dev              233.3 ns   (146.7 ns .. 417.4 ns)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Iterate_Intersection/10000
-time                 20.14 μs   (19.19 μs .. 21.13 μs)
-                     0.974 R²   (0.959 R² .. 0.991 R²)
-mean                 22.33 μs   (20.89 μs .. 25.28 μs)
-std dev              7.573 μs   (5.225 μs .. 11.58 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 15.77 μs   (15.76 μs .. 15.78 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 15.78 μs   (15.77 μs .. 15.79 μs)
+std dev              26.68 ns   (22.10 ns .. 32.51 ns)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/Iterate_Intersection/100000
-time                 191.0 μs   (190.4 μs .. 192.4 μs)
-                     0.999 R²   (0.998 R² .. 1.000 R²)
-mean                 191.6 μs   (190.9 μs .. 194.0 μs)
-std dev              4.946 μs   (1.839 μs .. 8.878 μs)
-variance introduced by outliers: 20% (moderately inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/MixedWorkload_DenseIDs/100_ops
-time                 466.6 ns   (431.9 ns .. 507.2 ns)
-                     0.959 R²   (0.935 R² .. 0.996 R²)
-mean                 448.4 ns   (433.5 ns .. 487.8 ns)
-std dev              70.37 ns   (37.85 ns .. 118.3 ns)
-variance introduced by outliers: 96% (severely inflated)
-
-benchmarking Data.SparseSet.Unboxed.Mutable/MixedWorkload_DenseIDs/1000_ops
-time                 4.059 μs   (3.757 μs .. 4.490 μs)
-                     0.904 R²   (0.849 R² .. 0.974 R²)
-mean                 5.034 μs   (4.337 μs .. 6.226 μs)
-std dev              3.333 μs   (1.604 μs .. 5.683 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 156.7 μs   (156.6 μs .. 156.8 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 156.7 μs   (156.6 μs .. 156.8 μs)
+std dev              322.4 ns   (269.8 ns .. 408.6 ns)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/MixedWorkload_DenseIDs/10000_ops
-time                 87.08 μs   (83.34 μs .. 91.77 μs)
-                     0.984 R²   (0.977 R² .. 0.993 R²)
-mean                 85.42 μs   (83.48 μs .. 89.52 μs)
-std dev              8.477 μs   (6.004 μs .. 12.36 μs)
-variance introduced by outliers: 82% (severely inflated)
+time                 71.15 μs   (70.86 μs .. 71.50 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 71.61 μs   (71.45 μs .. 71.80 μs)
+std dev              604.9 ns   (359.7 ns .. 1.168 μs)
 
 benchmarking Data.SparseSet.Unboxed.Mutable/MixedWorkload_DenseIDs/100000_ops
-time                 1.061 ms   (990.4 μs .. 1.165 ms)
-                     0.964 R²   (0.935 R² .. 0.992 R²)
-mean                 1.029 ms   (993.5 μs .. 1.105 ms)
-std dev              154.5 μs   (75.38 μs .. 275.1 μs)
-variance introduced by outliers: 86% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Insert_DenseIDs_Sequential_Map_AscendingOrder/100
-time                 1.893 μs   (1.653 μs .. 2.145 μs)
-                     0.937 R²   (0.923 R² .. 0.962 R²)
-mean                 1.672 μs   (1.577 μs .. 1.796 μs)
-std dev              344.8 ns   (255.8 ns .. 437.1 ns)
-variance introduced by outliers: 97% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Insert_DenseIDs_Sequential_Map_AscendingOrder/1000
-time                 21.76 μs   (19.98 μs .. 24.24 μs)
-                     0.962 R²   (0.945 R² .. 0.993 R²)
-mean                 22.20 μs   (20.72 μs .. 25.08 μs)
-std dev              7.030 μs   (3.514 μs .. 12.15 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 868.2 μs   (867.1 μs .. 869.8 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 873.7 μs   (872.7 μs .. 874.6 μs)
+std dev              3.099 μs   (2.495 μs .. 3.585 μs)
 
 benchmarking Data.IntMap.Strict/Insert_DenseIDs_Sequential_Map_AscendingOrder/10000
-time                 339.2 μs   (315.4 μs .. 365.5 μs)
-                     0.964 R²   (0.945 R² .. 0.988 R²)
-mean                 326.2 μs   (314.5 μs .. 342.7 μs)
-std dev              47.39 μs   (36.45 μs .. 68.86 μs)
-variance introduced by outliers: 89% (severely inflated)
+time                 216.5 μs   (216.1 μs .. 217.0 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 216.3 μs   (216.1 μs .. 216.5 μs)
+std dev              567.8 ns   (412.6 ns .. 910.8 ns)
 
 benchmarking Data.IntMap.Strict/Insert_DenseIDs_Sequential_Map_AscendingOrder/100000
-time                 18.76 ms   (9.635 ms .. 27.89 ms)
-                     0.480 R²   (0.209 R² .. 0.720 R²)
-mean                 15.86 ms   (12.47 ms .. 20.47 ms)
-std dev              9.151 ms   (7.758 ms .. 11.01 ms)
-variance introduced by outliers: 96% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Insert_DenseIDs_Sequential_Map_DesendingOrder/100
-time                 2.114 μs   (1.773 μs .. 2.506 μs)
-                     0.828 R²   (0.795 R² .. 0.905 R²)
-mean                 2.337 μs   (2.052 μs .. 2.921 μs)
-std dev              1.280 μs   (841.8 ns .. 2.104 μs)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Insert_DenseIDs_Sequential_Map_DesendingOrder/1000
-time                 19.13 μs   (18.89 μs .. 19.33 μs)
-                     0.991 R²   (0.981 R² .. 0.995 R²)
-mean                 19.92 μs   (19.53 μs .. 20.78 μs)
-std dev              1.963 μs   (559.8 ns .. 3.425 μs)
-variance introduced by outliers: 84% (severely inflated)
+time                 5.440 ms   (5.405 ms .. 5.472 ms)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 5.534 ms   (5.497 ms .. 5.584 ms)
+std dev              128.9 μs   (90.23 μs .. 188.4 μs)
 
 benchmarking Data.IntMap.Strict/Insert_DenseIDs_Sequential_Map_DesendingOrder/10000
-time                 345.4 μs   (322.4 μs .. 371.0 μs)
-                     0.958 R²   (0.944 R² .. 0.979 R²)
-mean                 359.4 μs   (335.3 μs .. 428.7 μs)
-std dev              123.3 μs   (54.65 μs .. 252.0 μs)
-variance introduced by outliers: 98% (severely inflated)
+time                 225.3 μs   (225.1 μs .. 225.5 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 226.1 μs   (225.9 μs .. 226.3 μs)
+std dev              656.9 ns   (560.1 ns .. 782.6 ns)
 
 benchmarking Data.IntMap.Strict/Insert_DenseIDs_Sequential_Map_DesendingOrder/100000
-time                 23.85 ms   (12.89 ms .. 33.85 ms)
-                     0.576 R²   (0.295 R² .. 0.772 R²)
-mean                 19.87 ms   (15.37 ms .. 24.81 ms)
-std dev              10.58 ms   (9.203 ms .. 12.35 ms)
-variance introduced by outliers: 95% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Insert_SparseIDs_Step100_Map_AscendingOrder/100
-time                 2.557 μs   (2.268 μs .. 2.876 μs)
-                     0.834 R²   (0.776 R² .. 0.898 R²)
-mean                 3.388 μs   (2.897 μs .. 4.055 μs)
-std dev              1.840 μs   (1.437 μs .. 2.499 μs)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Insert_SparseIDs_Step100_Map_AscendingOrder/1000
-time                 38.09 μs   (32.29 μs .. 44.09 μs)
-                     0.817 R²   (0.710 R² .. 0.915 R²)
-mean                 37.69 μs   (34.21 μs .. 45.89 μs)
-std dev              16.23 μs   (12.64 μs .. 23.89 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 5.236 ms   (5.208 ms .. 5.268 ms)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 5.334 ms   (5.307 ms .. 5.372 ms)
+std dev              99.01 μs   (69.26 μs .. 152.0 μs)
 
 benchmarking Data.IntMap.Strict/Insert_SparseIDs_Step100_Map_AscendingOrder/10000
-time                 495.6 μs   (429.9 μs .. 594.6 μs)
-                     0.850 R²   (0.784 R² .. 0.956 R²)
-mean                 466.6 μs   (433.2 μs .. 512.9 μs)
-std dev              135.6 μs   (84.40 μs .. 200.9 μs)
-variance introduced by outliers: 97% (severely inflated)
+time                 308.8 μs   (308.4 μs .. 309.4 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 309.5 μs   (309.1 μs .. 310.1 μs)
+std dev              1.626 μs   (1.141 μs .. 2.662 μs)
 
 benchmarking Data.IntMap.Strict/Insert_SparseIDs_Step100_Map_AscendingOrder/100000
-time                 32.95 ms   (18.41 ms .. 45.58 ms)
-                     0.608 R²   (0.400 R² .. 0.792 R²)
-mean                 21.87 ms   (15.87 ms .. 28.61 ms)
-std dev              13.51 ms   (10.93 ms .. 15.24 ms)
-variance introduced by outliers: 95% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Insert_SparseIDs_Step100_Map_DescendingOrder/100
-time                 2.579 μs   (2.270 μs .. 3.002 μs)
-                     0.857 R²   (0.771 R² .. 0.981 R²)
-mean                 2.833 μs   (2.504 μs .. 3.412 μs)
-std dev              1.380 μs   (886.1 ns .. 1.963 μs)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Insert_SparseIDs_Step100_Map_DescendingOrder/1000
-time                 29.91 μs   (27.61 μs .. 32.39 μs)
-                     0.909 R²   (0.838 R² .. 0.974 R²)
-mean                 32.28 μs   (29.77 μs .. 38.13 μs)
-std dev              13.08 μs   (7.780 μs .. 21.96 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 7.672 ms   (7.610 ms .. 7.726 ms)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 7.689 ms   (7.643 ms .. 7.748 ms)
+std dev              139.2 μs   (99.11 μs .. 195.4 μs)
 
 benchmarking Data.IntMap.Strict/Insert_SparseIDs_Step100_Map_DescendingOrder/10000
-time                 530.3 μs   (469.4 μs .. 578.5 μs)
-                     0.923 R²   (0.897 R² .. 0.957 R²)
-mean                 490.3 μs   (455.4 μs .. 551.7 μs)
-std dev              151.0 μs   (97.92 μs .. 256.7 μs)
-variance introduced by outliers: 97% (severely inflated)
+time                 300.5 μs   (300.1 μs .. 300.8 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 300.2 μs   (299.9 μs .. 300.7 μs)
+std dev              1.254 μs   (1.062 μs .. 1.515 μs)
 
 benchmarking Data.IntMap.Strict/Insert_SparseIDs_Step100_Map_DescendingOrder/100000
-time                 39.95 ms   (34.57 ms .. 44.15 ms)
-                     0.954 R²   (0.902 R² .. 0.983 R²)
-mean                 38.16 ms   (35.35 ms .. 41.38 ms)
-std dev              5.953 ms   (4.059 ms .. 9.016 ms)
-variance introduced by outliers: 58% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Update_DenseIDs_Sequential_Map/100_updates
-time                 2.983 μs   (2.723 μs .. 3.263 μs)
-                     0.902 R²   (0.854 R² .. 0.950 R²)
-mean                 3.277 μs   (2.899 μs .. 3.743 μs)
-std dev              1.521 μs   (1.001 μs .. 2.052 μs)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Update_DenseIDs_Sequential_Map/1000_updates
-time                 58.64 μs   (56.52 μs .. 61.12 μs)
-                     0.973 R²   (0.959 R² .. 0.983 R²)
-mean                 74.83 μs   (64.81 μs .. 96.70 μs)
-std dev              52.46 μs   (21.54 μs .. 83.94 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 7.590 ms   (7.525 ms .. 7.670 ms)
+                     0.999 R²   (0.999 R² .. 1.000 R²)
+mean                 7.597 ms   (7.551 ms .. 7.654 ms)
+std dev              145.1 μs   (113.8 μs .. 197.3 μs)
 
 benchmarking Data.IntMap.Strict/Update_DenseIDs_Sequential_Map/10000_updates
-time                 1.002 ms   (960.5 μs .. 1.065 ms)
-                     0.977 R²   (0.958 R² .. 0.992 R²)
-mean                 1.082 ms   (1.040 ms .. 1.134 ms)
-std dev              189.4 μs   (133.5 μs .. 266.1 μs)
-variance introduced by outliers: 89% (severely inflated)
+time                 817.0 μs   (816.1 μs .. 818.4 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 817.1 μs   (816.4 μs .. 817.8 μs)
+std dev              2.599 μs   (2.146 μs .. 3.368 μs)
 
 benchmarking Data.IntMap.Strict/Update_DenseIDs_Sequential_Map/100000_updates
-time                 21.12 ms   (16.78 ms .. 27.52 ms)
-                     0.820 R²   (0.675 R² .. 0.929 R²)
-mean                 22.81 ms   (20.29 ms .. 25.59 ms)
-std dev              6.084 ms   (4.834 ms .. 8.357 ms)
-variance introduced by outliers: 84% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Get_Existing_DenseIDs_Map/100
-time                 1.595 μs   (1.506 μs .. 1.799 μs)
-                     0.950 R²   (0.896 R² .. 0.990 R²)
-mean                 1.825 μs   (1.651 μs .. 2.094 μs)
-std dev              811.3 ns   (358.0 ns .. 1.211 μs)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Get_Existing_DenseIDs_Map/1000
-time                 28.70 μs   (27.02 μs .. 31.08 μs)
-                     0.948 R²   (0.899 R² .. 0.982 R²)
-mean                 30.47 μs   (28.83 μs .. 32.62 μs)
-std dev              6.752 μs   (5.130 μs .. 8.851 μs)
-variance introduced by outliers: 97% (severely inflated)
+time                 11.29 ms   (11.22 ms .. 11.37 ms)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 11.38 ms   (11.32 ms .. 11.47 ms)
+std dev              179.6 μs   (136.1 μs .. 257.5 μs)
 
 benchmarking Data.IntMap.Strict/Get_Existing_DenseIDs_Map/10000
-time                 402.7 μs   (391.0 μs .. 422.3 μs)
-                     0.986 R²   (0.974 R² .. 0.995 R²)
-mean                 429.9 μs   (406.4 μs .. 513.8 μs)
-std dev              134.9 μs   (26.98 μs .. 281.2 μs)
-variance introduced by outliers: 98% (severely inflated)
+time                 339.5 μs   (338.9 μs .. 340.1 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 339.6 μs   (339.3 μs .. 339.8 μs)
+std dev              917.0 ns   (782.1 ns .. 1.110 μs)
 
 benchmarking Data.IntMap.Strict/Get_Existing_DenseIDs_Map/100000
-time                 4.351 ms   (4.168 ms .. 4.589 ms)
-                     0.968 R²   (0.940 R² .. 0.994 R²)
-mean                 4.767 ms   (4.543 ms .. 5.521 ms)
-std dev              1.011 ms   (530.7 μs .. 1.952 ms)
-variance introduced by outliers: 90% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Get_NonExisting_DenseIDs_Map/100
-time                 1.644 μs   (1.508 μs .. 1.811 μs)
-                     0.943 R²   (0.904 R² .. 0.980 R²)
-mean                 1.667 μs   (1.556 μs .. 1.839 μs)
-std dev              461.9 ns   (300.8 ns .. 718.1 ns)
-variance introduced by outliers: 98% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Get_NonExisting_DenseIDs_Map/1000
-time                 27.88 μs   (26.64 μs .. 30.04 μs)
-                     0.972 R²   (0.960 R² .. 0.992 R²)
-mean                 29.54 μs   (28.28 μs .. 31.54 μs)
-std dev              5.831 μs   (4.575 μs .. 8.375 μs)
-variance introduced by outliers: 96% (severely inflated)
+time                 3.749 ms   (3.739 ms .. 3.758 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 3.751 ms   (3.747 ms .. 3.756 ms)
+std dev              14.81 μs   (10.65 μs .. 25.65 μs)
 
 benchmarking Data.IntMap.Strict/Get_NonExisting_DenseIDs_Map/10000
-time                 367.4 μs   (349.0 μs .. 390.7 μs)
-                     0.976 R²   (0.956 R² .. 0.997 R²)
-mean                 361.8 μs   (353.9 μs .. 376.8 μs)
-std dev              38.47 μs   (23.03 μs .. 60.74 μs)
-variance introduced by outliers: 80% (severely inflated)
+time                 283.8 μs   (283.6 μs .. 283.9 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 283.7 μs   (283.6 μs .. 283.8 μs)
+std dev              347.5 ns   (292.3 ns .. 416.1 ns)
 
 benchmarking Data.IntMap.Strict/Get_NonExisting_DenseIDs_Map/100000
-time                 4.106 ms   (4.008 ms .. 4.293 ms)
-                     0.978 R²   (0.957 R² .. 0.995 R²)
-mean                 4.210 ms   (4.104 ms .. 4.416 ms)
-std dev              394.2 μs   (243.6 μs .. 560.4 μs)
-variance introduced by outliers: 60% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Contains_Existing_DenseIDs_Map/100
-time                 1.217 μs   (1.187 μs .. 1.260 μs)
-                     0.906 R²   (0.866 R² .. 0.954 R²)
-mean                 2.087 μs   (1.808 μs .. 2.508 μs)
-std dev              1.255 μs   (994.5 ns .. 1.552 μs)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Contains_Existing_DenseIDs_Map/1000
-time                 25.99 μs   (24.62 μs .. 27.28 μs)
-                     0.971 R²   (0.950 R² .. 0.989 R²)
-mean                 29.11 μs   (26.61 μs .. 33.66 μs)
-std dev              11.92 μs   (5.969 μs .. 20.45 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 3.388 ms   (3.384 ms .. 3.392 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 3.395 ms   (3.391 ms .. 3.398 ms)
+std dev              11.81 μs   (8.659 μs .. 15.22 μs)
 
 benchmarking Data.IntMap.Strict/Contains_Existing_DenseIDs_Map/10000
-time                 397.1 μs   (388.4 μs .. 408.6 μs)
-                     0.993 R²   (0.985 R² .. 0.998 R²)
-mean                 396.9 μs   (391.5 μs .. 415.1 μs)
-std dev              31.67 μs   (19.96 μs .. 51.96 μs)
-variance introduced by outliers: 68% (severely inflated)
+time                 337.9 μs   (337.4 μs .. 338.2 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 337.4 μs   (337.2 μs .. 337.7 μs)
+std dev              918.0 ns   (725.5 ns .. 1.261 μs)
 
 benchmarking Data.IntMap.Strict/Contains_Existing_DenseIDs_Map/100000
-time                 4.380 ms   (4.098 ms .. 4.725 ms)
-                     0.901 R²   (0.806 R² .. 0.985 R²)
-mean                 4.785 ms   (4.488 ms .. 5.142 ms)
-std dev              1.052 ms   (664.7 μs .. 1.483 ms)
-variance introduced by outliers: 90% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Contains_NonExisting_DenseIDs_Map/100
-time                 773.9 ns   (749.6 ns .. 812.7 ns)
-                     0.963 R²   (0.923 R² .. 0.990 R²)
-mean                 853.5 ns   (790.4 ns .. 957.9 ns)
-std dev              281.1 ns   (176.7 ns .. 418.0 ns)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Contains_NonExisting_DenseIDs_Map/1000
-time                 7.959 μs   (6.840 μs .. 10.44 μs)
-                     0.838 R²   (0.796 R² .. 0.945 R²)
-mean                 9.048 μs   (8.108 μs .. 10.32 μs)
-std dev              3.719 μs   (2.921 μs .. 4.574 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 3.788 ms   (3.782 ms .. 3.793 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 3.797 ms   (3.793 ms .. 3.805 ms)
+std dev              18.15 μs   (8.532 μs .. 34.06 μs)
 
 benchmarking Data.IntMap.Strict/Contains_NonExisting_DenseIDs_Map/10000
-time                 72.81 μs   (70.14 μs .. 76.70 μs)
-                     0.906 R²   (0.797 R² .. 0.994 R²)
-mean                 83.00 μs   (75.42 μs .. 98.28 μs)
-std dev              33.42 μs   (16.62 μs .. 52.16 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 55.23 μs   (55.17 μs .. 55.28 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 55.21 μs   (55.17 μs .. 55.34 μs)
+std dev              252.5 ns   (93.15 ns .. 481.7 ns)
 
 benchmarking Data.IntMap.Strict/Contains_NonExisting_DenseIDs_Map/100000
-time                 773.3 μs   (671.5 μs .. 923.5 μs)
-                     0.883 R²   (0.837 R² .. 0.953 R²)
-mean                 1.116 ms   (948.1 μs .. 1.352 ms)
-std dev              761.9 μs   (575.5 μs .. 998.7 μs)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Remove_DenseIDs_AscendingOrder_Map/100_removes
-time                 1.380 μs   (1.270 μs .. 1.655 μs)
-                     0.853 R²   (0.763 R² .. 0.936 R²)
-mean                 1.542 μs   (1.385 μs .. 1.764 μs)
-std dev              622.4 ns   (439.3 ns .. 1.054 μs)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Remove_DenseIDs_AscendingOrder_Map/1000_removes
-time                 15.49 μs   (14.04 μs .. 17.12 μs)
-                     0.902 R²   (0.863 R² .. 0.961 R²)
-mean                 19.38 μs   (16.99 μs .. 23.39 μs)
-std dev              11.48 μs   (6.389 μs .. 17.69 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 547.5 μs   (545.9 μs .. 549.2 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 544.7 μs   (544.2 μs .. 545.7 μs)
+std dev              2.431 μs   (1.759 μs .. 3.650 μs)
 
 benchmarking Data.IntMap.Strict/Remove_DenseIDs_AscendingOrder_Map/10000_removes
-time                 218.3 μs   (201.7 μs .. 250.1 μs)
-                     0.885 R²   (0.758 R² .. 0.991 R²)
-mean                 253.4 μs   (221.7 μs .. 314.6 μs)
-std dev              143.0 μs   (73.47 μs .. 229.8 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 153.3 μs   (152.0 μs .. 154.9 μs)
+                     0.999 R²   (0.999 R² .. 1.000 R²)
+mean                 152.5 μs   (151.9 μs .. 153.5 μs)
+std dev              2.547 μs   (1.741 μs .. 3.462 μs)
+variance introduced by outliers: 10% (moderately inflated)
 
 benchmarking Data.IntMap.Strict/Remove_DenseIDs_AscendingOrder_Map/100000_removes
-time                 2.919 ms   (2.476 ms .. 3.651 ms)
-                     0.717 R²   (0.549 R² .. 0.942 R²)
-mean                 3.118 ms   (2.749 ms .. 3.713 ms)
-std dev              1.437 ms   (822.4 μs .. 2.018 ms)
-variance introduced by outliers: 98% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Remove_DenseIDs_DescendingOrder_Map/100_removes
-time                 1.191 μs   (1.164 μs .. 1.244 μs)
-                     0.972 R²   (0.945 R² .. 0.993 R²)
-mean                 1.473 μs   (1.265 μs .. 1.953 μs)
-std dev              1.039 μs   (355.5 ns .. 1.716 μs)
-variance introduced by outliers: 100% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Remove_DenseIDs_DescendingOrder_Map/1000_removes
-time                 16.36 μs   (15.90 μs .. 17.14 μs)
-                     0.972 R²   (0.945 R² .. 0.997 R²)
-mean                 17.56 μs   (16.76 μs .. 19.40 μs)
-std dev              4.008 μs   (2.574 μs .. 6.275 μs)
-variance introduced by outliers: 97% (severely inflated)
+time                 1.806 ms   (1.789 ms .. 1.825 ms)
+                     0.999 R²   (0.999 R² .. 1.000 R²)
+mean                 1.830 ms   (1.819 ms .. 1.848 ms)
+std dev              47.24 μs   (35.63 μs .. 63.52 μs)
+variance introduced by outliers: 13% (moderately inflated)
 
 benchmarking Data.IntMap.Strict/Remove_DenseIDs_DescendingOrder_Map/10000_removes
-time                 223.2 μs   (209.0 μs .. 240.9 μs)
-                     0.954 R²   (0.908 R² .. 0.995 R²)
-mean                 242.4 μs   (219.1 μs .. 316.4 μs)
-std dev              124.0 μs   (31.52 μs .. 247.7 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 157.2 μs   (156.4 μs .. 158.3 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 159.9 μs   (159.1 μs .. 160.9 μs)
+std dev              3.050 μs   (2.186 μs .. 4.215 μs)
+variance introduced by outliers: 13% (moderately inflated)
 
 benchmarking Data.IntMap.Strict/Remove_DenseIDs_DescendingOrder_Map/100000_removes
-time                 2.905 ms   (2.423 ms .. 3.564 ms)
-                     0.699 R²   (0.580 R² .. 0.842 R²)
-mean                 4.115 ms   (3.558 ms .. 4.847 ms)
-std dev              2.013 ms   (1.572 ms .. 2.846 ms)
-variance introduced by outliers: 98% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Iterate_DenseIDs_Map/100
-time                 615.5 ns   (573.8 ns .. 677.1 ns)
-                     0.866 R²   (0.791 R² .. 0.943 R²)
-mean                 719.4 ns   (641.7 ns .. 880.3 ns)
-std dev              309.0 ns   (219.8 ns .. 501.6 ns)
-variance introduced by outliers: 100% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Iterate_DenseIDs_Map/1000
-time                 7.680 μs   (6.119 μs .. 9.142 μs)
-                     0.864 R²   (0.819 R² .. 0.948 R²)
-mean                 6.443 μs   (6.056 μs .. 7.459 μs)
-std dev              1.925 μs   (1.443 μs .. 3.154 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 1.947 ms   (1.925 ms .. 1.969 ms)
+                     0.999 R²   (0.999 R² .. 0.999 R²)
+mean                 1.958 ms   (1.948 ms .. 1.970 ms)
+std dev              37.70 μs   (28.28 μs .. 50.29 μs)
 
 benchmarking Data.IntMap.Strict/Iterate_DenseIDs_Map/10000
-time                 66.78 μs   (60.51 μs .. 74.36 μs)
-                     0.865 R²   (0.790 R² .. 0.944 R²)
-mean                 76.11 μs   (67.15 μs .. 96.37 μs)
-std dev              40.66 μs   (22.74 μs .. 63.75 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 48.64 μs   (48.14 μs .. 49.14 μs)
+                     0.999 R²   (0.999 R² .. 1.000 R²)
+mean                 48.57 μs   (48.27 μs .. 48.99 μs)
+std dev              1.163 μs   (963.7 ns .. 1.373 μs)
+variance introduced by outliers: 22% (moderately inflated)
 
 benchmarking Data.IntMap.Strict/Iterate_DenseIDs_Map/100000
-time                 595.3 μs   (567.5 μs .. 619.8 μs)
-                     0.962 R²   (0.932 R² .. 0.988 R²)
-mean                 741.0 μs   (650.0 μs .. 912.2 μs)
-std dev              454.0 μs   (228.8 μs .. 777.6 μs)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Iterate_Intersection_Map/100
-time                 770.4 ns   (717.4 ns .. 867.3 ns)
-                     0.923 R²   (0.877 R² .. 0.969 R²)
-mean                 815.7 ns   (751.9 ns .. 938.7 ns)
-std dev              285.1 ns   (183.7 ns .. 431.0 ns)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.IntMap.Strict/Iterate_Intersection_Map/1000
-time                 7.924 μs   (7.306 μs .. 8.844 μs)
-                     0.902 R²   (0.843 R² .. 0.967 R²)
-mean                 8.821 μs   (7.861 μs .. 10.19 μs)
-std dev              3.771 μs   (2.019 μs .. 5.673 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 473.1 μs   (471.3 μs .. 476.0 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 478.5 μs   (477.3 μs .. 479.5 μs)
+std dev              3.844 μs   (3.035 μs .. 4.746 μs)
 
 benchmarking Data.IntMap.Strict/Iterate_Intersection_Map/10000
-time                 82.35 μs   (77.51 μs .. 91.30 μs)
-                     0.902 R²   (0.839 R² .. 0.969 R²)
-mean                 100.4 μs   (90.30 μs .. 123.9 μs)
-std dev              48.03 μs   (26.44 μs .. 81.07 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 60.36 μs   (60.23 μs .. 60.54 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 60.69 μs   (60.57 μs .. 60.80 μs)
+std dev              382.7 ns   (332.4 ns .. 440.5 ns)
 
 benchmarking Data.IntMap.Strict/Iterate_Intersection_Map/100000
-time                 2.054 ms   (1.613 ms .. 2.420 ms)
-                     0.743 R²   (0.629 R² .. 0.858 R²)
-mean                 2.256 ms   (1.987 ms .. 2.590 ms)
-std dev              1.079 ms   (857.7 μs .. 1.282 ms)
-variance introduced by outliers: 98% (severely inflated)
-
-benchmarking Data.IntMap.Strict/MixedWorkload_DenseIDs_Map/100_ops
-time                 1.061 μs   (955.6 ns .. 1.192 μs)
-                     0.925 R²   (0.896 R² .. 0.981 R²)
-mean                 1.145 μs   (1.039 μs .. 1.418 μs)
-std dev              506.9 ns   (266.0 ns .. 842.7 ns)
-variance introduced by outliers: 99% (severely inflated)
-
-benchmarking Data.IntMap.Strict/MixedWorkload_DenseIDs_Map/1000_ops
-time                 22.56 μs   (20.63 μs .. 24.96 μs)
-                     0.909 R²   (0.867 R² .. 0.957 R²)
-mean                 24.05 μs   (22.11 μs .. 27.69 μs)
-std dev              8.635 μs   (6.500 μs .. 12.06 μs)
-variance introduced by outliers: 99% (severely inflated)
+time                 1.177 ms   (1.169 ms .. 1.185 ms)
+                     0.999 R²   (0.999 R² .. 1.000 R²)
+mean                 1.200 ms   (1.188 ms .. 1.211 ms)
+std dev              37.12 μs   (29.94 μs .. 46.82 μs)
+variance introduced by outliers: 20% (moderately inflated)
 
 benchmarking Data.IntMap.Strict/MixedWorkload_DenseIDs_Map/10000_ops
-time                 701.8 μs   (669.8 μs .. 743.8 μs)
-                     0.982 R²   (0.974 R² .. 0.993 R²)
-mean                 728.4 μs   (695.7 μs .. 775.5 μs)
-std dev              137.4 μs   (79.65 μs .. 263.4 μs)
-variance introduced by outliers: 92% (severely inflated)
+time                 570.5 μs   (570.0 μs .. 571.0 μs)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 569.0 μs   (568.7 μs .. 569.4 μs)
+std dev              1.366 μs   (1.163 μs .. 1.607 μs)
 
 benchmarking Data.IntMap.Strict/MixedWorkload_DenseIDs_Map/100000_ops
-time                 13.73 ms   (13.16 ms .. 14.41 ms)
-                     0.975 R²   (0.943 R² .. 0.993 R²)
-mean                 13.65 ms   (13.29 ms .. 14.26 ms)
-std dev              1.287 ms   (991.8 μs .. 1.851 ms)
-variance introduced by outliers: 48% (moderately inflated)
-
-Benchmark heph-sparse-set-bench: FINISH
-Completed 2 action(s).
+time                 10.67 ms   (10.63 ms .. 10.71 ms)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 10.69 ms   (10.67 ms .. 10.73 ms)
+std dev              82.80 μs   (49.56 μs .. 143.0 μs)

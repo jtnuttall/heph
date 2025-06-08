@@ -28,28 +28,30 @@ When an element is removed, the last element from the dense arrays is swapped in
 
 ## Performance Characteristics
 
-The full benchmark suite can be found in the `bench` directory and run with `stack bench`.
+The full benchmark suite can be found in the `bench` directory and run with `cabal bench` or `stack bench`.
 
-Benchmarks show that `heph-sparse-set` holds a significant performance advantage for its target workloads.
-
-The following results compare `heph-sparse-set` against `Data.IntMap.Strict` for **100,000** elements. The speedup factor is an approximation, rounded to account for statistical noise in the measurements.
+The following results compare `heph-sparse-set` against `Data.IntMap.Strict` for **100,000** elements, using the default GHC garbage collector on a quiet system. The results are highly stable (R² > 0.99) and demonstrate the significant performance advantage of `heph-sparse-set` for its target workloads.
 
 | Operation                | `heph-sparse-set` | `Data.IntMap.Strict` | Advantage            | Speedup Factor |
 | :----------------------- | :---------------- | :------------------- | :------------------- | :------------- |
-| **Get (Existing)**       | **134 µs**        | 4,351 µs             | `heph-sparse-set`    | ~32x           |
-| **Contains (Existing)**  | **113 µs**        | 4,380 µs             | `heph-sparse-set`    | ~39x           |
-| **Update (Dense)**       | **356 µs**        | 21,120 µs            | `heph-sparse-set`    | ~59x           |
-| **Insert (Dense)**       | **2.39 ms**       | 18.76 ms             | `heph-sparse-set`    | ~8x            |
-| **Insert (Sparse, Asc)** | 82.41 ms          | **32.95 ms**         | `Data.IntMap.Strict` | ~2.5x          |
-| **Remove (Dense)**       | **1.29 ms**       | 2.91 ms              | `heph-sparse-set`    | ~2x            |
-| **Intersection (50%)**   | **191.0 μs**      | 2.054 ms             | `heph-sparse-set`    | ~11x           |
-| **Mixed Workload**       | **1.06 ms**       | 13.73 ms             | `heph-sparse-set`    | ~13x           |
+| **Get (Existing)**       | **138 μs**        | 3,749 μs             | `heph-sparse-set`    | **~27x**       |
+| **Contains (Existing)**  | **111 μs**        | 3,788 μs             | `heph-sparse-set`    | **~34x**       |
+| **Update (Dense)**       | **168 μs**        | 11,290 μs            | `heph-sparse-set`    | **~67x**       |
+| **Insert (Dense, Asc)**  | **1.86 ms**       | 5.44 ms              | `heph-sparse-set`    | **~2.9x**      |
+| **Remove (Dense)**       | **1.02 ms**       | 1.81 ms              | `heph-sparse-set`    | **~1.8x**      |
+| **Intersection (50%)**   | **157 μs**        | 1,177 μs             | `heph-sparse-set`    | **~7.5x**      |
+| **Mixed Workload**       | **868 μs**        | 10,670 μs            | `heph-sparse-set`    | **~12x**       |
+| **Insert (Sparse, Asc)** | 77.23 ms          | **7.67 ms**          | `Data.IntMap.Strict` | **~10x**       |
 
 ### Analysis
 
-- **Lookups**: The core strength of `heph-sparse-set` is true O(1) lookups, which is orders of magnitude faster than the O(log n) tree traversal of an `IntMap`.
-- **Dense Operations**: For densely packed entity IDs, `heph-sparse-set` maintains a strong advantage across all operations due to its cache-friendly memory layout.
-- **Trade-Offs**: The table explicitly demonstrates the primary trade-off. `Data.IntMap.Strict` is significantly faster when inserting **sparse, sequentially ascending keys**.
+- **Lookups and Updates**: The core strength of `heph-sparse-set` is its true O(1) complexity for lookups, updates, and containment checks. The **~27x to ~67x speedup** is a direct result of simple array indexing versus the O(log n) tree traversal required by `IntMap`.
+
+- **Dense Workloads**: For densely packed entity IDs, `heph-sparse-set` is significantly faster across all operations. The **~2.9x speedup** for dense insertions highlights the efficiency of amortized O(1) appends to contiguous vectors over the allocations and rebalancing of a tree structure.
+
+- **Iteration and Cache Performance**: The library's advantage in iteration-heavy tasks like `Intersection` and the `Mixed Workload` showcases the benefit of its cache-friendly memory layout. Iterating over the internal dense arrays is significantly faster than the pointer chasing required to traverse the nodes of an `IntMap`.
+
+- **The Sparse Insertion Trade-off**: The table clearly shows the primary trade-off. `Data.IntMap.Strict` is the superior choice for workloads dominated by **sparse, ascending key insertions**, where it performs up to **10x faster**. This is because each such insert in `heph-sparse-set` can trigger a costly reallocation of the internal sparse array. Interestingly, insertions in _descending_ sparse order are much faster in `heph-sparse-set` (`~14.6 ms`) because the sparse array is allocated once to its maximum required size and then filled, avoiding repeated reallocations.
 
 ## Usage
 

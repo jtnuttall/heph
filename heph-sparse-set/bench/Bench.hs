@@ -22,7 +22,7 @@ type TestEntity = Int
 
 -- Common sizes for benchmarks
 benchmarkSizes :: [Int]
-benchmarkSizes = [100_000]
+benchmarkSizes = [10_000, 100_000]
 
 randomSeed :: Int
 randomSeed = 7113_1337
