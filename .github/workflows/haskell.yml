@@ -43,6 +43,11 @@ jobs:
           stack-no-global: ${{ matrix.build_tool == 'stack' && 'true' || '' }}
           stack-setup-ghc: ${{ matrix.build_tool == 'stack' && 'true' || '' }}
 
+      - name: Run fourmolu
+        uses: haskell-actions/run-fourmolu@v9
+        with:
+          version: "0.15.0.0"
+
       - name: Cache dependencies (${{ matrix.build_tool }})
         uses: actions/cache@v4
         with:
@@ -74,8 +79,3 @@ jobs:
       - name: Run Tests (Cabal)
         if: matrix.build_tool == 'cabal'
         run: cabal test all
-
-      - name: Install fourmolu (${{ matrix.build_tool }})
-        uses: haskell-actions/run-fourmolu@v9
-        with:
-          version: "0.15.0.0"
