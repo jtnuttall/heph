@@ -46,13 +46,13 @@ import Data.Vector.Generic qualified as VG
 import Data.Vector.Generic.Mutable qualified as MVG
 import Data.Vector.Primitive.Mutable qualified as MVP
 import GHC.Generics (Generic)
+import GHC.Stack (HasCallStack)
 import Prelude hiding (length, lookup, mapM_)
 
 import Data.SparseSet.Generic.Mutable.Internal.GrowVec (GrowVec)
 import Data.SparseSet.Generic.Mutable.Internal.GrowVec qualified as GrowVec
 import Data.SparseSet.Generic.Mutable.Internal.MutableSparseArray (MutableSparseArray)
 import Data.SparseSet.Generic.Mutable.Internal.MutableSparseArray qualified as MSA
-import Data.Vector.Internal.Check (HasCallStack)
 
 data MutableSparseSet v s a = MutableSparseSet
   { ssDense :: {-# UNPACK #-} !(MutVar s (GrowVec v s a))
