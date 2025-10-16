@@ -2,3 +2,4 @@ snapshot: lts-23.24
 
 packages:
   - heph-sparse-set
+  - heph-aligned-storable
