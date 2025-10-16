@@ -1,5 +1,9 @@
 # heph-sparse-set
 
+![hackage version](https://img.shields.io/hackage/v/heph-sparse-set?style=flat)
+
+![license](https://img.shields.io/badge/License-BSD--3--Clause-blue.svg)
+
 A highly-performant, mutable sparse set implementation for Haskell.
 
 This library is part of the forthcoming Hephaestus rendering system, but is sufficiently general purpose for any application that needs its particular behavior.
