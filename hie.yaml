@@ -1,13 +1,19 @@
 cradle:
-  cabal:
-    - path: "./heph-sparse-set/src"
-      component: "lib:heph-sparse-set"
+  stack:
+    - path: "heph-aligned-storable/src"
+      component: "heph-aligned-storable:lib"
 
-    - path: "./heph-sparse-set/test"
+    - path: "heph-aligned-storable/test"
+      component: "heph-aligned-storable:test:heph-aligned-storable-test"
+
+    - path: "heph-sparse-set/src"
+      component: "heph-sparse-set:lib"
+
+    - path: "heph-sparse-set/test"
       component: "heph-sparse-set:test:heph-sparse-set-test"
 
-    - path: "./heph-sparse-set/bench/Bench.hs"
+    - path: "heph-sparse-set/bench/Bench.hs"
       component: "heph-sparse-set:bench:heph-sparse-set-bench"
 
-    - path: "./heph-sparse-set/bench/BenchLib.hs"
+    - path: "heph-sparse-set/bench/BenchLib.hs"
       component: "heph-sparse-set:bench:heph-sparse-set-bench"
