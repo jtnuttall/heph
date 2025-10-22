@@ -1,0 +1,157 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.38.1.
+--
+-- see: https://github.com/sol/hpack
+
+name:           heph-input
+version:        0.1.0.0
+synopsis:       Type-safe, high-performance input action mapping for games
+description:    Please see the README on GitHub at <https://github.com/jtnuttall/heph/tree/main/heph-input#readme>
+homepage:       https://github.com/jtnuttall/heph/tree/main/heph-input#readme
+bug-reports:    https://github.com/jtnuttall/heph/issues
+author:         Jeremy Nuttall
+maintainer:     jeremy@jeremy-nuttall.com
+copyright:      2025 Jeremy Nuttall
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+extra-doc-files:
+    README.md
+    LICENSE
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/jtnuttall/heph
+
+library
+  exposed-modules:
+      Heph.Input
+      Heph.Input.Action
+      Heph.Input.Action.TH
+      Heph.Input.Buffer
+      Heph.Input.Internal.BoundedArray.Boxed
+      Heph.Input.Internal.BoundedArray.Boxed.Mutable
+      Heph.Input.Internal.BoundedArray.Generic
+      Heph.Input.Internal.BoundedArray.Generic.Mutable
+      Heph.Input.Internal.BoundedArray.Index
+      Heph.Input.Internal.BoundedArray.Primitive
+      Heph.Input.Internal.BoundedArray.Primitive.Mutable
+      Heph.Input.Types.Controller
+      Heph.Input.Types.Mouse
+      Heph.Input.Types.Scancode
+  other-modules:
+      Paths_heph_input
+  autogen-modules:
+      Paths_heph_input
+  hs-source-dirs:
+      src
+  default-extensions:
+      BlockArguments
+      DerivingStrategies
+      LambdaCase
+      RecordWildCards
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      base >=4.16 && <5
+    , bytestring
+    , containers
+    , deepseq
+    , exceptions
+    , generic-data
+    , linear
+    , monad-control
+    , primitive
+    , resourcet
+    , template-haskell
+    , th-abstraction
+    , vector
+  default-language: GHC2021
+
+test-suite heph-input-test
+  type: exitcode-stdio-1.0
+  main-is: Driver.hs
+  other-modules:
+      Heph.Input.Action.THSpec
+      Heph.Input.ActionSpec
+      Heph.Input.ActionWorkflowIntegrationSpec
+      Heph.Input.BufferSpec
+      Heph.Input.Internal.BoundedArray.Boxed.MutableSpec
+      Heph.Input.Internal.BoundedArray.IndexSpec
+      Heph.Input.Internal.BoundedArray.Primitive.MutableSpec
+      Heph.Input.MemoryLeakSpec
+      Heph.Input.Types.ControllerSpec
+      Heph.Input.Types.MouseSpec
+      Heph.Input.Types.ScancodeSpec
+      Paths_heph_input
+  autogen-modules:
+      Paths_heph_input
+  hs-source-dirs:
+      test
+  default-extensions:
+      BlockArguments
+      DerivingStrategies
+      LambdaCase
+      RecordWildCards
+  ghc-options: -Wall -Wcompat -threaded -rtsopts -with-rtsopts=-N
+  build-tool-depends:
+      tasty-discover:tasty-discover
+  build-depends:
+      base >=4.16 && <5
+    , bytestring
+    , containers >=0.6.2 && <0.8
+    , deepseq
+    , exceptions
+    , generic-data
+    , hedgehog >=1.0.4 && <1.6
+    , heph-input
+    , linear
+    , monad-control
+    , nothunks >=0.1.3.0 && <0.4
+    , primitive
+    , resourcet
+    , tasty >=1.4.1 && <1.6
+    , tasty-discover >=4.2.1 && <6
+    , tasty-hedgehog >=1.1 && <1.5
+    , tasty-hunit ==0.10.*
+    , template-haskell
+    , th-abstraction
+    , vector
+  default-language: GHC2021
+
+benchmark heph-input-bench
+  type: exitcode-stdio-1.0
+  main-is: Bench.hs
+  other-modules:
+      BenchLib
+      Paths_heph_input
+  autogen-modules:
+      Paths_heph_input
+  hs-source-dirs:
+      bench
+  default-extensions:
+      BlockArguments
+      DerivingStrategies
+      LambdaCase
+      RecordWildCards
+  ghc-options: -Wall -Wcompat -threaded -rtsopts -O2
+  build-depends:
+      base >=4.16 && <5
+    , bytestring
+    , containers
+    , criterion >=1.5.9 && <1.7
+    , deepseq
+    , exceptions
+    , generic-data
+    , heph-input
+    , linear
+    , monad-control
+    , mtl >=1.2 && <2.4
+    , primitive
+    , random >=0.3.3 && <1.3
+    , resourcet
+    , template-haskell
+    , th-abstraction
+    , vector
+  default-language: GHC2021
