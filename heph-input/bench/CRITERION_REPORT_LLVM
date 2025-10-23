@@ -21,211 +21,285 @@ Building library for heph-input-0.1.0.0...
 Preprocessing benchmark 'heph-input-bench' for heph-input-0.1.0.0...
 Building benchmark 'heph-input-bench' for heph-input-0.1.0.0...
 [1 of 3] Compiling BenchLib
-/home/jeremy/distrobox/haskell/heph-main/heph-input/bench/BenchLib.hs:18:1: warning: [GHC-66111] [-Wunused-imports]
-    The import of ‘Control.DeepSeq’ is redundant
-      except perhaps to import instances from ‘Control.DeepSeq’
-    To import instances alone, use: import Control.DeepSeq()
-   |
-18 | import Control.DeepSeq
-   | ^^^^^^^^^^^^^^^^^^^^^^
-
 [2 of 3] Compiling Main
 [3 of 3] Compiling Paths_heph_input
 [4 of 4] Linking .stack-work/dist/x86_64-linux/ghc-9.10.2/build/heph-input-bench/heph-input-bench
 heph-input> copy/register
-Installing library in /home/jeremy/distrobox/haskell/heph-main/.stack-work/install/x86_64-linux/4181a6da88409d09775d81bc400dc43b9b9214cffd8e59580141e60c261abf39/9.10.2/lib/x86_64-linux-ghc-9.10.2-35d5/heph-input-0.1.0.0-7QarOhkyD7CYTYZfhN8TA
+Installing library in /home/jeremy/distrobox/haskell/heph-main/.stack-work/install/x86_64-linux/4181a6da88409d09775d81bc400dc43b9b9214cffd8e59580141e60c261abf39/9.10.2/lib/x86_64-linux-ghc-9.10.2-35d5/heph-input-0.1.0.0-9YPvAuqnbr34H8bztFb9zL
 Registering library for heph-input-0.1.0.0...
 heph-input> benchmarks
 Running 1 benchmarks...
 Benchmark heph-input-bench: RUNNING...
 benchmarking ActionMap Creation/Small Game (10 actions)/Single binding per action
-time                 2.080 μs   (2.078 μs .. 2.081 μs)
+time                 2.564 μs   (2.559 μs .. 2.567 μs)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 2.079 μs   (2.078 μs .. 2.081 μs)
-std dev              4.913 ns   (3.514 ns .. 7.687 ns)
+mean                 2.560 μs   (2.557 μs .. 2.566 μs)
+std dev              14.47 ns   (9.245 ns .. 25.07 ns)
 
 benchmarking ActionMap Creation/Small Game (10 actions)/Multiple bindings (2 per action)
-time                 4.959 μs   (4.956 μs .. 4.961 μs)
+time                 6.330 μs   (6.320 μs .. 6.336 μs)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 4.966 μs   (4.958 μs .. 4.991 μs)
-std dev              45.15 ns   (6.822 ns .. 85.29 ns)
+mean                 6.321 μs   (6.309 μs .. 6.330 μs)
+std dev              36.98 ns   (30.34 ns .. 45.98 ns)
 
 benchmarking ActionMap Creation/Small Game (10 actions)/Many bindings (5 per action)
-time                 13.43 μs   (13.39 μs .. 13.49 μs)
+time                 16.77 μs   (16.76 μs .. 16.80 μs)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 13.44 μs   (13.42 μs .. 13.49 μs)
-std dev              114.0 ns   (63.93 ns .. 209.9 ns)
+mean                 16.76 μs   (16.74 μs .. 16.78 μs)
+std dev              66.79 ns   (57.60 ns .. 80.92 ns)
 
 benchmarking ActionMap Creation/Medium Game (20 actions)/Single binding per action
-time                 4.155 μs   (4.150 μs .. 4.162 μs)
+time                 5.081 μs   (5.077 μs .. 5.086 μs)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 4.150 μs   (4.142 μs .. 4.164 μs)
-std dev              35.32 ns   (10.38 ns .. 55.39 ns)
+mean                 5.089 μs   (5.085 μs .. 5.092 μs)
+std dev              11.86 ns   (9.995 ns .. 14.25 ns)
 
 benchmarking ActionMap Creation/Medium Game (20 actions)/Multiple bindings (2 per action)
-time                 9.863 μs   (9.853 μs .. 9.877 μs)
+time                 12.60 μs   (12.54 μs .. 12.66 μs)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 9.878 μs   (9.866 μs .. 9.905 μs)
-std dev              56.09 ns   (30.35 ns .. 99.62 ns)
+mean                 12.54 μs   (12.51 μs .. 12.57 μs)
+std dev              110.7 ns   (74.46 ns .. 171.5 ns)
 
 benchmarking ActionMap Creation/Large Game (100 actions)/Single binding per action
-time                 27.00 μs   (26.93 μs .. 27.11 μs)
+time                 33.23 μs   (33.19 μs .. 33.29 μs)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 26.99 μs   (26.96 μs .. 27.04 μs)
-std dev              122.7 ns   (67.55 ns .. 239.5 ns)
+mean                 33.21 μs   (33.16 μs .. 33.25 μs)
+std dev              156.8 ns   (132.2 ns .. 195.8 ns)
 
 benchmarking ActionMap Creation/Large Game (100 actions)/Multiple bindings (2 per action)
-time                 56.49 μs   (56.37 μs .. 56.65 μs)
+time                 69.85 μs   (69.76 μs .. 69.96 μs)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 56.30 μs   (56.20 μs .. 56.59 μs)
-std dev              526.9 ns   (255.9 ns .. 1.061 μs)
+mean                 69.84 μs   (69.76 μs .. 69.92 μs)
+std dev              255.4 ns   (201.7 ns .. 328.2 ns)
 
-benchmarking Input Queries (Hot Path)/absoluteInput - Button/Single binding
-time                 183.8 ns   (183.5 ns .. 184.1 ns)
-                     1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 183.9 ns   (183.5 ns .. 184.2 ns)
-std dev              799.7 ps   (569.9 ps .. 1.116 ns)
+benchmarking Input Queries (Hot Path)/Single binding/absoluteInput - Button
+time                 12.69 ns   (12.64 ns .. 12.77 ns)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 12.80 ns   (12.72 ns .. 12.99 ns)
+std dev              437.1 ps   (212.0 ps .. 673.7 ps)
+variance introduced by outliers: 56% (severely inflated)
 
-benchmarking Input Queries (Hot Path)/absoluteInput - Button/Multiple bindings (2)
-time                 183.9 ns   (183.7 ns .. 184.2 ns)
+benchmarking Input Queries (Hot Path)/Single binding/absoluteInput - Axis1D
+time                 15.61 ns   (15.59 ns .. 15.63 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 183.9 ns   (183.6 ns .. 184.2 ns)
-std dev              677.1 ps   (485.8 ps .. 1.096 ns)
+mean                 15.59 ns   (15.57 ns .. 15.61 ns)
+std dev              58.73 ps   (48.48 ps .. 76.45 ps)
 
-benchmarking Input Queries (Hot Path)/absoluteInput - Button/Many bindings (5)
-time                 200.1 ns   (199.2 ns .. 201.1 ns)
+benchmarking Input Queries (Hot Path)/Single binding/absoluteInput - Axis2D
+time                 14.54 ns   (14.46 ns .. 14.61 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 199.8 ns   (199.1 ns .. 200.9 ns)
-std dev              1.821 ns   (1.250 ns .. 2.735 ns)
-
-benchmarking Input Queries (Hot Path)/absoluteInput - Axis1D/Single binding
-time                 183.7 ns   (182.3 ns .. 185.1 ns)
-                     1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 183.5 ns   (182.4 ns .. 185.0 ns)
-std dev              2.521 ns   (1.768 ns .. 3.810 ns)
+mean                 14.49 ns   (14.45 ns .. 14.55 ns)
+std dev              168.2 ps   (104.7 ps .. 245.1 ps)
 variance introduced by outliers: 13% (moderately inflated)
 
-benchmarking Input Queries (Hot Path)/absoluteInput - Axis1D/Multiple bindings (2)
-time                 191.2 ns   (190.6 ns .. 191.7 ns)
+benchmarking Input Queries (Hot Path)/Single binding/deltaInput - Button
+time                 14.53 ns   (14.51 ns .. 14.56 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 191.3 ns   (190.7 ns .. 191.8 ns)
-std dev              1.227 ns   (997.7 ps .. 1.563 ns)
+mean                 14.53 ns   (14.52 ns .. 14.57 ns)
+std dev              71.31 ps   (39.17 ps .. 130.5 ps)
 
-benchmarking Input Queries (Hot Path)/absoluteInput - Axis1D/Many bindings (5)
-time                 201.6 ns   (200.9 ns .. 202.7 ns)
+benchmarking Input Queries (Hot Path)/Single binding/deltaInput - Axis2D
+time                 23.84 ns   (23.81 ns .. 23.88 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 202.7 ns   (201.5 ns .. 204.9 ns)
-std dev              3.090 ns   (1.708 ns .. 5.014 ns)
-variance introduced by outliers: 16% (moderately inflated)
+mean                 23.89 ns   (23.85 ns .. 23.98 ns)
+std dev              162.4 ps   (91.46 ps .. 293.8 ps)
 
-benchmarking Input Queries (Hot Path)/absoluteInput - Axis2D/Single binding
-time                 180.6 ns   (179.8 ns .. 181.5 ns)
+benchmarking Input Queries (Hot Path)/Multiple bindings (2)/absoluteInput - Button
+time                 16.28 ns   (16.22 ns .. 16.37 ns)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 16.36 ns   (16.24 ns .. 16.59 ns)
+std dev              553.6 ps   (335.1 ps .. 819.4 ps)
+variance introduced by outliers: 55% (severely inflated)
+
+benchmarking Input Queries (Hot Path)/Multiple bindings (2)/absoluteInput - Axis1D
+time                 22.49 ns   (22.46 ns .. 22.52 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 180.4 ns   (179.7 ns .. 182.1 ns)
-std dev              2.176 ns   (1.037 ns .. 3.654 ns)
+mean                 22.51 ns   (22.48 ns .. 22.53 ns)
+std dev              72.62 ps   (61.71 ps .. 88.98 ps)
+
+benchmarking Input Queries (Hot Path)/Multiple bindings (2)/absoluteInput - Axis2D
+time                 34.45 ns   (34.40 ns .. 34.50 ns)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 34.42 ns   (34.35 ns .. 34.48 ns)
+std dev              205.6 ps   (178.2 ps .. 239.4 ps)
+
+benchmarking Input Queries (Hot Path)/Multiple bindings (2)/deltaInput - Button
+time                 18.40 ns   (18.35 ns .. 18.47 ns)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 18.43 ns   (18.37 ns .. 18.70 ns)
+std dev              358.4 ps   (113.1 ps .. 771.2 ps)
+variance introduced by outliers: 29% (moderately inflated)
+
+benchmarking Input Queries (Hot Path)/Multiple bindings (2)/deltaInput - Axis2D
+time                 47.13 ns   (47.04 ns .. 47.24 ns)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 47.07 ns   (47.03 ns .. 47.12 ns)
+std dev              165.6 ps   (117.8 ps .. 223.3 ps)
+
+benchmarking Input Queries (Hot Path)/Multiple bindings (2)/Sequential 10 actions
+time                 207.0 ns   (206.3 ns .. 208.2 ns)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 207.1 ns   (206.5 ns .. 208.3 ns)
+std dev              2.978 ns   (1.237 ns .. 5.241 ns)
+variance introduced by outliers: 15% (moderately inflated)
+
+benchmarking Input Queries (Hot Path)/Many bindings (5)/absoluteInput - Button
+time                 25.42 ns   (25.11 ns .. 25.89 ns)
+                     0.999 R²   (0.998 R² .. 1.000 R²)
+mean                 25.16 ns   (25.10 ns .. 25.43 ns)
+std dev              398.0 ps   (137.9 ps .. 798.3 ps)
+variance introduced by outliers: 21% (moderately inflated)
+
+benchmarking Input Queries (Hot Path)/Many bindings (5)/absoluteInput - Axis1D
+time                 34.86 ns   (34.81 ns .. 34.92 ns)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 34.91 ns   (34.85 ns .. 35.07 ns)
+std dev              357.6 ps   (60.64 ps .. 680.5 ps)
+
+benchmarking Input Queries (Hot Path)/Many bindings (5)/absoluteInput - Axis2D
+time                 88.55 ns   (88.08 ns .. 89.19 ns)
+                     1.000 R²   (0.999 R² .. 1.000 R²)
+mean                 88.21 ns   (87.96 ns .. 88.97 ns)
+std dev              1.109 ns   (307.3 ps .. 2.283 ns)
+variance introduced by outliers: 13% (moderately inflated)
+
+benchmarking Input Queries (Hot Path)/Medium game (20 actions)/Sequential 20 actions
+time                 498.9 ns   (498.1 ns .. 500.0 ns)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 499.0 ns   (498.2 ns .. 501.1 ns)
+std dev              4.940 ns   (1.872 ns .. 9.006 ns)
+
+benchmarking Input Aggregation (Testing Actual Computation)/Button OR aggregation/All false (fast path)
+time                 21.03 ns   (20.95 ns .. 21.18 ns)
+                     0.999 R²   (0.998 R² .. 1.000 R²)
+mean                 21.04 ns   (20.93 ns .. 21.37 ns)
+std dev              674.5 ps   (117.2 ps .. 1.286 ns)
+variance introduced by outliers: 52% (severely inflated)
+
+benchmarking Input Aggregation (Testing Actual Computation)/Button OR aggregation/Mixed true/false (aggregation)
+time                 20.54 ns   (20.50 ns .. 20.64 ns)
+                     1.000 R²   (1.000 R² .. 1.000 R²)
+mean                 20.54 ns   (20.49 ns .. 20.62 ns)
+std dev              222.4 ps   (98.99 ps .. 362.4 ps)
 variance introduced by outliers: 11% (moderately inflated)
 
-benchmarking Input Queries (Hot Path)/absoluteInput - Axis2D/Multiple bindings (2)
-time                 209.8 ns   (209.2 ns .. 210.3 ns)
+benchmarking Input Aggregation (Testing Actual Computation)/Button OR aggregation/All true (worst case)
+time                 19.32 ns   (19.29 ns .. 19.35 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 209.5 ns   (208.7 ns .. 210.0 ns)
-std dev              1.322 ns   (915.0 ps .. 1.604 ns)
+mean                 19.34 ns   (19.30 ns .. 19.36 ns)
+std dev              110.7 ps   (87.42 ps .. 142.7 ps)
 
-benchmarking Input Queries (Hot Path)/absoluteInput - Axis2D/Many bindings (5)
-time                 252.6 ns   (252.1 ns .. 252.9 ns)
+benchmarking Input Aggregation (Testing Actual Computation)/Axis2D magnitude comparison/Keyboard vs gamepad (keyboard wins)
+time                 34.41 ns   (34.37 ns .. 34.48 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 252.4 ns   (251.7 ns .. 252.9 ns)
-std dev              1.204 ns   (906.4 ps .. 1.532 ns)
+mean                 34.52 ns   (34.38 ns .. 34.71 ns)
+std dev              540.7 ps   (161.7 ps .. 821.8 ps)
+variance introduced by outliers: 20% (moderately inflated)
 
-benchmarking Input Queries (Hot Path)/deltaInput - Button/Single binding
-time                 184.8 ns   (184.4 ns .. 185.2 ns)
+benchmarking Input Aggregation (Testing Actual Computation)/Axis2D magnitude comparison/Gamepad vs keyboard (gamepad wins)
+time                 34.50 ns   (34.36 ns .. 34.67 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 184.9 ns   (184.1 ns .. 185.2 ns)
-std dev              994.8 ps   (578.7 ps .. 1.647 ns)
+mean                 34.47 ns   (34.41 ns .. 34.55 ns)
+std dev              248.0 ps   (161.3 ps .. 392.3 ps)
 
-benchmarking Input Queries (Hot Path)/deltaInput - Button/Multiple bindings (2)
-time                 191.4 ns   (191.0 ns .. 191.8 ns)
+benchmarking Input Aggregation (Testing Actual Computation)/Axis2D magnitude comparison/Equal magnitudes
+time                 34.59 ns   (34.49 ns .. 34.69 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 191.5 ns   (191.0 ns .. 192.0 ns)
-std dev              1.102 ns   (773.3 ps .. 1.718 ns)
+mean                 34.58 ns   (34.43 ns .. 34.90 ns)
+std dev              699.8 ps   (155.8 ps .. 1.121 ns)
+variance introduced by outliers: 29% (moderately inflated)
 
-benchmarking Input Queries (Hot Path)/deltaInput - Axis2D/Single binding
-time                 191.0 ns   (190.6 ns .. 191.4 ns)
+benchmarking Input Aggregation (Testing Actual Computation)/Axis1D deadzone application/Below deadzone (zero out)
+time                 13.34 ns   (13.33 ns .. 13.35 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 191.0 ns   (190.4 ns .. 191.5 ns)
-std dev              1.224 ns   (885.6 ps .. 1.580 ns)
+mean                 13.38 ns   (13.34 ns .. 13.49 ns)
+std dev              260.8 ps   (26.55 ps .. 501.5 ps)
+variance introduced by outliers: 29% (moderately inflated)
 
-benchmarking Input Queries (Hot Path)/deltaInput - Axis2D/Multiple bindings (2)
-time                 211.9 ns   (211.6 ns .. 212.2 ns)
+benchmarking Input Aggregation (Testing Actual Computation)/Axis1D deadzone application/Above deadzone (normalize)
+time                 13.53 ns   (13.52 ns .. 13.54 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 212.0 ns   (211.7 ns .. 212.3 ns)
-std dev              615.3 ps   (446.2 ps .. 801.9 ps)
+mean                 13.52 ns   (13.51 ns .. 13.53 ns)
+std dev              36.16 ps   (28.41 ps .. 43.15 ps)
 
-benchmarking Input Queries (Hot Path)/Sequential queries (simulate game loop)/10 actions
-time                 362.1 ns   (361.8 ns .. 362.6 ns)
+benchmarking Input Aggregation (Testing Actual Computation)/Axis1D deadzone application/At deadzone edge
+time                 13.32 ns   (13.31 ns .. 13.34 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 362.2 ns   (361.8 ns .. 362.8 ns)
-std dev              1.107 ns   (742.4 ps .. 1.602 ns)
+mean                 13.33 ns   (13.32 ns .. 13.34 ns)
+std dev              43.50 ps   (37.93 ps .. 51.20 ps)
 
-benchmarking Input Queries (Hot Path)/Sequential queries (simulate game loop)/20 actions
-time                 563.0 ns   (562.1 ns .. 564.5 ns)
+benchmarking Input Aggregation (Testing Actual Computation)/Sensitivity scaling/Full deflection with sensitivity
+time                 13.90 ns   (13.87 ns .. 13.96 ns)
+                     0.999 R²   (0.998 R² .. 1.000 R²)
+mean                 14.03 ns   (13.89 ns .. 14.58 ns)
+std dev              695.8 ps   (76.93 ps .. 1.366 ns)
+variance introduced by outliers: 73% (severely inflated)
+
+benchmarking Input Aggregation (Testing Actual Computation)/Sensitivity scaling/Partial deflection with sensitivity
+time                 13.96 ns   (13.93 ns .. 14.00 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 562.6 ns   (562.0 ns .. 565.0 ns)
-std dev              2.495 ns   (439.6 ps .. 4.754 ns)
+mean                 13.97 ns   (13.95 ns .. 14.02 ns)
+std dev              100.4 ps   (53.01 ps .. 187.8 ps)
 
 benchmarking Frame Management/newBufferedInput
-time                 51.85 ns   (51.83 ns .. 51.87 ns)
+time                 69.58 ns   (69.25 ns .. 69.98 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 51.93 ns   (51.90 ns .. 51.98 ns)
-std dev              131.8 ps   (101.9 ps .. 167.4 ps)
+mean                 69.33 ns   (69.08 ns .. 69.88 ns)
+std dev              1.062 ns   (530.9 ps .. 1.979 ns)
+variance introduced by outliers: 19% (moderately inflated)
 
 benchmarking Frame Management/prepareBufferedInput
-time                 161.2 ns   (160.8 ns .. 161.8 ns)
+time                 3.713 ns   (3.709 ns .. 3.718 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 161.6 ns   (161.0 ns .. 162.6 ns)
-std dev              1.510 ns   (768.3 ps .. 2.614 ns)
+mean                 3.744 ns   (3.731 ns .. 3.772 ns)
+std dev              52.46 ps   (39.36 ps .. 67.10 ps)
+variance introduced by outliers: 19% (moderately inflated)
 
 benchmarking Frame Management/Full frame cycle
-time                 235.9 ns   (235.2 ns .. 236.5 ns)
+time                 60.68 ns   (60.53 ns .. 60.83 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 235.4 ns   (234.6 ns .. 236.1 ns)
-std dev              1.582 ns   (1.292 ns .. 1.985 ns)
+mean                 60.87 ns   (60.55 ns .. 61.56 ns)
+std dev              1.555 ns   (422.6 ps .. 2.821 ns)
+variance introduced by outliers: 39% (moderately inflated)
 
 benchmarking Baselines (Raw Buffer Access)/Single MPA.read (Bool)
-time                 157.5 ns   (157.3 ns .. 157.7 ns)
+time                 1.568 ns   (1.565 ns .. 1.570 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 157.6 ns   (157.5 ns .. 157.8 ns)
-std dev              309.5 ps   (230.4 ps .. 432.5 ps)
+mean                 1.582 ns   (1.578 ns .. 1.593 ns)
+std dev              22.60 ps   (17.92 ps .. 29.97 ps)
+variance introduced by outliers: 20% (moderately inflated)
 
 benchmarking Baselines (Raw Buffer Access)/Single MPA.read (Float)
-time                 157.9 ns   (157.7 ns .. 158.1 ns)
+time                 2.090 ns   (2.086 ns .. 2.093 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 157.9 ns   (157.7 ns .. 158.1 ns)
-std dev              436.8 ps   (328.8 ps .. 608.1 ps)
+mean                 2.084 ns   (2.082 ns .. 2.086 ns)
+std dev              8.228 ps   (6.941 ps .. 10.30 ps)
 
 benchmarking Baselines (Raw Buffer Access)/Two MPA.read (V2 simulation)
-time                 157.3 ns   (157.1 ns .. 157.5 ns)
+time                 3.999 ns   (3.985 ns .. 4.015 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 157.2 ns   (156.9 ns .. 157.5 ns)
-std dev              711.1 ps   (495.8 ps .. 1.047 ns)
+mean                 3.985 ns   (3.975 ns .. 3.995 ns)
+std dev              38.53 ps   (29.75 ps .. 50.11 ps)
 
 benchmarking Baselines (Raw Buffer Access)/Delta query (read last + this)
-time                 159.3 ns   (159.0 ns .. 159.5 ns)
+time                 3.060 ns   (3.055 ns .. 3.065 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 159.3 ns   (159.0 ns .. 159.6 ns)
-std dev              633.6 ps   (449.8 ps .. 810.0 ps)
+mean                 3.052 ns   (3.047 ns .. 3.056 ns)
+std dev              13.99 ps   (11.70 ps .. 17.27 ps)
 
 benchmarking Baselines (Raw Buffer Access)/10 raw reads (game loop simulation)
-time                 156.6 ns   (156.1 ns .. 157.0 ns)
+time                 12.03 ns   (11.99 ns .. 12.07 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 156.5 ns   (155.8 ns .. 157.0 ns)
-std dev              1.326 ns   (868.6 ps .. 1.707 ns)
+mean                 12.03 ns   (12.00 ns .. 12.08 ns)
+std dev              129.4 ps   (54.99 ps .. 241.9 ps)
+variance introduced by outliers: 11% (moderately inflated)
 
 benchmarking Baselines (Raw Buffer Access)/prepareBufferedInput vs manual buffer swap
-time                 160.6 ns   (160.4 ns .. 160.8 ns)
+time                 3.743 ns   (3.736 ns .. 3.750 ns)
                      1.000 R²   (1.000 R² .. 1.000 R²)
-mean                 160.7 ns   (160.5 ns .. 160.9 ns)
-std dev              378.4 ps   (174.1 ps .. 646.4 ps)
+mean                 3.761 ns   (3.752 ns .. 3.774 ns)
+std dev              37.55 ps   (31.13 ps .. 46.40 ps)
+variance introduced by outliers: 10% (moderately inflated)
 
 Benchmark heph-input-bench: FINISH
 Completed 2 action(s).

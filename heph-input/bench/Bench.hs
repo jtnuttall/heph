@@ -2,13 +2,14 @@
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-
 {-# HLINT ignore "Redundant irrefutable pattern" #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 
 module Main (main) where
 
 import BenchLib
+import Control.DeepSeq (NFData)
 import Heph.Input
 import Heph.Input.Buffer as Buf
 import Heph.Input.Internal.BoundedArray.Primitive.Mutable qualified as MPA
@@ -166,6 +167,10 @@ data LargeGame (src :: ActionSource) where
   LGFreeLook :: LargeGame Button
   LGResetCamera :: LargeGame Button
 
+instance
+  (NFData a, NFData b, NFData c, NFData d, NFData e, NFData f, NFData g, NFData h, NFData i, NFData j)
+  => NFData (a, b, c, d, e, f, g, h, i, j)
+
 makeAction ''LargeGame
 
 -- Main benchmark entry point
@@ -174,6 +179,7 @@ main =
   defaultMain
     [ actionMapBenchmarks
     , inputQueryBenchmarks
+    , aggregationBenchmarks
     , frameManagementBenchmarks
     , baselineBenchmarks
     ]
@@ -599,101 +605,122 @@ inputQueryBenchmarks :: Benchmark
 inputQueryBenchmarks =
   bgroup
     "Input Queries (Hot Path)"
-    [ bgroup
-        "absoluteInput - Button"
-        [ bench "Single binding" $
-            perRunEnv setupSmallGameSingle $ \ ~(buf, mp) ->
-              absoluteInput buf mp SGJump
-        , bench "Multiple bindings (2)" $
-            perRunEnv setupSmallGameMultiple $ \ ~(buf, mp) ->
-              absoluteInput buf mp SGJump
-        , bench "Many bindings (5)" $
-            perRunEnv setupSmallGameMany $ \ ~(buf, mp) ->
-              absoluteInput buf mp SGJump
-        ]
-    , bgroup
-        "absoluteInput - Axis1D"
-        [ bench "Single binding" $
-            perRunEnv setupSmallGameSingle $ \ ~(buf, mp) ->
-              absoluteInput buf mp SGZoom
-        , bench "Multiple bindings (2)" $
-            perRunEnv setupSmallGameMultiple $ \ ~(buf, mp) ->
-              absoluteInput buf mp SGZoom
-        , bench "Many bindings (5)" $
-            perRunEnv setupSmallGameMany $ \ ~(buf, mp) ->
-              absoluteInput buf mp SGZoom
-        ]
-    , bgroup
-        "absoluteInput - Axis2D"
-        [ bench "Single binding" $
-            perRunEnv setupSmallGameSingle $ \ ~(buf, mp) ->
-              absoluteInput buf mp SGMove
-        , bench "Multiple bindings (2)" $
-            perRunEnv setupSmallGameMultiple $ \ ~(buf, mp) ->
-              absoluteInput buf mp SGMove
-        , bench "Many bindings (5)" $
-            perRunEnv setupSmallGameMany $ \ ~(buf, mp) ->
-              absoluteInput buf mp SGMove
-        ]
-    , bgroup
-        "deltaInput - Button"
-        [ bench "Single binding" $
-            perRunEnv setupSmallGameSingle $ \ ~(buf, mp) ->
-              deltaInput buf mp SGJump
-        , bench "Multiple bindings (2)" $
-            perRunEnv setupSmallGameMultiple $ \ ~(buf, mp) ->
-              deltaInput buf mp SGJump
-        ]
-    , bgroup
-        "deltaInput - Axis2D"
-        [ bench "Single binding" $
-            perRunEnv setupSmallGameSingle $ \ ~(buf, mp) ->
-              deltaInput buf mp SGLook
-        , bench "Multiple bindings (2)" $
-            perRunEnv setupSmallGameMultiple $ \ ~(buf, mp) ->
-              deltaInput buf mp SGLook
-        ]
-    , bgroup
-        "Sequential queries (simulate game loop)"
-        [ bench "10 actions" $
-            perRunEnv setupSmallGameMultiple $ \ ~(buf, mp) -> do
-              !_ <- absoluteInput buf mp SGJump
-              !_ <- absoluteInput buf mp SGCrouch
-              !_ <- absoluteInput buf mp SGSprint
-              !_ <- absoluteInput buf mp SGShoot
-              !_ <- absoluteInput buf mp SGReload
-              !_ <- absoluteInput buf mp SGMove
-              !_ <- absoluteInput buf mp SGLook
-              !_ <- deltaInput buf mp SGInteract
-              !_ <- deltaInput buf mp SGZoom
-              deltaInput buf mp SGThrottle
-        , bench "20 actions" $
-            perRunEnv setupMediumGameMultiple $ \ ~(buf, mp) -> do
-              !_ <- absoluteInput buf mp MGJump
-              !_ <- absoluteInput buf mp MGCrouch
-              !_ <- absoluteInput buf mp MGSprint
-              !_ <- absoluteInput buf mp MGShoot
-              !_ <- absoluteInput buf mp MGReload
-              !_ <- absoluteInput buf mp MGMelee
-              !_ <- absoluteInput buf mp MGGrenade
-              !_ <- absoluteInput buf mp MGSwitchWeapon
-              !_ <- absoluteInput buf mp MGUse
-              !_ <- absoluteInput buf mp MGInventory
-              !_ <- absoluteInput buf mp MGMove
-              !_ <- absoluteInput buf mp MGLook
-              !_ <- absoluteInput buf mp MGStrafe
-              !_ <- deltaInput buf mp MGInteract
-              !_ <- deltaInput buf mp MGMap
-              !_ <- deltaInput buf mp MGPause
-              !_ <- deltaInput buf mp MGScreenshot
-              !_ <- deltaInput buf mp MGZoom
-              !_ <- deltaInput buf mp MGThrottle
-              deltaInput buf mp MGLeanAxis
-        ]
+    [ env setupSmallGameSingle $ \ ~(buf, mp) ->
+        bgroup
+          "Single binding"
+          [ bench "absoluteInput - Button" $
+              nfIO $
+                absoluteInput buf mp SGJump
+          , bench "absoluteInput - Axis1D" $
+              nfIO $
+                absoluteInput buf mp SGZoom
+          , bench "absoluteInput - Axis2D" $
+              nfIO $
+                absoluteInput buf mp SGMove
+          , bench "deltaInput - Button" $
+              nfIO $
+                deltaInput buf mp SGJump
+          , bench "deltaInput - Axis2D" $
+              nfIO $
+                deltaInput buf mp SGLook
+          ]
+    , env setupSmallGameMultiple $ \ ~(buf, mp) ->
+        bgroup
+          "Multiple bindings (2)"
+          [ bench "absoluteInput - Button" $
+              nfIO $
+                absoluteInput buf mp SGJump
+          , bench "absoluteInput - Axis1D" $
+              nfIO $
+                absoluteInput buf mp SGZoom
+          , bench "absoluteInput - Axis2D" $
+              nfIO $
+                absoluteInput buf mp SGMove
+          , bench "deltaInput - Button" $
+              nfIO $
+                deltaInput buf mp SGJump
+          , bench "deltaInput - Axis2D" $
+              nfIO $
+                deltaInput buf mp SGLook
+          , bench "Sequential 10 actions" $ nfIO do
+              a <- absoluteInput buf mp SGJump
+              b <- absoluteInput buf mp SGCrouch
+              c <- absoluteInput buf mp SGSprint
+              d <- absoluteInput buf mp SGShoot
+              e <- absoluteInput buf mp SGReload
+              f <- absoluteInput buf mp SGMove
+              g <- absoluteInput buf mp SGLook
+              h <- deltaInput buf mp SGInteract
+              i <- deltaInput buf mp SGZoom
+              j <- deltaInput buf mp SGThrottle
+              pure (a, b, c, d, e, f, g, h, i, j)
+          ]
+    , env setupSmallGameMany $ \ ~(buf, mp) ->
+        bgroup
+          "Many bindings (5)"
+          [ bench "absoluteInput - Button" $
+              nfIO $
+                absoluteInput buf mp SGJump
+          , bench "absoluteInput - Axis1D" $
+              nfIO $
+                absoluteInput buf mp SGZoom
+          , bench "absoluteInput - Axis2D" $
+              nfIO $
+                absoluteInput buf mp SGMove
+          ]
+    , env setupMediumGameMultiple $ \ ~(buf, mp) ->
+        bgroup
+          "Medium game (20 actions)"
+          [ bench "Sequential 20 actions" $ nfIO do
+              -- NOTE: Not the greatest test, but at least this should guarantee deep evaluation
+              a <-
+                sum . map fromEnum
+                  <$> sequence
+                    [ absoluteInput buf mp MGJump
+                    , absoluteInput buf mp MGCrouch
+                    , absoluteInput buf mp MGSprint
+                    , absoluteInput buf mp MGShoot
+                    , absoluteInput buf mp MGReload
+                    , absoluteInput buf mp MGMelee
+                    , absoluteInput buf mp MGGrenade
+                    , absoluteInput buf mp MGSwitchWeapon
+                    , absoluteInput buf mp MGUse
+                    , absoluteInput buf mp MGInventory
+                    ]
+              b <-
+                sum
+                  <$> sequence
+                    [ absoluteInput buf mp MGMove
+                    , absoluteInput buf mp MGLook
+                    , absoluteInput buf mp MGStrafe
+                    ]
+              c <-
+                sum . map fromEnum
+                  <$> sequence
+                    [ deltaInput buf mp MGInteract
+                    , deltaInput buf mp MGMap
+                    , deltaInput buf mp MGPause
+                    , deltaInput buf mp MGScreenshot
+                    ]
+              d <-
+                sum
+                  <$> sequence
+                    [ deltaInput buf mp MGZoom
+                    , deltaInput buf mp MGThrottle
+                    , deltaInput buf mp MGLeanAxis
+                    ]
+              pure (a, b, c, d)
+          ]
     ]
  where
   setupSmallGameSingle = do
     buf <- Buf.newBufferedInput
+    -- Add realistic input values
+    MPA.write buf.thisInput.kbScancodes ScancodeW True
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftX 0.75
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY (-0.5)
+    MPA.write buf.thisInput.mouseAxes MouseX 12.5
+    MPA.write buf.thisInput.mouseAxes MouseY (-8.3)
     let mp = smallGameSingleBindings
     pure (buf, mp)
    where
@@ -713,6 +740,22 @@ inputQueryBenchmarks =
 
   setupSmallGameMultiple = do
     buf <- Buf.newBufferedInput
+    -- Add values that test aggregation (multiple bindings active)
+    -- SGJump: both keyboard and gamepad active (tests Button OR)
+    MPA.write buf.thisInput.kbScancodes ScancodeSpace True
+    MPA.write buf.thisInput.controllerButtons ControllerButtonA True
+    -- SGMove: both WASD and stick active (tests Axis2D magnitude comparison)
+    MPA.write buf.thisInput.kbScancodes ScancodeW True
+    MPA.write buf.thisInput.kbScancodes ScancodeD True
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftX 0.5
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY 0.3
+    -- SGLook: both mouse and stick active (tests aggregation)
+    MPA.write buf.thisInput.mouseAxes MouseX 15.2
+    MPA.write buf.thisInput.mouseAxes MouseY (-10.7)
+    MPA.write buf.thisInput.controllerAxes ControllerAxisRightX 0.8
+    MPA.write buf.thisInput.controllerAxes ControllerAxisRightY (-0.6)
+    -- SGThrottle: test trigger axis
+    MPA.write buf.thisInput.controllerAxes ControllerAxisTriggerRight 0.85
     let mp = smallGameMultipleBindings
     pure (buf, mp)
    where
@@ -734,6 +777,23 @@ inputQueryBenchmarks =
 
   setupSmallGameMany = do
     buf <- Buf.newBufferedInput
+    -- Test worst-case aggregation with many active bindings
+    -- SGJump: activate 3 out of 5 button bindings
+    MPA.write buf.thisInput.kbScancodes ScancodeSpace True
+    MPA.write buf.thisInput.controllerButtons ControllerButtonA True
+    MPA.write buf.thisInput.kbScancodes ScancodeUp True
+    -- SGMove: activate multiple DPad and stick sources with different values
+    MPA.write buf.thisInput.kbScancodes ScancodeW True
+    MPA.write buf.thisInput.kbScancodes ScancodeD True
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftX 0.6
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY (-0.4)
+    MPA.write buf.thisInput.controllerButtons ControllerButtonDpadUp True
+    MPA.write buf.thisInput.kbScancodes Scancode8 True
+    -- SGLook: activate multiple sources
+    MPA.write buf.thisInput.mouseAxes MouseX 18.5
+    MPA.write buf.thisInput.mouseAxes MouseY (-12.3)
+    MPA.write buf.thisInput.controllerAxes ControllerAxisRightX 0.9
+    MPA.write buf.thisInput.controllerAxes ControllerAxisRightY (-0.7)
     let mp = smallGameManyBindings
     pure (buf, mp)
    where
@@ -817,6 +877,15 @@ inputQueryBenchmarks =
 
   setupMediumGameMultiple = do
     buf <- Buf.newBufferedInput
+    -- Add realistic values for medium game scenario
+    MPA.write buf.thisInput.kbScancodes ScancodeSpace True
+    MPA.write buf.thisInput.kbScancodes ScancodeW True
+    MPA.write buf.thisInput.kbScancodes ScancodeA True
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftX 0.55
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY 0.65
+    MPA.write buf.thisInput.mouseAxes MouseX 10.5
+    MPA.write buf.thisInput.mouseAxes MouseY (-7.2)
+    MPA.write buf.thisInput.controllerButtons ControllerButtonA True
     let mp = mediumGameMultipleBindings
     pure (buf, mp)
    where
@@ -853,6 +922,179 @@ inputQueryBenchmarks =
         ]
 
 -- ============================================================================
+-- Input Aggregation Benchmarks
+-- ============================================================================
+
+aggregationBenchmarks :: Benchmark
+aggregationBenchmarks =
+  bgroup
+    "Input Aggregation (Testing Actual Computation)"
+    [ bgroup
+        "Button OR aggregation"
+        [ env setupButtonAllFalse $ \ ~(buf, mp) ->
+            bench "All false (fast path)" $
+              nfIO $
+                absoluteInput buf mp SGJump
+        , env setupButtonMixed $ \ ~(buf, mp) ->
+            bench "Mixed true/false (aggregation)" $
+              nfIO $
+                absoluteInput buf mp SGJump
+        , env setupButtonAllTrue $ \ ~(buf, mp) ->
+            bench "All true (worst case)" $
+              nfIO $
+                absoluteInput buf mp SGJump
+        ]
+    , bgroup
+        "Axis2D magnitude comparison"
+        [ env setupKeyboardWins $ \ ~(buf, mp) ->
+            bench "Keyboard vs gamepad (keyboard wins)" $
+              nfIO $
+                absoluteInput buf mp SGMove
+        , env setupGamepadWins $ \ ~(buf, mp) ->
+            bench "Gamepad vs keyboard (gamepad wins)" $
+              nfIO $
+                absoluteInput buf mp SGMove
+        , env setupEqualMagnitudes $ \ ~(buf, mp) ->
+            bench "Equal magnitudes" $
+              nfIO $
+                absoluteInput buf mp SGMove
+        ]
+    , bgroup
+        "Axis1D deadzone application"
+        [ env setupBelowDeadzone $ \ ~(buf, mp) ->
+            bench "Below deadzone (zero out)" $
+              nfIO $
+                absoluteInput buf mp SGThrottle
+        , env setupAboveDeadzone $ \ ~(buf, mp) ->
+            bench "Above deadzone (normalize)" $
+              nfIO $
+                absoluteInput buf mp SGThrottle
+        , env setupAtDeadzoneEdge $ \ ~(buf, mp) ->
+            bench "At deadzone edge" $
+              nfIO $
+                absoluteInput buf mp SGThrottle
+        ]
+    , bgroup
+        "Sensitivity scaling"
+        [ env setupFullDeflection $ \ ~(buf, mp) ->
+            bench "Full deflection with sensitivity" $
+              nfIO $
+                absoluteInput buf mp SGLook
+        , env setupPartialDeflection $ \ ~(buf, mp) ->
+            bench "Partial deflection with sensitivity" $
+              nfIO $
+                absoluteInput buf mp SGLook
+        ]
+    ]
+ where
+  -- Button OR tests
+  setupButtonAllFalse = do
+    buf <- Buf.newBufferedInput
+    -- Leave all buttons as False (default)
+    let mp =
+          newActionMap @SmallGame
+            [SGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA, Key ScancodeUp]]
+    pure (buf, mp)
+
+  setupButtonMixed = do
+    buf <- Buf.newBufferedInput
+    -- Activate 1 out of 3 bindings
+    MPA.write buf.thisInput.controllerButtons ControllerButtonA True
+    let mp =
+          newActionMap @SmallGame
+            [SGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA, Key ScancodeUp]]
+    pure (buf, mp)
+
+  setupButtonAllTrue = do
+    buf <- Buf.newBufferedInput
+    -- Activate all 3 bindings (worst case OR)
+    MPA.write buf.thisInput.kbScancodes ScancodeSpace True
+    MPA.write buf.thisInput.controllerButtons ControllerButtonA True
+    MPA.write buf.thisInput.kbScancodes ScancodeUp True
+    let mp =
+          newActionMap @SmallGame
+            [SGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA, Key ScancodeUp]]
+    pure (buf, mp)
+
+  -- Axis2D magnitude comparison tests
+  setupKeyboardWins = do
+    buf <- Buf.newBufferedInput
+    -- Keyboard: magnitude = sqrt(1^2 + 1^2) = 1.414
+    MPA.write buf.thisInput.kbScancodes ScancodeW True
+    MPA.write buf.thisInput.kbScancodes ScancodeD True
+    -- Gamepad: magnitude = sqrt(0.5^2 + 0.3^2) = 0.583
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftX 0.5
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY 0.3
+    let mp =
+          newActionMap @SmallGame
+            [ SGMove ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
+            ]
+    pure (buf, mp)
+
+  setupGamepadWins = do
+    buf <- Buf.newBufferedInput
+    -- Keyboard: magnitude = 0 (no keys pressed)
+    -- Gamepad: magnitude = sqrt(0.9^2 + 0.8^2) = 1.204
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftX 0.9
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY 0.8
+    let mp =
+          newActionMap @SmallGame
+            [ SGMove ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
+            ]
+    pure (buf, mp)
+
+  setupEqualMagnitudes = do
+    buf <- Buf.newBufferedInput
+    -- Both have magnitude ~0.707
+    MPA.write buf.thisInput.kbScancodes ScancodeW True -- (0, 1)
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftX 0.7071
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY 0.0
+    let mp =
+          newActionMap @SmallGame
+            [ SGMove ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
+            ]
+    pure (buf, mp)
+
+  -- Deadzone tests
+  setupBelowDeadzone = do
+    buf <- Buf.newBufferedInput
+    -- 0.12 < 0.15 deadzone -> should become 0
+    MPA.write buf.thisInput.controllerAxes ControllerAxisTriggerRight 0.12
+    let mp = newActionMap @SmallGame [SGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
+    pure (buf, mp)
+
+  setupAboveDeadzone = do
+    buf <- Buf.newBufferedInput
+    -- 0.75 > 0.15 deadzone -> normalize to (0.75 - 0.15) / (1.0 - 0.15) = 0.706
+    MPA.write buf.thisInput.controllerAxes ControllerAxisTriggerRight 0.75
+    let mp = newActionMap @SmallGame [SGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
+    pure (buf, mp)
+
+  setupAtDeadzoneEdge = do
+    buf <- Buf.newBufferedInput
+    -- Exactly at deadzone edge
+    MPA.write buf.thisInput.controllerAxes ControllerAxisTriggerRight 0.15
+    let mp = newActionMap @SmallGame [SGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
+    pure (buf, mp)
+
+  -- Sensitivity tests
+  setupFullDeflection = do
+    buf <- Buf.newBufferedInput
+    -- Full mouse movement with 2x sensitivity
+    MPA.write buf.thisInput.mouseAxes MouseX 50.0
+    MPA.write buf.thisInput.mouseAxes MouseY (-30.0)
+    let mp = newActionMap @SmallGame [SGLook ~> [MouseMotion 2.0]]
+    pure (buf, mp)
+
+  setupPartialDeflection = do
+    buf <- Buf.newBufferedInput
+    -- Partial mouse movement with 0.5x sensitivity
+    MPA.write buf.thisInput.mouseAxes MouseX 10.0
+    MPA.write buf.thisInput.mouseAxes MouseY (-5.0)
+    let mp = newActionMap @SmallGame [SGLook ~> [MouseMotion 0.5]]
+    pure (buf, mp)
+
+-- ============================================================================
 -- Frame Management Benchmarks
 -- ============================================================================
 
@@ -861,11 +1103,12 @@ frameManagementBenchmarks =
   bgroup
     "Frame Management"
     [ bench "newBufferedInput" $ nfIO newBufferedInput
-    , bench "prepareBufferedInput" $
-        perRunEnv newBufferedInput $ \ ~buf ->
-          prepareBufferedInput buf
-    , bench "Full frame cycle" $
-        perRunEnv setupFrame $ \ ~(buf, mp) -> do
+    , env newBufferedInput $ \ ~buf ->
+        bench "prepareBufferedInput" $
+          nfIO $
+            prepareBufferedInput buf
+    , env setupFrame $ \ ~(buf, mp) ->
+        bench "Full frame cycle" $ nfIO do
           prepareBufferedInput buf
           -- Simulate writing some input
           MPA.write buf.thisInput.kbScancodes ScancodeW True
@@ -873,9 +1116,10 @@ frameManagementBenchmarks =
           MPA.write buf.thisInput.mouseAxes MouseX 5.0
           MPA.write buf.thisInput.mouseAxes MouseY (-2.5)
           -- Query some actions
-          !_ <- absoluteInput buf mp SGMove
-          !_ <- deltaInput buf mp SGJump
-          deltaInput buf mp SGLook
+          a <- absoluteInput buf mp SGMove
+          b <- deltaInput buf mp SGJump
+          c <- deltaInput buf mp SGLook
+          pure (a, b, c)
     ]
  where
   setupFrame = do
@@ -901,41 +1145,48 @@ frameManagementBenchmarks =
 
 baselineBenchmarks :: Benchmark
 baselineBenchmarks =
-  bgroup
-    "Baselines (Raw Buffer Access)"
-    [ bench "Single MPA.read (Bool)" $
-        perRunEnv setupBaseline $ \ ~buf ->
-          MPA.read buf.thisInput.kbScancodes ScancodeSpace
-    , bench "Single MPA.read (Float)" $
-        perRunEnv setupBaseline $ \ ~buf ->
-          MPA.read buf.thisInput.mouseAxes MouseX
-    , bench "Two MPA.read (V2 simulation)" $
-        perRunEnv setupBaseline $ \ ~buf -> do
+  env setupBaseline $ \ ~buf ->
+    bgroup
+      "Baselines (Raw Buffer Access)"
+      [ bench "Single MPA.read (Bool)" $
+          nfIO $
+            MPA.read buf.thisInput.kbScancodes ScancodeSpace
+      , bench "Single MPA.read (Float)" $
+          nfIO $
+            MPA.read buf.thisInput.mouseAxes MouseX
+      , bench "Two MPA.read (V2 simulation)" $ nfIO do
           x <- MPA.read buf.thisInput.mouseAxes MouseX
           y <- MPA.read buf.thisInput.mouseAxes MouseY
           pure $ V2 x y
-    , bench "Delta query (read last + this)" $
-        perRunEnv setupBaseline $ \ ~buf -> do
+      , bench "Delta query (read last + this)" $ nfIO do
           last' <- MPA.read buf.lastInput.kbScancodes ScancodeSpace
           this <- MPA.read buf.thisInput.kbScancodes ScancodeSpace
           pure (last', this)
-    , bench "10 raw reads (game loop simulation)" $
-        perRunEnv setupBaseline $ \ ~buf -> do
-          !_ <- MPA.read buf.thisInput.kbScancodes ScancodeSpace
-          !_ <- MPA.read buf.thisInput.kbScancodes ScancodeLCtrl
-          !_ <- MPA.read buf.thisInput.kbScancodes ScancodeLShift
-          !_ <- MPA.read buf.thisInput.kbScancodes ScancodeE
-          !_ <- MPA.read buf.thisInput.mouseButtons MouseButtonLeft
-          !_ <- MPA.read buf.thisInput.kbScancodes ScancodeR
-          !_ <- MPA.read buf.thisInput.kbScancodes ScancodeW
-          !_ <- MPA.read buf.thisInput.mouseAxes MouseX
-          !_ <- MPA.read buf.thisInput.mouseAxes MouseY
-          MPA.read buf.thisInput.kbScancodes ScancodeA
-    , bench "prepareBufferedInput vs manual buffer swap" $
-        perRunEnv setupBaseline $ \ ~buf -> do
+      , bench "10 raw reads (game loop simulation)" $ nfIO do
+          a <- MPA.read buf.thisInput.kbScancodes ScancodeSpace
+          b <- MPA.read buf.thisInput.kbScancodes ScancodeLCtrl
+          c <- MPA.read buf.thisInput.kbScancodes ScancodeLShift
+          d <- MPA.read buf.thisInput.kbScancodes ScancodeE
+          e <- MPA.read buf.thisInput.mouseButtons MouseButtonLeft
+          f <- MPA.read buf.thisInput.kbScancodes ScancodeR
+          g <- MPA.read buf.thisInput.kbScancodes ScancodeW
+          h <- MPA.read buf.thisInput.mouseAxes MouseX
+          i <- MPA.read buf.thisInput.mouseAxes MouseY
+          j <- MPA.read buf.thisInput.kbScancodes ScancodeA
+          pure (a, b, c, d, e, f, g, h, i, j)
+      , bench "prepareBufferedInput vs manual buffer swap" $ nfIO do
           Buf.copyInputBuffer buf.lastInput buf.thisInput
           MPA.write buf.thisInput.mouseAxes MouseX 0
           MPA.write buf.thisInput.mouseAxes MouseY 0
-    ]
+      ]
  where
-  setupBaseline = Buf.newBufferedInput
+  setupBaseline = do
+    buf <- Buf.newBufferedInput
+    -- Add realistic values for baseline comparisons
+    MPA.write buf.thisInput.kbScancodes ScancodeSpace True
+    MPA.write buf.thisInput.kbScancodes ScancodeW True
+    MPA.write buf.thisInput.mouseAxes MouseX 15.0
+    MPA.write buf.thisInput.mouseAxes MouseY (-10.0)
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftX 0.7
+    MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY 0.6
+    pure buf

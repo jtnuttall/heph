@@ -12,6 +12,7 @@ module BenchLib (
   bench,
   nf,
   nfIO,
+  nfAppIO,
   whnf,
 ) where
 
