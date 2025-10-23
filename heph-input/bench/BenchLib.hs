@@ -15,6 +15,5 @@ module BenchLib (
   whnf,
 ) where
 
-import Control.DeepSeq
 import Criterion
 import Criterion.Main
