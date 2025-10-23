@@ -12,8 +12,8 @@ extra-doc-files:
   - CHANGELOG.md
 
 synopsis: Type-safe, high-performance input action mapping for games
-# category:
-# tested-with: GHC == 9.8.4 || == 9.6.5 || == 8.10.7
+category: Graphics
+tested-with: GHC == 9.10.2
 
 build-type: Simple
 
@@ -30,18 +30,14 @@ homepage: https://github.com/jtnuttall/heph/tree/main/heph-input#readme
 
 dependencies:
   - base >= 4.16 && < 5
-  - bytestring
-  - containers
-  - deepseq
-  - exceptions
-  - generic-data
-  - linear
-  - monad-control
-  - primitive
-  - resourcet
-  - template-haskell
-  - th-abstraction
-  - vector
+  - deepseq >= 1.4 && < 1.6
+  - template-haskell >= 2.18 && < 2.24
+  - containers >= 0.6 && < 0.8
+  - exceptions >= 0.10 && < 0.11
+  - generic-data >= 1.0 && < 1.2
+  - linear >= 1.21 && < 1.24
+  - th-abstraction >= 0.4 && < 0.8
+  - primitive >= 0.8 && < 0.10
 
 ghc-options:
   - -Wall
