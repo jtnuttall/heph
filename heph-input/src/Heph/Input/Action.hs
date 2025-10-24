@@ -8,10 +8,6 @@
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE NoFieldSelectors #-}
--- NOTE: Not sure why, but even with NoFieldSelectors GHC is complaining about
--- unused record fields in pattern synonyms, so I've squelched the warnings. Be
--- sure to turn it off if adding or removing things in this file.
-{-# OPTIONS_GHC -Wno-unused-top-binds #-}
 
 -- |
 -- High-performance, type-safe input action system for games and interactive applications.
@@ -184,40 +180,40 @@ pattern MouseButton :: MouseButton -> InputSource Button
 pattern MouseButton mb = SourceButton (InputMouseButton mb)
 
 pattern GamepadTrigger :: ControllerAxis -> Float -> Float -> InputSource Axis1D
-pattern GamepadTrigger{trigger, triggerSensitivity, triggerDeadzone} =
-  SourceStick1D trigger (Sensitivity triggerSensitivity) (Deadzone triggerDeadzone)
+pattern GamepadTrigger{_trigger, _triggerSensitivity, _triggerDeadzone} =
+  SourceStick1D _trigger (Sensitivity _triggerSensitivity) (Deadzone _triggerDeadzone)
 
 pattern GamepadStick :: ControllerAxis -> ControllerAxis -> Float -> Float -> InputSource Axis2D
-pattern GamepadStick{stickX, stickY, stickSensitivity, stickDeadzone} =
-  SourceStick stickX stickY (Sensitivity stickSensitivity) (Deadzone stickDeadzone)
+pattern GamepadStick{_stickX, _stickY, _stickSensitivity, _stickDeadzone} =
+  SourceStick _stickX _stickY (Sensitivity _stickSensitivity) (Deadzone _stickDeadzone)
 
 pattern LeftStick :: Float -> Float -> InputSource Axis2D
-pattern LeftStick{leftStickSensitivity, leftStickDeadzone} =
+pattern LeftStick{_leftStickSensitivity, _leftStickDeadzone} =
   SourceStick
     ControllerAxisLeftX
     ControllerAxisLeftY
-    (Sensitivity leftStickSensitivity)
-    (Deadzone leftStickDeadzone)
+    (Sensitivity _leftStickSensitivity)
+    (Deadzone _leftStickDeadzone)
 
 pattern RightStick :: Float -> Float -> InputSource Axis2D
-pattern RightStick{rightStickSensitivity, rightStickDeadzone} =
+pattern RightStick{_rightStickSensitivity, _rightStickDeadzone} =
   SourceStick
     ControllerAxisRightX
     ControllerAxisRightY
-    (Sensitivity rightStickSensitivity)
-    (Deadzone rightStickDeadzone)
+    (Sensitivity _rightStickSensitivity)
+    (Deadzone _rightStickDeadzone)
 
 pattern MouseAxis1D :: MouseAxis -> Float -> InputSource Axis1D
-pattern MouseAxis1D{mouseAxis, mouseSensitivity1D} =
-  SourceMouse1D mouseAxis (Sensitivity mouseSensitivity1D)
+pattern MouseAxis1D{_mouseAxis, _mouseSensitivity1D} =
+  SourceMouse1D _mouseAxis (Sensitivity _mouseSensitivity1D)
 
 pattern MouseAxis2D :: MouseAxis -> MouseAxis -> Float -> InputSource Axis2D
-pattern MouseAxis2D{mouseX, mouseY, mouseSensitivity2D} =
-  SourceMouseMotion mouseX mouseY (Sensitivity mouseSensitivity2D)
+pattern MouseAxis2D{_mouseX, _mouseY, _mouseSensitivity2D} =
+  SourceMouseMotion _mouseX _mouseY (Sensitivity _mouseSensitivity2D)
 
 pattern MouseMotion :: Float -> InputSource Axis2D
-pattern MouseMotion{mouseSensitivity} =
-  SourceMouseMotion MouseX MouseY (Sensitivity mouseSensitivity)
+pattern MouseMotion{_mouseSensitivity} =
+  SourceMouseMotion MouseX MouseY (Sensitivity _mouseSensitivity)
 
 pattern DPad
   :: InputSource Button
@@ -225,8 +221,8 @@ pattern DPad
   -> InputSource Button
   -> InputSource Button
   -> InputSource Axis2D
-pattern DPad{dpadLeft, dpadUp, dpadDown, dpadRight} <-
-  (unDPad -> Just (dpadLeft, dpadUp, dpadDown, dpadRight))
+pattern DPad{_dpadLeft, _dpadUp, _dpadDown, _dpadRight} <-
+  (unDPad -> Just (_dpadLeft, _dpadUp, _dpadDown, _dpadRight))
   where
     DPad (SourceButton l) (SourceButton u) (SourceButton d) (SourceButton r) =
       SourceDPad l u d r
