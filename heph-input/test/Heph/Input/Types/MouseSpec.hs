@@ -5,9 +5,7 @@ import Heph.Input.Types.Mouse
 import Data.List (nub)
 import Hedgehog
 import Hedgehog.Gen qualified as Gen
-import Hedgehog.Range qualified as Range
 import Test.Tasty.HUnit
-import Test.Tasty.Hedgehog
 
 -- MouseButton unit tests
 unit_mouseButtonCount :: Assertion

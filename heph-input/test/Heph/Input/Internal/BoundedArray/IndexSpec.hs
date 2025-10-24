@@ -9,10 +9,7 @@ import Heph.Input.Types.Scancode (Scancode (..))
 import Control.Monad (when)
 import Hedgehog as HH
 import Hedgehog.Gen qualified as Gen
-import Hedgehog.Range qualified as Range
-import Test.Tasty
 import Test.Tasty.HUnit
-import Test.Tasty.Hedgehog
 
 -- Unit tests for specific cases
 unit_sizeMouseButton :: Assertion

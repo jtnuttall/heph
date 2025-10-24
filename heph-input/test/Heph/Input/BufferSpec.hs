@@ -4,7 +4,6 @@ module Heph.Input.BufferSpec where
 
 import Heph.Input.Buffer
 import Heph.Input.Internal.BoundedArray.Primitive.Mutable qualified as MPA
-import Heph.Input.Types.Controller
 import Heph.Input.Types.Mouse
 import Heph.Input.Types.Scancode
 
@@ -12,7 +11,6 @@ import Data.List (nub)
 import Hedgehog
 import Hedgehog.Gen qualified as Gen
 import Test.Tasty.HUnit
-import Test.Tasty.Hedgehog
 
 -- BufferedInput unit tests
 unit_newBufferedInput :: Assertion

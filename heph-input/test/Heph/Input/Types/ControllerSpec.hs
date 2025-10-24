@@ -5,9 +5,7 @@ import Heph.Input.Types.Controller
 import Data.List (nub)
 import Hedgehog
 import Hedgehog.Gen qualified as Gen
-import Hedgehog.Range qualified as Range
 import Test.Tasty.HUnit
-import Test.Tasty.Hedgehog
 
 -- ControllerButton unit tests
 unit_controllerButtonCount :: Assertion

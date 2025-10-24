@@ -10,7 +10,6 @@ import Hedgehog
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 import Test.Tasty.HUnit
-import Test.Tasty.Hedgehog
 
 -- Unit tests
 unit_newArrayHasDefaultValue :: Assertion

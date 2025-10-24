@@ -15,9 +15,13 @@ import Heph.Input.Types.Controller
 import Heph.Input.Types.Mouse
 import Heph.Input.Types.Scancode
 
+import Control.DeepSeq
+import Control.Exception (evaluate)
 import Data.Typeable (Typeable)
+import GHC.Base (noinline)
 import Linear.V2 (V2 (..))
 import NoThunks.Class
+import System.Random.Stateful
 import Test.Tasty.HUnit
 
 -- Test action for memory leak tests
@@ -49,6 +53,9 @@ deriving via
   InspectHeap ButtonState
   instance
     NoThunks ButtonState
+
+instance Uniform Scancode
+instance Uniform ControllerAxis
 
 -- Helper function for cleaner assertions
 assertNoThunks :: (NoThunks a) => String -> a -> IO ()
@@ -225,3 +232,39 @@ unit_fullWorkflow_noThunks = do
 
   prepareBufferedInput buffered
   assertNoThunks "frame 2 prepare" buffered
+
+unit_rnf_actionMap_noThunks :: Assertion
+unit_rnf_actionMap_noThunks = do
+  buffered <- newBufferedInput
+  systemGen <- newStdGen
+  g <- newIOGenM systemGen
+  scancode <- noinline uniformM g
+  scValue <- noinline uniformM g
+  axis <- noinline uniformM g
+  axisValue <- noinline uniformRM (-6e7, 6e7) g
+
+  noinline MPA.write buffered.thisInput.kbScancodes scancode scValue
+  noinline MPA.write buffered.thisInput.controllerAxes axis axisValue
+
+  assertNoThunks "buffer" buffered
+
+  scValue' <- noinline MPA.read buffered.thisInput.kbScancodes scancode
+  assertNoThunks "scancode value" scValue'
+
+  axisValue' <- noinline MPA.read buffered.thisInput.controllerAxes axis
+  assertNoThunks "axis value" axisValue'
+
+  let actionMap =
+        newActionMap
+          [ TestButton ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
+          , TestAxis2D
+              ~> [ DPad
+                    (Key ScancodeA)
+                    (Key ScancodeW)
+                    (Key ScancodeS)
+                    (Key ScancodeD)
+                 ]
+          ]
+
+  evaluate (rnf actionMap)
+  assertNoThunks "rnf actionmap" actionMap

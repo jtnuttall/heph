@@ -1,14 +1,12 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}
 
 module Heph.Input.ActionSpec where
 
 import Heph.Input.Action
 import Heph.Input.Action.TH
-import Heph.Input.Buffer
-import Heph.Input.Internal.BoundedArray.Primitive.Mutable qualified as MPA
 import Heph.Input.Types.Controller
-import Heph.Input.Types.Mouse
 import Heph.Input.Types.Scancode
 
 import Data.Primitive.SmallArray qualified as SA
@@ -17,7 +15,6 @@ import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 import Linear.V2
 import Test.Tasty.HUnit
-import Test.Tasty.Hedgehog
 
 -- Test action GADT
 data GameAction (src :: ActionSource) where

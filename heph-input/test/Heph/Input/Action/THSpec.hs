@@ -7,13 +7,9 @@ module Heph.Input.Action.THSpec where
 import Heph.Input.Action
 import Heph.Input.Action.TH
 
-import Data.Typeable
 import Hedgehog as HH
 import Hedgehog.Gen qualified as Gen
-import Hedgehog.Range qualified as Range
-import Heph.Input (SomeAction)
 import Test.Tasty.HUnit
-import Test.Tasty.Hedgehog
 
 -- Test action GADT
 data TestAction (src :: ActionSource) where
