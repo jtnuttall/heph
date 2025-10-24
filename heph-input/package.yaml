@@ -53,6 +53,14 @@ library:
     - -Wmissing-home-modules
     - -Wpartial-fields
     - -Wredundant-constraints
+  exposed-modules:
+    - Heph.Input
+    - Heph.Input.Action
+    - Heph.Input.Action.TH
+    - Heph.Input.Buffer
+    - Heph.Input.Types.Controller
+    - Heph.Input.Types.Mouse
+    - Heph.Input.Types.Scancode
 
 tests:
   heph-input-test:

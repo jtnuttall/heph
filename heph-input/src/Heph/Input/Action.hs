@@ -350,9 +350,10 @@ data ActionMap act where
   --   the map was created.
   --
   -- NOTE: I benchmarked several possible implementations. This implementation
-  -- is faster than alternatives like than safe casting using `Data.Typeable.cast`
+  -- is faster than alternatives like safe casting using 'Data.Typeable.cast'
   -- by at least an order of magnitude, and averts any need to pull in singletons
-  -- or implement custom type-level structures for the purpose.
+  -- or implement custom type-level structures to construct a sound structure
+  -- with similar performance.
   --
   -- As an added benefit, this representation seems to have really good L1/L2 cache
   -- locality on query.

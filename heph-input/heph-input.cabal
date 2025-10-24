@@ -34,6 +34,10 @@ library
       Heph.Input.Action
       Heph.Input.Action.TH
       Heph.Input.Buffer
+      Heph.Input.Types.Controller
+      Heph.Input.Types.Mouse
+      Heph.Input.Types.Scancode
+  other-modules:
       Heph.Input.Internal.BoundedArray.Boxed
       Heph.Input.Internal.BoundedArray.Boxed.Mutable
       Heph.Input.Internal.BoundedArray.Generic
@@ -41,10 +45,6 @@ library
       Heph.Input.Internal.BoundedArray.Index
       Heph.Input.Internal.BoundedArray.Primitive
       Heph.Input.Internal.BoundedArray.Primitive.Mutable
-      Heph.Input.Types.Controller
-      Heph.Input.Types.Mouse
-      Heph.Input.Types.Scancode
-  other-modules:
       Paths_heph_input
   autogen-modules:
       Paths_heph_input
