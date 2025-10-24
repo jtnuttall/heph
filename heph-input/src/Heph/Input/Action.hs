@@ -334,20 +334,28 @@ infixr 8 ~>
 -- mappings. It is optimized for high-performance lookups, using a bounded
 -- array internally. It is constructed once via 'newActionMap' from a list of
 -- 'ActionMapping's and is treated as immutable thereafter.
---
--- === Implementation Note: Type-Erased Storage ===
--- For maximum performance, this structure stores its input sources in a
--- type-erased format using 'unsafeCoerce'. This is a deliberate design
--- choice that is guaranteed to be safe by the surrounding API.
---
--- The safety invariant is established by the 'ActionMapping' constructor and
--- the 'Actionlike' instance. The 'ActionMapping' ensures an @act src@ can only
--- be mapped to sources of type @InputSource src@. The 'Actionlike' instance
--- guarantees a valid index for the lookup. The 'readActions' function then
--- safely coerces the sources back to their correct type, effectively restoring
--- type information that was proven correct when the map was created.
 data ActionMap act where
-  -- | Exquisitely unsafe. Only use 'newActionMap' and 'readActions'
+  -- | For maximum performance, this structure stores its input sources in a
+  -- type-erased format using 'unsafeCoerce'. This is a deliberate design
+  -- choice that is guaranteed to be safe by the surrounding API.
+  --
+  -- The safety invariant is established by the 'ActionMapping' constructor and
+  -- the 'Actionlike' instance:
+  --
+  -- - The 'ActionMapping' ensures an @act src@ can only be mapped to sources of
+  --   type @InputSource src@.
+  -- - The 'Actionlike' instance guarantees a valid index for the lookup.
+  -- - The 'readActions' function then safely coerces the sources back to their
+  --   correct type, restoring type information that was proven correct when
+  --   the map was created.
+  --
+  -- NOTE: I benchmarked several possible implementations. This implementation
+  -- is faster than alternatives like than safe casting using `Data.Typeable.cast`
+  -- by at least an order of magnitude, and averts any need to pull in singletons
+  -- or implement custom type-level structures for the purpose.
+  --
+  -- As an added benefit, this representation seems to have really good L1/L2 cache
+  -- locality on query.
   VeryUnsafeNoGoodActionMap
     :: BA.BoundedArray (ActionAsEnum (SomeAction act)) (SmallArray GHC.Exts.Any)
     -> ActionMap act
