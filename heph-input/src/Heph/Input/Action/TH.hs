@@ -24,7 +24,6 @@ import Data.Set (Set)
 import GHC.Generics
 import Language.Haskell.TH
 import Language.Haskell.TH.Datatype
-import Language.Haskell.TH.Syntax
 
 data CtorInfo = CtorInfo
   { constructorName :: Name
@@ -72,18 +71,7 @@ makeAction n = do
   dt <- reifyDatatype n
   tyVarName <- validateType dt
 
-  let ids = zip [0 ..] dt.datatypeCons
-      maxId = length ids - 1
-      toActionCases = map (uncurry mkToAction) ids
-      fromActionCases = map (uncurry mkFromAction) ids <> [catchAll]
-      catchAll = do
-        bad <- newName "bad"
-        match
-          (varP bad)
-          (normalB [|error $ "Library error: No action for action ID " <> show $(varE bad)|])
-          []
-
-      ctorInfo = mkCtorInfo dt tyVarName
+  let ctorInfo = mkCtorInfo dt tyVarName
       actionMapName = mkName (nameBase n <> "Map")
 
   actionlike <-
@@ -175,12 +163,6 @@ makeAction n = do
                 []
             ]
       , pragInlD 'actionSources Inline FunLike AllPhases
-      , valD (varP 'toActionId) (normalB (lamCaseE toActionCases)) []
-      , pragInlD 'toActionId Inline FunLike AllPhases
-      , valD (varP 'fromActionId) (normalB (lamCaseE fromActionCases)) []
-      , pragInlD 'fromActionId Inline FunLike AllPhases
-      , valD (varP 'maxActionId) (normalB (lift maxId)) []
-      , pragInlD 'maxActionId Inline FunLike AllPhases
       ]
 
   nfDataActionMap <- instanceD (cxt []) (conT ''NFData `appT` (conT ''ActionMap2 `appT` conT n)) []
@@ -218,14 +200,9 @@ makeAction n = do
             <> " has "
             <> show (length bad)
 
-  mkToAction i info =
-    match
-      [p|SomeAction $(conP info.constructorName [])|]
-      (normalB (lift i))
-      []
+-- TODO: reintroduce validations and scrubbing
 
-  mkFromAction i info =
-    match
-      (litP (IntegerL i))
-      (normalB [|SomeAction $(conE info.constructorName)|])
-      []
+-- -  -- Make sure that input sources are reasonable and will not cause div by zero errors.
+-- -  cleanSource = \case
+-- -    SourceStick1D a sens (Deadzone dz) -> SourceStick1D a sens (Deadzone (clamp (-0.99, 0.99) dz))
+-- -    SourceStick x y sens (Deadzone dz) -> SourceStick x y sens (Deadzone (clamp (-0.99, 0.99) dz))

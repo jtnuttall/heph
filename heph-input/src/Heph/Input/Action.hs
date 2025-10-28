@@ -1,6 +1,5 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE OverloadedLists #-}
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE StrictData #-}
@@ -9,42 +8,6 @@
 {-# LANGUAGE ViewPatterns #-}
 {-# LANGUAGE NoFieldSelectors #-}
 
--- |
--- High-performance, type-safe input action system for games and interactive applications.
---
--- This module provides the core abstractions for mapping low-level input events
--- (keyboard, mouse, gamepad) to high-level application actions with compile-time
--- validation and zero-cost runtime abstractions.
---
--- = Core Concepts
---
--- [Actions] Application-defined semantic input concepts (Jump, Move, Fire, etc.)
--- [Input Sources] Hardware input primitives (keys, buttons, analog sticks)
--- [Action Mappings] Validated bindings between actions and their input sources
--- [Input Aggregation] Combining multiple input sources into single action values
---
--- = Type Safety
---
--- The system uses phantom types, type families, and runtime reflection to ensure:
---
--- * Actions can only be bound to compatible input sources
--- * Input values have the correct type for their action
--- * Type compatibility verified through compile-time phantom types and runtime 'Type.Reflection'
--- * Efficient type erasure with 'unsafeCoerce' after reflection-based validation
---
--- = Performance
---
--- Key performance features:
---
--- * Bounded arrays for O(1) input lookups
--- * Double-buffered input state for efficient delta computation
--- * INLINE pragmas on hot path functions
--- * Carefully controlled use of 'unsafeCoerce' for type erasure
---
--- = Memory Layout
---
--- Input state is stored in contiguous bounded arrays indexed by 'Enum' instances,
--- providing cache-efficient access patterns and predictable memory usage.
 module Heph.Input.Action (
   ActionMapping (..),
   (~>),
@@ -64,7 +27,6 @@ module Heph.Input.Action (
   pattern MouseMotion,
   pattern DPad,
   pattern AsAxis,
-  SomeAction (..),
   Actionlike (..),
   AggregateInput (..),
   ButtonState (..),
@@ -76,78 +38,37 @@ module Heph.Input.Action (
 )
 where
 
-import Data.Constraint.Extras
-import Data.Dependent.Map (DMap)
-import Data.Dependent.Map qualified as DMap
-import Data.Dependent.Sum (DSum (..))
 import Heph.Input.Buffer
-import Heph.Input.Internal.BoundedArray.Boxed qualified as BA
-import Heph.Input.Internal.BoundedArray.Boxed.Mutable qualified as MBA
 import Heph.Input.Internal.BoundedArray.Primitive.Mutable qualified as MPA
 import Heph.Input.Types.Controller
 import Heph.Input.Types.Mouse
 import Heph.Input.Types.Scancode
 
 import Control.DeepSeq
-import Control.Exception (evaluate)
-import Control.Monad.Catch
 import Control.Monad.IO.Class
 import Data.Bifunctor
-import Data.Coerce (coerce)
 import Data.Foldable
-import Data.Function
 import Data.Kind
 import Data.Monoid (Any (..))
-import Data.Ord (clamp, comparing)
+import Data.Ord (comparing)
 import Data.Primitive.SmallArray
 import Data.Set (Set)
 import Data.Set qualified as S
 import Data.Traversable
-import Data.Type.Equality
 import Foreign (fromBool)
 import GHC.Generics
-import GHC.Stack (HasCallStack)
 import Linear.Metric (quadrance)
 import Linear.V2
 import Type.Reflection
-import Unsafe.Coerce (unsafeCoerce)
 
 data ActionSource = Button | Axis1D | Axis2D
   deriving (Generic, Show, Eq, Ord, Enum, Bounded)
-
-data SActionSource (src :: ActionSource) where
-  SButton :: SActionSource Button
-  SAxis1D :: SActionSource Axis1D
-  SAxis2D :: SActionSource Axis2D
-
-class KnownActionSource (a :: ActionSource) where
-  actionSourceSing :: proxy a -> SActionSource a
-
-instance KnownActionSource Button where
-  actionSourceSing _ = SButton
-  {-# INLINE actionSourceSing #-}
-
-instance KnownActionSource Axis1D where
-  actionSourceSing _ = SAxis1D
-  {-# INLINE actionSourceSing #-}
-
-instance KnownActionSource Axis2D where
-  actionSourceSing _ = SAxis2D
-  {-# INLINE actionSourceSing #-}
-
-instance NFData ActionSource
 
 newtype Sensitivity = Sensitivity Float
   deriving (NFData, Show, Eq, Ord)
 
 newtype Deadzone = Deadzone Float
   deriving (NFData, Show, Eq, Ord)
-
-data SomeAction (f :: ActionSource -> Type) where
-  SomeAction :: (Typeable f, (Typeable (f src)), KnownActionSource src) => f src -> SomeAction f
-
-instance Show (SomeAction f) where
-  show (SomeAction act) = show (typeOf act)
 
 -- | A typeclass that enables a GADT to be used as a set of actions. It provides
 -- a dense, zero-based mapping between action constructors and integer IDs.
@@ -187,37 +108,16 @@ class (Typeable act, NFData (ActionMap2 act)) => Actionlike (act :: ActionSource
   compileActions :: [ActionMapping act] -> ActionMap2 act
 
   actionSources
-    :: (KnownActionSource src, Typeable src)
+    :: (Typeable src)
     => ActionMap2 act
     -> act src
     -> SmallArray (InputSource src)
-
-  toActionId :: SomeAction act -> Int
-  fromActionId :: Int -> SomeAction act
-  maxActionId :: Int
 
 -- compileActionsIO :: MonadIO m => Actionlike act => [ActionMapping act] -> m (ActionMap2 act)
 -- compileActionsIO mappings = do
 --   let !m = compileActions mappings
 --   evaluate (rnf m)
 --   pure m
-
-maxActionIdOf :: forall act src. (Actionlike act) => act src -> Int
-maxActionIdOf _ = maxActionId @act
-
-newtype ActionAsEnum act = ActionAsEnum act
-
-instance (Actionlike act) => Enum (ActionAsEnum (SomeAction act)) where
-  toEnum = ActionAsEnum . fromActionId
-  {-# INLINE toEnum #-}
-  fromEnum (ActionAsEnum act) = toActionId act
-  {-# INLINE fromEnum #-}
-
-instance (Actionlike act) => Bounded (ActionAsEnum (SomeAction act)) where
-  minBound = ActionAsEnum $ fromActionId 0
-  {-# INLINE minBound #-}
-  maxBound = ActionAsEnum $ fromActionId (maxActionId @act)
-  {-# INLINE maxBound #-}
 
 data InputSource (k :: ActionSource) where
   SourceButton :: InputButton -> InputSource Button
@@ -344,92 +244,19 @@ unAxis :: InputSource Axis1D -> Maybe (InputSource Button)
 unAxis (SourceButtonAsAxis btn) = Just (SourceButton btn)
 unAxis _ = Nothing
 
-data SomeInputSource where
-  SomeInputSource
-    :: (Typeable src, KnownActionSource src, HasActionState src) => InputSource src -> SomeInputSource
-
-instance NFData SomeInputSource where
-  rnf (SomeInputSource !s) = case actionSourceSing s of
-    SButton -> ()
-    SAxis1D -> ()
-    SAxis2D -> ()
-
-instance Eq SomeInputSource where
-  (SomeInputSource s1) == (SomeInputSource s2) =
-    case testEquality (typeOf s1) (typeOf s2) of
-      Just Refl -> s1 == s2
-      Nothing -> False
-
-instance Ord SomeInputSource where
-  compare (SomeInputSource s1) (SomeInputSource s2) =
-    case testEquality (typeOf s1) (typeOf s2) of
-      Just Refl -> compare s1 s2
-      Nothing -> compare (someTypeRep s1) (someTypeRep s2)
-
 -- TODO: User should be able to determine ordering in whichever way they please, which means that
 -- I will need to move away from 'Set'. Since n is small (even large games unlikely to have more
 -- than 4-5 actions per mapping), and we compile to an efficient form, it should be acceptable to
 -- do a quadratic insertion on a linked list.
 data ActionMapping act where
   ActionMapping
-    :: (Typeable src, KnownActionSource src, HasActionState src)
+    :: (Typeable src, HasActionState src)
     => act src
     -> Set (InputSource src)
     -> ActionMapping act
 
--- | This is purely defensive. If the library is used as intended, with 'makeAction',
--- you should never see either of these.
-data ActionMapException where
-  InvalidActionMapping :: (Actionlike act) => ActionMapping act -> ActionMapException
-  InvalidActionMaxBound :: (Actionlike act) => SomeAction act -> ActionMapException
-
-instance Show ActionMapException where
-  show = \case
-    InvalidActionMapping (ActionMapping act src) ->
-      unlines
-        [ "InvalidActionMapping: Actionlike instance " <> show (toActionId asEnum) <> " is invalid!"
-        , "fromActionId (toActionId " <> show (toActionId asEnum) <> ") = " <> show (toActionId roundTrip)
-        , ""
-        , "Action type: " <> show (typeOf act)
-        , "InputSource type: " <> show (typeOf src)
-        ]
-     where
-      (asEnum, roundTrip) = actionRoundTrip act
-    InvalidActionMaxBound (SomeAction act) ->
-      unlines
-        [ "InvalidActionMaxBound: Actionlike " <> show (typeRepTyCon (typeOf act)) <> " is invalid!"
-        , "maxActionId = " <> show (maxActionIdOf act)
-        , "toActionId = " <> show (toActionId (SomeAction act))
-        , "Action type: " <> show (typeOf act)
-        ]
-
-instance Exception ActionMapException
-
-assertValidMapping
-  :: forall act m. (HasCallStack, MonadThrow m, Actionlike act) => ActionMapping act -> m ()
-assertValidMapping (ActionMapping act src)
-  | not isValidMapping = throwM $ InvalidActionMapping (ActionMapping act src)
-  | toActionId (SomeAction act) > maxActionId @act = throwM $ InvalidActionMaxBound (SomeAction act)
-  | otherwise = pure ()
- where
-  isValidMapping =
-    case actionRoundTrip act of
-      (_, SomeAction act') ->
-        case testEquality (typeOf act) (typeOf act') of
-          Just Refl
-            | toActionId (SomeAction act) == toActionId (SomeAction act') -> True
-            | otherwise -> False
-          Nothing -> False
-
-actionRoundTrip
-  :: (Actionlike act, KnownActionSource src, Typeable src) => act src -> (SomeAction act, SomeAction act)
-actionRoundTrip act =
-  let asEnum = ActionAsEnum (SomeAction act)
-      ActionAsEnum roundTrip = toEnum (fromEnum asEnum)
-   in (coerce asEnum, roundTrip)
-
 (~>)
-  :: (KnownActionSource src, HasActionState src)
+  :: (HasActionState src)
   => act src
   -> [InputSource src]
   -> ActionMapping act
@@ -440,121 +267,6 @@ infixr 8 ~>
 -- inlining the convenience wrapper leads to code bloat from Set method inlines
 -- with no real benefit.
 {-# NOINLINE (~>) #-}
-
--- | A compiled, immutable map from actions to their bound 'InputSource's.
---
--- The 'ActionMap' is the runtime representation of the user-defined action
--- mappings. It is optimized for high-performance lookups, using a bounded
--- array internally. It is constructed once via 'newActionMap' from a list of
--- 'ActionMapping's and is treated as immutable thereafter.
-data ActionMap act where
-  -- | For maximum performance, this structure stores its input sources in a
-  -- type-erased format using 'unsafeCoerce'. This is a deliberate design
-  -- choice that is guaranteed to be safe by the surrounding API.
-  --
-  -- The safety invariant is established by the 'ActionMapping' constructor and
-  -- the 'Actionlike' instance:
-  --
-  -- - The 'ActionMapping' ensures an @act src@ can only be mapped to sources of
-  --   type @InputSource src@.
-  -- - The 'Actionlike' instance guarantees a valid index for the lookup.
-  -- - The 'readActions' function then safely coerces the sources back to their
-  --   correct type, restoring type information that was proven correct when
-  --   the map was created.
-  --
-  -- NOTE: I benchmarked several possible implementations. This implementation
-  -- is faster than alternatives like safe casting using 'Data.Typeable.cast'
-  -- by at least an order of magnitude, and averts any need to pull in singletons
-  -- or implement custom type-level structures to construct a sound structure
-  -- with similar performance.
-  --
-  -- As an added benefit, this representation seems to have really good L1/L2 cache
-  -- locality on query.
-  VeryUnsafeNoGoodActionMap
-    :: BA.BoundedArray (ActionAsEnum (SomeAction act)) (SmallArray SomeInputSource)
-    -> ActionMap act
-
-instance NFData (ActionMap act) where
-  rnf (VeryUnsafeNoGoodActionMap mp) = rnf mp
-
-readActions
-  :: (Actionlike act, KnownActionSource src, Typeable src)
-  => ActionMap act
-  -> act src
-  -> SmallArray (InputSource src)
-readActions (VeryUnsafeNoGoodActionMap mp) act =
-  (\(SomeInputSource s) -> unsafeCoerce s) <$> BA.index mp (ActionAsEnum (SomeAction act))
-{-# INLINE readActions #-}
-
--- nam2 :: (Actionlike act) => [ActionMapping act] ->
-
--- | Create a compiled action map from a list of action mappings.
---
--- This is the primary way to construct an 'ActionMap'. It validates all mappings,
--- aggregates multiple bindings to the same action, and compiles them into an
--- efficient lookup structure.
---
--- This function should be called once during initialization. The resulting
--- 'ActionMap' is immutable and can be reused across frames.
---
--- ==== __Examples__
---
--- @
--- data MyAction (src :: 'ActionSource') where
---   Jump :: MyAction 'Button'
---   Move :: MyAction 'Axis2D'
---
--- 'makeAction' ''MyAction
---
--- actionMap :: 'ActionMap' MyAction
--- actionMap = newActionMap
---   [ Jump '~>' ['Key' ScancodeSpace, 'GamepadButton' ControllerButtonA]
---   , Move '~>' ['LeftStick' 1.0 0.15]
---   ]
--- @
---
--- ==== __Validation__
---
--- The function validates that:
---
--- * All action IDs are within valid range
--- * The 'Actionlike' instance satisfies round-trip laws
--- * Sensitivity and deadzone values are clamped to safe ranges
---
--- Invalid configurations will result in runtime exceptions during construction.
-newActionMap :: (HasCallStack, Actionlike act) => [ActionMapping act] -> ActionMap act
-newActionMap mbEmptyActs = VeryUnsafeNoGoodActionMap $ BA.runArray do
-  actionMap <- MBA.new []
-  for_ @[] [minBound .. maxBound] \i -> do
-    let !mapping = mappings `BA.index` i
-        !arr = smallArrayFromList . toList $ mapping
-    MBA.write actionMap i arr
-  pure $! actionMap
- where
-  -- Scrub bad inputs.
-  acts =
-    mbEmptyActs
-      & filter (\(ActionMapping _ src) -> not (null src))
-      & map (\(ActionMapping act src) -> ActionMapping act (S.map cleanSource src))
-
-  -- Make sure that input sources are reasonable and will not cause div by zero errors.
-  cleanSource = \case
-    SourceStick1D a sens (Deadzone dz) -> SourceStick1D a sens (Deadzone (clamp (-0.99, 0.99) dz))
-    SourceStick x y sens (Deadzone dz) -> SourceStick x y sens (Deadzone (clamp (-0.99, 0.99) dz))
-    src -> src
-
-  -- A bounded array is essentially a highly specialized hashmap with a perfect
-  -- hashing function defined by fromEnum and an exact capacity, which means we
-  -- should be able to loop quite efficiently here to "compile" the input map.
-  !mappings = BA.runArray do
-    mp <- MBA.new mempty
-    for_ acts \(ActionMapping act src) -> do
-      assertValidMapping (ActionMapping act src)
-      let !i = ActionAsEnum (SomeAction act)
-      !old <- MBA.read mp i
-      let !new = old `S.union` S.map SomeInputSource src
-      MBA.write mp i new
-    pure $! mp
 
 data ButtonState = JustPressed | JustReleased | Held | NotPressed
   deriving (Generic, Show, Eq, Ord, Enum, Bounded)
@@ -659,7 +371,7 @@ instance AggregateInput Axis2D where
 -- This function is designed for frequent use in game loops and is heavily
 -- optimized with INLINE pragmas and strict evaluation.
 absoluteInput
-  :: (MonadIO m, KnownActionSource src, Actionlike act, HasActionState src)
+  :: (MonadIO m, Actionlike act, HasActionState src)
   => BufferedInput
   -> ActionMap2 act
   -> act src
@@ -698,7 +410,7 @@ absoluteInput s mp act = do
 -- For delta queries to work correctly, you must call 'prepareBufferedInput'
 -- at the start of each frame to swap the input buffers.
 deltaInput
-  :: (MonadIO m, KnownActionSource src, Actionlike act, HasActionState src)
+  :: (MonadIO m, Actionlike act, HasActionState src)
   => BufferedInput
   -> ActionMap2 act
   -> act src

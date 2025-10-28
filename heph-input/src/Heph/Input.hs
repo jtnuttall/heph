@@ -88,7 +88,6 @@ import Heph.Input.Action as Action (
   HasActionState (..),
   InputSource (..),
   Sensitivity (..),
-  SomeAction (..),
   absoluteInput,
   deltaInput,
   (~>),
