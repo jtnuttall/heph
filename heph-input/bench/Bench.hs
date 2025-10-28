@@ -195,25 +195,25 @@ actionMapBenchmarks =
     [ bgroup
         "Small Game (10 actions)"
         [ bench "Single binding per action" $
-            nf newActionMap smallGameSingleBindings
+            nf compileActions smallGameSingleBindings
         , bench "Multiple bindings (2 per action)" $
-            nf newActionMap smallGameMultipleBindings
+            nf compileActions smallGameMultipleBindings
         , bench "Many bindings (5 per action)" $
-            nf newActionMap smallGameManyBindings
+            nf compileActions smallGameManyBindings
         ]
     , bgroup
         "Medium Game (20 actions)"
         [ bench "Single binding per action" $
-            nf newActionMap mediumGameSingleBindings
+            nf compileActions mediumGameSingleBindings
         , bench "Multiple bindings (2 per action)" $
-            nf newActionMap mediumGameMultipleBindings
+            nf compileActions mediumGameMultipleBindings
         ]
     , bgroup
         "Large Game (100 actions)"
         [ bench "Single binding per action" $
-            nf newActionMap largeGameSingleBindings
+            nf compileActions largeGameSingleBindings
         , bench "Multiple bindings (2 per action)" $
-            nf newActionMap largeGameMultipleBindings
+            nf compileActions largeGameMultipleBindings
         ]
     ]
  where
@@ -725,7 +725,7 @@ inputQueryBenchmarks =
     pure (buf, mp)
    where
     smallGameSingleBindings =
-      newActionMap @SmallGame
+      compileActions @SmallGame
         [ SGJump ~> [Key ScancodeSpace]
         , SGCrouch ~> [Key ScancodeLCtrl]
         , SGSprint ~> [Key ScancodeLShift]
@@ -760,7 +760,7 @@ inputQueryBenchmarks =
     pure (buf, mp)
    where
     smallGameMultipleBindings =
-      newActionMap @SmallGame
+      compileActions @SmallGame
         [ SGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
         , SGCrouch ~> [Key ScancodeLCtrl, GamepadButton ControllerButtonB]
         , SGSprint ~> [Key ScancodeLShift, GamepadButton ControllerButtonLeftStick]
@@ -798,7 +798,7 @@ inputQueryBenchmarks =
     pure (buf, mp)
    where
     smallGameManyBindings =
-      newActionMap @SmallGame
+      compileActions @SmallGame
         [ SGJump
             ~> [ Key ScancodeSpace
                , GamepadButton ControllerButtonA
@@ -890,7 +890,7 @@ inputQueryBenchmarks =
     pure (buf, mp)
    where
     mediumGameMultipleBindings =
-      newActionMap @MediumGame
+      compileActions @MediumGame
         [ MGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
         , MGCrouch ~> [Key ScancodeLCtrl, GamepadButton ControllerButtonB]
         , MGSprint ~> [Key ScancodeLShift, GamepadButton ControllerButtonLeftStick]
@@ -992,7 +992,7 @@ aggregationBenchmarks =
     buf <- Buf.newBufferedInput
     -- Leave all buttons as False (default)
     let mp =
-          newActionMap @SmallGame
+          compileActions @SmallGame
             [SGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA, Key ScancodeUp]]
     pure (buf, mp)
 
@@ -1001,7 +1001,7 @@ aggregationBenchmarks =
     -- Activate 1 out of 3 bindings
     MPA.write buf.thisInput.controllerButtons ControllerButtonA True
     let mp =
-          newActionMap @SmallGame
+          compileActions @SmallGame
             [SGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA, Key ScancodeUp]]
     pure (buf, mp)
 
@@ -1012,7 +1012,7 @@ aggregationBenchmarks =
     MPA.write buf.thisInput.controllerButtons ControllerButtonA True
     MPA.write buf.thisInput.kbScancodes ScancodeUp True
     let mp =
-          newActionMap @SmallGame
+          compileActions @SmallGame
             [SGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA, Key ScancodeUp]]
     pure (buf, mp)
 
@@ -1026,7 +1026,7 @@ aggregationBenchmarks =
     MPA.write buf.thisInput.controllerAxes ControllerAxisLeftX 0.5
     MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY 0.3
     let mp =
-          newActionMap @SmallGame
+          compileActions @SmallGame
             [ SGMove ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
             ]
     pure (buf, mp)
@@ -1038,7 +1038,7 @@ aggregationBenchmarks =
     MPA.write buf.thisInput.controllerAxes ControllerAxisLeftX 0.9
     MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY 0.8
     let mp =
-          newActionMap @SmallGame
+          compileActions @SmallGame
             [ SGMove ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
             ]
     pure (buf, mp)
@@ -1050,7 +1050,7 @@ aggregationBenchmarks =
     MPA.write buf.thisInput.controllerAxes ControllerAxisLeftX 0.7071
     MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY 0.0
     let mp =
-          newActionMap @SmallGame
+          compileActions @SmallGame
             [ SGMove ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
             ]
     pure (buf, mp)
@@ -1060,21 +1060,21 @@ aggregationBenchmarks =
     buf <- Buf.newBufferedInput
     -- 0.12 < 0.15 deadzone -> should become 0
     MPA.write buf.thisInput.controllerAxes ControllerAxisTriggerRight 0.12
-    let mp = newActionMap @SmallGame [SGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
+    let mp = compileActions @SmallGame [SGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
     pure (buf, mp)
 
   setupAboveDeadzone = do
     buf <- Buf.newBufferedInput
     -- 0.75 > 0.15 deadzone -> normalize to (0.75 - 0.15) / (1.0 - 0.15) = 0.706
     MPA.write buf.thisInput.controllerAxes ControllerAxisTriggerRight 0.75
-    let mp = newActionMap @SmallGame [SGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
+    let mp = compileActions @SmallGame [SGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
     pure (buf, mp)
 
   setupAtDeadzoneEdge = do
     buf <- Buf.newBufferedInput
     -- Exactly at deadzone edge
     MPA.write buf.thisInput.controllerAxes ControllerAxisTriggerRight 0.15
-    let mp = newActionMap @SmallGame [SGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
+    let mp = compileActions @SmallGame [SGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
     pure (buf, mp)
 
   -- Sensitivity tests
@@ -1083,7 +1083,7 @@ aggregationBenchmarks =
     -- Full mouse movement with 2x sensitivity
     MPA.write buf.thisInput.mouseAxes MouseX 50.0
     MPA.write buf.thisInput.mouseAxes MouseY (-30.0)
-    let mp = newActionMap @SmallGame [SGLook ~> [MouseMotion 2.0]]
+    let mp = compileActions @SmallGame [SGLook ~> [MouseMotion 2.0]]
     pure (buf, mp)
 
   setupPartialDeflection = do
@@ -1091,7 +1091,7 @@ aggregationBenchmarks =
     -- Partial mouse movement with 0.5x sensitivity
     MPA.write buf.thisInput.mouseAxes MouseX 10.0
     MPA.write buf.thisInput.mouseAxes MouseY (-5.0)
-    let mp = newActionMap @SmallGame [SGLook ~> [MouseMotion 0.5]]
+    let mp = compileActions @SmallGame [SGLook ~> [MouseMotion 0.5]]
     pure (buf, mp)
 
 -- ============================================================================
@@ -1125,7 +1125,7 @@ frameManagementBenchmarks =
   setupFrame = do
     buf <- Buf.newBufferedInput
     let mp =
-          newActionMap @SmallGame
+          compileActions @SmallGame
             [ SGJump ~> [Key ScancodeSpace]
             , SGMove ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD)]
             , SGLook ~> [MouseMotion 1.0]
