@@ -78,7 +78,6 @@ module Heph.Input (
 
 import Heph.Input.Action as Action (
   AbsoluteInput,
-  ActionMap,
   ActionMapping (..),
   ActionSource (..),
   Actionlike (..),
@@ -92,7 +91,6 @@ import Heph.Input.Action as Action (
   SomeAction (..),
   absoluteInput,
   deltaInput,
-  newActionMap,
   (~>),
   pattern AsAxis,
   pattern DPad,

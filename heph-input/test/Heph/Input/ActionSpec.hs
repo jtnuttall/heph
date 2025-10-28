@@ -26,28 +26,28 @@ data GameAction (src :: ActionSource) where
 makeAction ''GameAction
 
 -- ActionMap unit tests
-unit_newActionMapEmpty :: Assertion
-unit_newActionMapEmpty = do
-  let actionMap = newActionMap @GameAction []
-      sources = readActions actionMap Jump
+unit_compileActionsEmpty :: Assertion
+unit_compileActionsEmpty = do
+  let actionMap = compileActions @GameAction []
+      sources = actionSources actionMap Jump
   SA.sizeofSmallArray sources @?= 0
 
-unit_newActionMapSingleMapping :: Assertion
-unit_newActionMapSingleMapping = do
-  let actionMap = newActionMap [Jump ~> [Key ScancodeSpace]]
-      sources = readActions actionMap Jump
+unit_compileActionsSingleMapping :: Assertion
+unit_compileActionsSingleMapping = do
+  let actionMap = compileActions [Jump ~> [Key ScancodeSpace]]
+      sources = actionSources actionMap Jump
   SA.sizeofSmallArray sources @?= 1
 
-unit_newActionMapMultipleSources :: Assertion
-unit_newActionMapMultipleSources = do
-  let actionMap = newActionMap [Jump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]]
-      sources = readActions actionMap Jump
+unit_compileActionsMultipleSources :: Assertion
+unit_compileActionsMultipleSources = do
+  let actionMap = compileActions [Jump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]]
+      sources = actionSources actionMap Jump
   SA.sizeofSmallArray sources @?= 2
 
-unit_newActionMapFiltersEmptySources :: Assertion
-unit_newActionMapFiltersEmptySources = do
-  let actionMap = newActionMap [Jump ~> []]
-      sources = readActions actionMap Jump
+unit_compileActionsFiltersEmptySources :: Assertion
+unit_compileActionsFiltersEmptySources = do
+  let actionMap = compileActions [Jump ~> []]
+      sources = actionSources actionMap Jump
   SA.sizeofSmallArray sources @?= 0
 
 -- Aggregation unit tests
@@ -111,7 +111,7 @@ hprop_actionMappingPreservesType :: Property
 hprop_actionMappingPreservesType = property $ do
   -- Button action can only be mapped to button sources
   let mapping = Jump ~> [Key ScancodeSpace]
-      actionMap = newActionMap [mapping]
-      sources = readActions actionMap Jump
+      actionMap = compileActions [mapping]
+      sources = actionSources actionMap Jump
 
   SA.sizeofSmallArray sources === 1

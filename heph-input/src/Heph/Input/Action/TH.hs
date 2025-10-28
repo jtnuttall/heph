@@ -11,6 +11,7 @@ module Heph.Input.Action.TH (makeAction) where
 
 import Heph.Input.Action
 
+import Control.DeepSeq
 import Control.Monad
 import Data.Constraint.Extras.TH (deriveArgDict)
 import Data.Dependent.Map (DMap)
@@ -20,6 +21,7 @@ import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
 import Data.GADT.Show.TH (deriveGShow)
 import Data.Primitive.SmallArray
 import Data.Set (Set)
+import GHC.Generics
 import Language.Haskell.TH
 import Language.Haskell.TH.Datatype
 import Language.Haskell.TH.Syntax
@@ -107,7 +109,7 @@ makeAction n = do
                   ctorInfo
               )
           ]
-          []
+          [derivClause Nothing [conT ''Generic]]
       , do
           mappings <- newName "mappings"
           funD
@@ -181,12 +183,14 @@ makeAction n = do
       , pragInlD 'maxActionId Inline FunLike AllPhases
       ]
 
+  nfDataActionMap <- instanceD (cxt []) (conT ''NFData `appT` (conT ''ActionMap2 `appT` conT n)) []
+
   gCompare <- deriveGCompare n
   gEq <- deriveGEq n
   gShow <- deriveGShow n
   argDict <- deriveArgDict n
 
-  pure $ concat [[actionlike], gCompare, gEq, gShow, argDict]
+  pure $ concat [[actionlike, nfDataActionMap], gCompare, gEq, gShow, argDict]
  where
   validVariants = [Datatype, DataInstance]
 

@@ -44,10 +44,10 @@ deriving via
     NoThunks InputBuffer
 
 deriving via
-  InspectHeap (ActionMap act)
+  InspectHeap (ActionMap2 act)
   instance
-    (Typeable act)
-    => NoThunks (ActionMap act)
+    (Actionlike act)
+    => NoThunks (ActionMap2 act)
 
 deriving via
   InspectHeap ButtonState
@@ -117,15 +117,15 @@ unit_readFromBuffer_noThunks = do
   assertNoThunks "read value" val
 
 -- Test that ActionMap creation doesn't introduce thunks
-unit_newActionMap_scancode_noThunks :: Assertion
-unit_newActionMap_scancode_noThunks = do
-  let !actionMap = newActionMap [TestButton ~> [Key ScancodeSpace]]
+unit_compileActions_scancode_noThunks :: Assertion
+unit_compileActions_scancode_noThunks = do
+  let !actionMap = compileActions [TestButton ~> [Key ScancodeSpace]]
   assertNoThunks "action map" actionMap
 
-unit_newActionMap_dpad_noThunks :: Assertion
-unit_newActionMap_dpad_noThunks = do
+unit_compileActions_dpad_noThunks :: Assertion
+unit_compileActions_dpad_noThunks = do
   let !actionMap =
-        newActionMap
+        compileActions
           [ TestAxis2D
               ~> [ DPad
                     (Key ScancodeA)
@@ -136,24 +136,24 @@ unit_newActionMap_dpad_noThunks = do
           ]
   assertNoThunks "action map" actionMap
 
-unit_newActionMap_multibutton_noThunks :: Assertion
-unit_newActionMap_multibutton_noThunks = do
+unit_compileActions_multibutton_noThunks :: Assertion
+unit_compileActions_multibutton_noThunks = do
   let !actionMap =
-        newActionMap
+        compileActions
           [ TestButton ~> [Key ScancodeSpace]
           , TestButton2 ~> [Key ScancodeA]
           ]
   assertNoThunks "action map" actionMap
 
-unit_newActionMap_multimap_noThunks :: Assertion
-unit_newActionMap_multimap_noThunks = do
-  let !actionMap = newActionMap [TestButton ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]]
+unit_compileActions_multimap_noThunks :: Assertion
+unit_compileActions_multimap_noThunks = do
+  let !actionMap = compileActions [TestButton ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]]
   assertNoThunks "action map" actionMap
 
-unit_newActionMap_multimap_multiinput_noThunks :: Assertion
-unit_newActionMap_multimap_multiinput_noThunks = do
+unit_compileActions_multimap_multiinput_noThunks :: Assertion
+unit_compileActions_multimap_multiinput_noThunks = do
   let !actionMap =
-        newActionMap
+        compileActions
           [ TestButton ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
           , TestAxis2D
               ~> [ DPad
@@ -169,7 +169,7 @@ unit_newActionMap_multimap_multiinput_noThunks = do
 unit_absoluteInput_noThunks :: Assertion
 unit_absoluteInput_noThunks = do
   buffered <- newBufferedInput
-  let actionMap = newActionMap [TestButton ~> [Key ScancodeSpace]]
+  let actionMap = compileActions [TestButton ~> [Key ScancodeSpace]]
 
   MPA.write buffered.thisInput.kbScancodes ScancodeSpace True
 
@@ -181,7 +181,7 @@ unit_absoluteInput_noThunks = do
 unit_deltaInput_noThunks :: Assertion
 unit_deltaInput_noThunks = do
   buffered <- newBufferedInput
-  let actionMap = newActionMap [TestButton ~> [Key ScancodeSpace]]
+  let actionMap = compileActions [TestButton ~> [Key ScancodeSpace]]
 
   MPA.write buffered.thisInput.kbScancodes ScancodeSpace True
 
@@ -196,7 +196,7 @@ unit_fullWorkflow_noThunks = do
   assertNoThunks "initial" buffered
 
   let !actionMap =
-        newActionMap
+        compileActions
           [ TestButton ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
           , TestAxis2D
               ~> [ DPad
@@ -255,7 +255,7 @@ unit_rnf_actionMap_noThunks = do
   assertNoThunks "axis value" axisValue'
 
   let actionMap =
-        newActionMap
+        compileActions
           [ TestButton ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
           , TestAxis2D
               ~> [ DPad

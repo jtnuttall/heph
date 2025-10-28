@@ -32,7 +32,7 @@ unit_fullButtonWorkflow = do
   buffered <- newBufferedInput
 
   -- Create action map
-  let actionMap = newActionMap [Jump ~> [Key ScancodeSpace]]
+  let actionMap = compileActions [Jump ~> [Key ScancodeSpace]]
 
   -- Simulate pressing space
   MPA.write buffered.thisInput.kbScancodes ScancodeSpace True
@@ -48,7 +48,7 @@ unit_fullButtonWorkflow = do
 unit_fullButtonReleaseWorkflow :: Assertion
 unit_fullButtonReleaseWorkflow = do
   buffered <- newBufferedInput
-  let actionMap = newActionMap [Jump ~> [Key ScancodeSpace]]
+  let actionMap = compileActions [Jump ~> [Key ScancodeSpace]]
 
   -- Press in last frame
   MPA.write buffered.lastInput.kbScancodes ScancodeSpace True
@@ -62,7 +62,7 @@ unit_fullButtonReleaseWorkflow = do
 unit_fullButtonHeldWorkflow :: Assertion
 unit_fullButtonHeldWorkflow = do
   buffered <- newBufferedInput
-  let actionMap = newActionMap [Jump ~> [Key ScancodeSpace]]
+  let actionMap = compileActions [Jump ~> [Key ScancodeSpace]]
 
   -- Held in both frames
   MPA.write buffered.lastInput.kbScancodes ScancodeSpace True
@@ -74,7 +74,7 @@ unit_fullButtonHeldWorkflow = do
 unit_multipleSourcesAggregation :: Assertion
 unit_multipleSourcesAggregation = do
   buffered <- newBufferedInput
-  let actionMap = newActionMap [Jump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]]
+  let actionMap = compileActions [Jump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]]
 
   -- Only one source pressed
   MPA.write buffered.thisInput.kbScancodes ScancodeSpace True
@@ -92,7 +92,7 @@ unit_axis2DWorkflow :: Assertion
 unit_axis2DWorkflow = do
   buffered <- newBufferedInput
   let actionMap =
-        newActionMap
+        compileActions
           [ Move
               ~> [ DPad
                     (Key ScancodeA)
@@ -113,7 +113,7 @@ unit_axis2DWorkflowOpposingInputs :: Assertion
 unit_axis2DWorkflowOpposingInputs = do
   buffered <- newBufferedInput
   let actionMap =
-        newActionMap
+        compileActions
           [ Move
               ~> [ DPad
                     (Key ScancodeA)
@@ -133,7 +133,7 @@ unit_axis2DWorkflowOpposingInputs = do
 unit_axis1DMouseWorkflow :: Assertion
 unit_axis1DMouseWorkflow = do
   buffered <- newBufferedInput
-  let actionMap = newActionMap [Look ~> [MouseAxis1D MouseX 1.0]]
+  let actionMap = compileActions [Look ~> [MouseAxis1D MouseX 1.0]]
 
   -- Set mouse X movement
   MPA.write buffered.thisInput.mouseAxes MouseX 10.0
@@ -144,7 +144,7 @@ unit_axis1DMouseWorkflow = do
 unit_prepareBufferedInputWorkflow :: Assertion
 unit_prepareBufferedInputWorkflow = do
   buffered <- newBufferedInput
-  let actionMap = newActionMap [Jump ~> [Key ScancodeSpace]]
+  let actionMap = compileActions [Jump ~> [Key ScancodeSpace]]
 
   -- Press space in first frame
   MPA.write buffered.thisInput.kbScancodes ScancodeSpace True

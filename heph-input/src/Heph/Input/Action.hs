@@ -64,9 +64,6 @@ module Heph.Input.Action (
   pattern MouseMotion,
   pattern DPad,
   pattern AsAxis,
-  ActionMap,
-  newActionMap,
-  readActions,
   SomeAction (..),
   Actionlike (..),
   AggregateInput (..),
@@ -178,7 +175,7 @@ instance Show (SomeAction f) where
 -- @
 --
 -- TODO: Most of this is outmoded. Need to update once refactor is done.
-class (Typeable act) => Actionlike (act :: ActionSource -> Type) where
+class (Typeable act, NFData (ActionMap2 act)) => Actionlike (act :: ActionSource -> Type) where
   -- TODO: Removing unsafe coerce, move to case-of-known-constructor
   data ActionMap2 act
 
@@ -664,11 +661,11 @@ instance AggregateInput Axis2D where
 absoluteInput
   :: (MonadIO m, KnownActionSource src, Actionlike act, HasActionState src)
   => BufferedInput
-  -> ActionMap act
+  -> ActionMap2 act
   -> act src
   -> m (AbsoluteInput src)
 absoluteInput s mp act = do
-  r <- for (readActions mp act) (absoluteBufferedInput s)
+  r <- for (actionSources mp act) (absoluteBufferedInput s)
   pure $! aggregateAbsolute r
 {-# INLINE absoluteInput #-}
 
@@ -703,11 +700,11 @@ absoluteInput s mp act = do
 deltaInput
   :: (MonadIO m, KnownActionSource src, Actionlike act, HasActionState src)
   => BufferedInput
-  -> ActionMap act
+  -> ActionMap2 act
   -> act src
   -> m (DeltaInput src)
 deltaInput s mp act = do
-  r <- for (readActions mp act) (deltaBufferedInput s)
+  r <- for (actionSources mp act) (deltaBufferedInput s)
   pure $! aggregateDelta r
 {-# INLINE deltaInput #-}
 
