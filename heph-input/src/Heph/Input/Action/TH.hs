@@ -80,7 +80,7 @@ makeAction n = do
       (conT ''Actionlike `appT` conT n)
       [ dataInstD
           (cxt [])
-          ''ActionMap2
+          ''ActionMap
           [conT n]
           Nothing
           [ recC
@@ -165,7 +165,7 @@ makeAction n = do
       , pragInlD 'actionSources Inline FunLike AllPhases
       ]
 
-  nfDataActionMap <- instanceD (cxt []) (conT ''NFData `appT` (conT ''ActionMap2 `appT` conT n)) []
+  nfDataActionMap <- instanceD (cxt []) (conT ''NFData `appT` (conT ''ActionMap `appT` conT n)) []
 
   gCompare <- deriveGCompare n
   gEq <- deriveGEq n

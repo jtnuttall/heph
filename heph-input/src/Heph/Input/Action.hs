@@ -96,24 +96,23 @@ newtype Deadzone = Deadzone Float
 -- @
 --
 -- TODO: Most of this is outmoded. Need to update once refactor is done.
-class (Typeable act, NFData (ActionMap2 act)) => Actionlike (act :: ActionSource -> Type) where
-  -- TODO: Removing unsafe coerce, move to case-of-known-constructor
-  data ActionMap2 act
+class (Typeable act, NFData (ActionMap act)) => Actionlike (act :: ActionSource -> Type) where
+  data ActionMap act
 
   -- | Prefer 'compileActionsIO'. If you use this function, be sure to force it:
   --
   -- @@
   -- let !myActionMap = compileActions myActionMappings
   -- @@
-  compileActions :: [ActionMapping act] -> ActionMap2 act
+  compileActions :: [ActionMapping act] -> ActionMap act
 
   actionSources
     :: (Typeable src)
-    => ActionMap2 act
+    => ActionMap act
     -> act src
     -> SmallArray (InputSource src)
 
--- compileActionsIO :: MonadIO m => Actionlike act => [ActionMapping act] -> m (ActionMap2 act)
+-- compileActionsIO :: MonadIO m => Actionlike act => [ActionMapping act] -> m (ActionMap act)
 -- compileActionsIO mappings = do
 --   let !m = compileActions mappings
 --   evaluate (rnf m)
@@ -373,7 +372,7 @@ instance AggregateInput Axis2D where
 absoluteInput
   :: (MonadIO m, Actionlike act, HasActionState src)
   => BufferedInput
-  -> ActionMap2 act
+  -> ActionMap act
   -> act src
   -> m (AbsoluteInput src)
 absoluteInput s mp act = do
@@ -412,7 +411,7 @@ absoluteInput s mp act = do
 deltaInput
   :: (MonadIO m, Actionlike act, HasActionState src)
   => BufferedInput
-  -> ActionMap2 act
+  -> ActionMap act
   -> act src
   -> m (DeltaInput src)
 deltaInput s mp act = do

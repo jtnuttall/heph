@@ -44,10 +44,10 @@ deriving via
     NoThunks InputBuffer
 
 deriving via
-  InspectHeap (ActionMap2 act)
+  InspectHeap (ActionMap act)
   instance
     (Actionlike act)
-    => NoThunks (ActionMap2 act)
+    => NoThunks (ActionMap act)
 
 deriving via
   InspectHeap ButtonState
