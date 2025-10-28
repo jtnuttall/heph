@@ -34,10 +34,6 @@ library
       Heph.Input.Action
       Heph.Input.Action.TH
       Heph.Input.Buffer
-      Heph.Input.Types.Controller
-      Heph.Input.Types.Mouse
-      Heph.Input.Types.Scancode
-  other-modules:
       Heph.Input.Internal.BoundedArray.Boxed
       Heph.Input.Internal.BoundedArray.Boxed.Mutable
       Heph.Input.Internal.BoundedArray.Generic
@@ -45,6 +41,10 @@ library
       Heph.Input.Internal.BoundedArray.Index
       Heph.Input.Internal.BoundedArray.Primitive
       Heph.Input.Internal.BoundedArray.Primitive.Mutable
+      Heph.Input.Types.Controller
+      Heph.Input.Types.Mouse
+      Heph.Input.Types.Scancode
+  other-modules:
       Paths_heph_input
   autogen-modules:
       Paths_heph_input
@@ -58,8 +58,12 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.16 && <5
+    , constraints-extras ==0.4.*
     , containers >=0.6 && <0.8
     , deepseq >=1.4 && <1.6
+    , dependent-map ==0.4.*
+    , dependent-sum >=0.6 && <0.8
+    , dependent-sum-template ==0.2.*
     , exceptions ==0.10.*
     , generic-data >=1.0 && <1.2
     , linear >=1.21 && <1.24
@@ -98,8 +102,12 @@ test-suite heph-input-test
       tasty-discover:tasty-discover
   build-depends:
       base >=4.16 && <5
+    , constraints-extras ==0.4.*
     , containers >=0.6 && <0.8
     , deepseq >=1.4 && <1.6
+    , dependent-map ==0.4.*
+    , dependent-sum >=0.6 && <0.8
+    , dependent-sum-template ==0.2.*
     , exceptions ==0.10.*
     , generic-data >=1.0 && <1.2
     , hedgehog >=1.0.4 && <1.6
@@ -134,9 +142,13 @@ benchmark heph-input-bench
   ghc-options: -Wall -Wcompat -threaded -rtsopts -O2 -fllvm -optc-O3 -with-rtsopts=-N +RTS -A32m --nonmoving-gc -T -RTS
   build-depends:
       base >=4.16 && <5
+    , constraints-extras ==0.4.*
     , containers >=0.6 && <0.8
     , criterion >=1.5.9 && <1.7
     , deepseq >=1.4 && <1.6
+    , dependent-map ==0.4.*
+    , dependent-sum >=0.6 && <0.8
+    , dependent-sum-template ==0.2.*
     , exceptions ==0.10.*
     , generic-data >=1.0 && <1.2
     , heph-input

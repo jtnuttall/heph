@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE TemplateHaskell #-}
 
@@ -11,58 +12,63 @@ module Heph.Input.Action.TH (makeAction) where
 import Heph.Input.Action
 
 import Control.Monad
+import Data.Constraint.Extras.TH (deriveArgDict)
+import Data.Dependent.Map (DMap)
+import Data.Dependent.Map qualified as DMap
 import Data.Foldable
+import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
+import Data.GADT.Show.TH (deriveGShow)
+import Data.Primitive.SmallArray
+import Data.Set (Set)
 import Language.Haskell.TH
 import Language.Haskell.TH.Datatype
 import Language.Haskell.TH.Syntax
 
--- | Generate an 'Actionlike' instance for an action GADT.
---
--- This Template Haskell function creates a lawful 'Actionlike' instance that
--- maps action constructors to unique integer IDs. It ensures:
---
--- * Dense, zero-based ID assignment (0 to n-1 for n constructors)
--- * Correct round-trip behavior ('fromActionId' . 'toActionId' = 'id')
--- * Efficient compile-time generation (no runtime overhead)
---
--- ==== __Usage__
---
--- Call 'makeAction' immediately after defining your action GADT:
---
--- @
--- {\-# LANGUAGE DataKinds #-\}
--- {\-# LANGUAGE TemplateHaskell #-\}
---
--- data MyAction (src :: 'ActionSource') where
---   Jump   :: MyAction 'Button'
---   Sprint :: MyAction 'Button'
---   Move   :: MyAction 'Axis2D'
---   Look   :: MyAction 'Axis2D'
---
--- 'makeAction' ''MyAction
--- @
---
--- ==== __Requirements__
---
--- The action type must satisfy:
---
--- * __GADT with at least one type variable__ for the 'ActionSource' phantom type
--- * __All constructors must be nullary__ (no fields allowed)
--- * __At least one constructor__ must be defined
---
--- Violating these requirements will result in a compile-time error with a
--- helpful message.
---
--- ==== __Safety__
---
--- Never write manual 'Actionlike' instances. The Template Haskell generator
--- ensures correctness guarantees that are difficult to verify manually and
--- critical for the safety of the 'ActionMap' implementation.
+data CtorInfo = CtorInfo
+  { constructorName :: Name
+  , actionMapFieldName :: Name
+  , inputSourceType :: Q Type
+  }
+
+mkCtorInfo :: DatatypeInfo -> Name -> [CtorInfo]
+mkCtorInfo dt vn =
+  map
+    ( \ctor ->
+        let actionMapFieldName = mkName ("actionMap_" <> nameBase ctor.constructorName)
+            inputSourceType = case ctor.constructorContext of
+              [EqualityT `AppT` VarT v `AppT` PromotedT r]
+                | v == vn ->
+                    conT ''InputSource `appT` promotedT r
+              [EqualityT `AppT` PromotedT r `AppT` VarT v]
+                | v == vn ->
+                    conT ''InputSource `appT` promotedT r
+              bad ->
+                fail $
+                  "Constructor "
+                    <> nameBase ctor.constructorName
+                    <> " has an unsupported GADT constraint. Expected: ["
+                    <> nameBase vn
+                    <> " ~ 'SomePromotedType], Got: "
+                    <> show bad
+         in CtorInfo
+              { constructorName = ctor.constructorName
+              , ..
+              }
+    )
+    dt.datatypeCons
+
+newtype ActionF f (src :: ActionSource) = ActionF (f (InputSource src))
+
+instance Semigroup (ActionF Set a) where
+  ActionF l <> ActionF r = ActionF $ l <> r
+
+instance Monoid (ActionF Set a) where
+  mempty = ActionF mempty
+
 makeAction :: Name -> DecsQ
 makeAction n = do
   dt <- reifyDatatype n
-
-  validateType dt
+  tyVarName <- validateType dt
 
   let ids = zip [0 ..] dt.datatypeCons
       maxId = length ids - 1
@@ -75,15 +81,112 @@ makeAction n = do
           (normalB [|error $ "Library error: No action for action ID " <> show $(varE bad)|])
           []
 
-  [d|
-    instance Actionlike $(conT n) where
-      toActionId a = $(caseE [|a|] toActionCases)
-      {-# INLINE toActionId #-}
-      fromActionId i = $(caseE [|i|] fromActionCases)
-      {-# INLINE fromActionId #-}
-      maxActionId = $(lift maxId)
-      {-# INLINE maxActionId #-}
-    |]
+      ctorInfo = mkCtorInfo dt tyVarName
+      actionMapName = mkName (nameBase n <> "Map")
+
+  actionlike <-
+    instanceD
+      (cxt [])
+      (conT ''Actionlike `appT` conT n)
+      [ dataInstD
+          (cxt [])
+          ''ActionMap2
+          [conT n]
+          Nothing
+          [ recC
+              actionMapName
+              ( map
+                  ( \info ->
+                      varBangType
+                        info.actionMapFieldName
+                        ( bangType
+                            (bang sourceUnpack sourceStrict)
+                            (conT ''SmallArray `appT` info.inputSourceType)
+                        )
+                  )
+                  ctorInfo
+              )
+          ]
+          []
+      , do
+          mappings <- newName "mappings"
+          funD
+            'compileActions
+            [ clause
+                [varP mappings]
+                ( normalB
+                    [e|
+                      let
+                        dmap :: DMap $(conT n) (ActionF Set)
+                        dmap =
+                          foldr
+                            ( \(ActionMapping act set) ->
+                                DMap.insertWith' (<>) act (ActionF set)
+                            )
+                            DMap.empty
+                            $(varE mappings)
+                       in
+                        $( recConE
+                            actionMapName
+                            ( map
+                                ( \info -> do
+                                    val <-
+                                      [e|
+                                        let sources =
+                                              case DMap.lookup $(conE info.constructorName) dmap of
+                                                Just (ActionF r) -> toList r
+                                                Nothing -> []
+                                         in case smallArrayFromList sources of
+                                              arr -> arr -- force whnf
+                                        |]
+                                    pure (info.actionMapFieldName, val)
+                                )
+                                ctorInfo
+                            )
+                         )
+                      |]
+                )
+                []
+            ]
+      , do
+          actionMap <- newName "actionMap"
+          action <- newName "action"
+
+          funD
+            'actionSources
+            [ clause
+                [varP actionMap, varP action]
+                ( normalB
+                    ( caseE
+                        (varE action)
+                        ( map
+                            ( \info ->
+                                match
+                                  (conP info.constructorName [])
+                                  (normalB (varE info.actionMapFieldName `appE` varE actionMap))
+                                  []
+                            )
+                            ctorInfo
+                        )
+                    )
+                )
+                []
+            ]
+      , pragInlD 'actionSources Inline FunLike AllPhases
+      , valD (varP 'toActionId) (normalB (lamCaseE toActionCases)) []
+      , pragInlD 'toActionId Inline FunLike AllPhases
+      , valD (varP 'fromActionId) (normalB (lamCaseE fromActionCases)) []
+      , pragInlD 'fromActionId Inline FunLike AllPhases
+      , valD (varP 'maxActionId) (normalB (lift maxId)) []
+      , pragInlD 'maxActionId Inline FunLike AllPhases
+      ]
+
+  gCompare <- deriveGCompare n
+  gEq <- deriveGEq n
+  gShow <- deriveGShow n
+  argDict <- deriveArgDict n
+
+  pure $ concat [[actionlike], gCompare, gEq, gShow, argDict]
  where
   validVariants = [Datatype, DataInstance]
 
@@ -95,15 +198,21 @@ makeAction n = do
       unless (null ctor.constructorFields) do
         fail "Actionlike instances cannot have any fields"
 
-    when (dt.datatypeVariant `notElem` validVariants) do
+    unless (dt.datatypeVariant `elem` validVariants) do
       fail $
         "Actionlike can only be generated for "
           <> show validVariants
           <> ", but got "
           <> show dt.datatypeVariant
 
-    when (null dt.datatypeVars) do
-      fail "Actionlike instances require GADTs with at least one type variable for the mapping"
+    case dt.datatypeVars of
+      [tv] -> pure $ tvName tv
+      bad ->
+        fail $
+          "Actionlike GADT must have exactly one type variable, but "
+            <> nameBase n
+            <> " has "
+            <> show (length bad)
 
   mkToAction i info =
     match

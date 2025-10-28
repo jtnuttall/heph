@@ -30,6 +30,10 @@ homepage: https://github.com/jtnuttall/heph/tree/main/heph-input#readme
 
 dependencies:
   - base >= 4.16 && < 5
+  - constraints-extras >= 0.4 && < 0.5
+  - dependent-map >= 0.4 && < 0.5
+  - dependent-sum >= 0.6 && < 0.8
+  - dependent-sum-template >= 0.2 && < 0.3
   - deepseq >= 1.4 && < 1.6
   - template-haskell >= 2.18 && < 2.24
   - containers >= 0.6 && < 0.8

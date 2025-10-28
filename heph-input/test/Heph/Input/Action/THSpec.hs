@@ -1,12 +1,24 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE MonoLocalBinds #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}
 
 module Heph.Input.Action.THSpec where
 
+import Heph.Input
 import Heph.Input.Action
 import Heph.Input.Action.TH
 
+import Data.Constraint.Extras.TH
+import Data.Dependent.Map (DMap)
+import Data.Dependent.Map qualified as DMap
+import Data.Dependent.Sum (DSum ((:=>)), (==>))
+import Data.Functor.Identity
+import Data.GADT.Compare.TH
+import Data.GADT.Show (gshow)
+import Data.GADT.Show.TH
+import Data.Primitive (SmallArray)
+import Data.Set (Set)
+import Data.Set qualified as Set
 import Hedgehog as HH
 import Hedgehog.Gen qualified as Gen
 import Test.Tasty.HUnit
@@ -20,6 +32,28 @@ data TestAction (src :: ActionSource) where
   Zoom :: TestAction Axis1D
 
 makeAction ''TestAction
+
+data TestActionTag f where
+  JumpTag :: TestActionTag (InputSource Button)
+
+deriveGEq ''TestActionTag
+deriveGCompare ''TestActionTag
+deriveGShow ''TestActionTag
+deriveArgDict ''TestActionTag
+
+-- x :: DMap TestActionTag Set
+-- x =
+--   foldl'
+--     (\mp (k :=> v :: DSum TestActionTag []) -> DMap.insertWith' Set.union k (Set.fromList v) mp)
+--     DMap.empty
+--     [ JumpTag
+--         :=> [ MouseButton MouseButtonLeft
+--             , MouseButton MouseButtonRight
+--             ]
+--     ]
+
+-- >>> show x
+-- "fromList [JumpTag :=> [SourceButton (InputMouseButton MouseButtonLeft),SourceButton (InputMouseButton MouseButtonRight)]]"
 
 -- Unit tests
 unit_toActionIdUnique :: Assertion
