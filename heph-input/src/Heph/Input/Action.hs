@@ -10,6 +10,7 @@
 
 module Heph.Input.Action (
   ActionMapping (..),
+  ActionSet (..),
   (~>),
   ActionSource (..),
   InputSource (..),
@@ -47,13 +48,13 @@ import Heph.Input.Types.Scancode
 import Control.DeepSeq
 import Control.Monad.IO.Class
 import Data.Bifunctor
+import Data.Dependent.Sum (DSum)
+import Data.Dependent.Sum qualified as DSum
 import Data.Foldable
 import Data.Kind
 import Data.Monoid (Any (..))
 import Data.Ord (comparing)
 import Data.Primitive.SmallArray
-import Data.Set (Set)
-import Data.Set qualified as S
 import Data.Traversable
 import Foreign (fromBool)
 import GHC.Generics
@@ -63,6 +64,16 @@ import Type.Reflection
 
 data ActionSource = Button | Axis1D | Axis2D
   deriving (Generic, Show, Eq, Ord, Enum, Bounded)
+
+-- | A newtype for holding input sources - eta reduces the type so it can be
+-- used with 'DMap'
+newtype ActionSet (src :: ActionSource) = ActionSet {unActionSet :: [InputSource src]}
+  deriving (NFData, Semigroup, Monoid)
+
+(~>) :: act src -> ActionSet src -> DSum act ActionSet
+(~>) = (DSum.:=>)
+{-# INLINEABLE (~>) #-}
+infixr 1 ~>
 
 newtype Sensitivity = Sensitivity Float
   deriving (NFData, Show, Eq, Ord)
@@ -243,29 +254,12 @@ unAxis :: InputSource Axis1D -> Maybe (InputSource Button)
 unAxis (SourceButtonAsAxis btn) = Just (SourceButton btn)
 unAxis _ = Nothing
 
--- TODO: User should be able to determine ordering in whichever way they please, which means that
--- I will need to move away from 'Set'. Since n is small (even large games unlikely to have more
--- than 4-5 actions per mapping), and we compile to an efficient form, it should be acceptable to
--- do a quadratic insertion on a linked list.
+-- TODO: This may actually just be 'DSum' at this point ha
 data ActionMapping act where
-  ActionMapping
-    :: (Typeable src, HasActionState src)
-    => act src
-    -> Set (InputSource src)
+  (:=>)
+    :: act src
+    -> [InputSource src]
     -> ActionMapping act
-
-(~>)
-  :: (HasActionState src)
-  => act src
-  -> [InputSource src]
-  -> ActionMapping act
-(~>) act src = ActionMapping act (S.fromList src)
-infixr 8 ~>
-
--- We should always be reducing our list of action mappings to normal form, so
--- inlining the convenience wrapper leads to code bloat from Set method inlines
--- with no real benefit.
-{-# NOINLINE (~>) #-}
 
 data ButtonState = JustPressed | JustReleased | Held | NotPressed
   deriving (Generic, Show, Eq, Ord, Enum, Bounded)

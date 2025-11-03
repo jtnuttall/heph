@@ -41,6 +41,7 @@ library
       Heph.Input.Internal.BoundedArray.Index
       Heph.Input.Internal.BoundedArray.Primitive
       Heph.Input.Internal.BoundedArray.Primitive.Mutable
+      Heph.Input.State
       Heph.Input.Types.Controller
       Heph.Input.Types.Mouse
       Heph.Input.Types.Scancode

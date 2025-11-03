@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 -- |
 -- Template Haskell code generation for action types.
@@ -19,8 +20,10 @@ import Data.Dependent.Map qualified as DMap
 import Data.Foldable
 import Data.GADT.Compare.TH (deriveGCompare, deriveGEq)
 import Data.GADT.Show.TH (deriveGShow)
+import Data.List qualified as L
+import Data.List.NonEmpty (NonEmpty)
+import Data.List.NonEmpty qualified as NE
 import Data.Primitive.SmallArray
-import Data.Set (Set)
 import GHC.Generics
 import Language.Haskell.TH
 import Language.Haskell.TH.Datatype
@@ -31,9 +34,9 @@ data CtorInfo = CtorInfo
   , inputSourceType :: Q Type
   }
 
-mkCtorInfo :: DatatypeInfo -> Name -> [CtorInfo]
-mkCtorInfo dt vn =
-  map
+mkCtorInfo :: Name -> NonEmpty ConstructorInfo -> NonEmpty CtorInfo
+mkCtorInfo vn =
+  fmap
     ( \ctor ->
         let actionMapFieldName = mkName ("actionMap_" <> nameBase ctor.constructorName)
             inputSourceType = case ctor.constructorContext of
@@ -45,40 +48,30 @@ mkCtorInfo dt vn =
                     conT ''InputSource `appT` promotedT r
               bad ->
                 fail $
-                  "Constructor "
-                    <> nameBase ctor.constructorName
-                    <> " has an unsupported GADT constraint. Expected: ["
-                    <> nameBase vn
-                    <> " ~ 'SomePromotedType], Got: "
-                    <> show bad
+                  unlines
+                    [ "Constructor " <> nameBase ctor.constructorName <> " has an unsupported GADT constraint."
+                    , ""
+                    , "Expected: "
+                    , nameBase vn <> " ~ 'SomePromotedType)"
+                    , ""
+                    , "Got:"
+                    , pprint bad
+                    ]
          in CtorInfo
               { constructorName = ctor.constructorName
               , ..
               }
     )
-    dt.datatypeCons
-
-newtype ActionF f (src :: ActionSource) = ActionF (f (InputSource src))
-
-instance Semigroup (ActionF Set a) where
-  ActionF l <> ActionF r = ActionF $ l <> r
-
-instance Monoid (ActionF Set a) where
-  mempty = ActionF mempty
 
 makeAction :: Name -> DecsQ
 makeAction n = do
   dt <- reifyDatatype n
-  tyVarName <- validateType dt
+  ctorInfo <- validateType dt
 
-  let ctorInfo = mkCtorInfo dt tyVarName
-      actionMapName = mkName (nameBase n <> "Map")
+  let actionMapName = mkName (nameBase n <> "Map")
 
-  actionlike <-
-    instanceD
-      (cxt [])
-      (conT ''Actionlike `appT` conT n)
-      [ dataInstD
+      declareActionMap =
+        dataInstD
           (cxt [])
           ''ActionMap
           [conT n]
@@ -94,77 +87,90 @@ makeAction n = do
                             (conT ''SmallArray `appT` info.inputSourceType)
                         )
                   )
-                  ctorInfo
+                  (toList ctorInfo)
               )
           ]
           [derivClause Nothing [conT ''Generic]]
-      , do
-          mappings <- newName "mappings"
-          funD
-            'compileActions
-            [ clause
-                [varP mappings]
-                ( normalB
-                    [e|
-                      let
-                        dmap :: DMap $(conT n) (ActionF Set)
-                        dmap =
-                          foldr
-                            ( \(ActionMapping act set) ->
-                                DMap.insertWith' (<>) act (ActionF set)
+
+      declareCompileActions = do
+        mappings <- newName "mappings"
+        funD
+          'compileActions
+          [ clause
+              [varP mappings]
+              ( normalB
+                  [e|
+                    let
+                      -- 'nub' is quadratic, but since we expect m to be small, this is acceptable
+                      -- to maintain insertion order.
+                      dmap :: DMap $(conT n) ActionSet
+                      !dmap =
+                        DMap.map (ActionSet . L.nub . unActionSet)
+                          . foldr
+                            ( \(act :=> set) ->
+                                DMap.insertWith' (<>) act (ActionSet set)
                             )
                             DMap.empty
-                            $(varE mappings)
-                       in
-                        $( recConE
-                            actionMapName
-                            ( map
-                                ( \info -> do
-                                    val <-
-                                      [e|
-                                        let sources =
-                                              case DMap.lookup $(conE info.constructorName) dmap of
-                                                Just (ActionF r) -> toList r
-                                                Nothing -> []
-                                         in case smallArrayFromList sources of
-                                              arr -> arr -- force whnf
-                                        |]
-                                    pure (info.actionMapFieldName, val)
-                                )
-                                ctorInfo
-                            )
-                         )
-                      |]
-                )
-                []
-            ]
-      , do
-          actionMap <- newName "actionMap"
-          action <- newName "action"
+                          $ $(varE mappings)
+                     in
+                      $( recConE
+                          actionMapName
+                          ( map
+                              ( \info -> do
+                                  val <-
+                                    [e|
+                                      let sources =
+                                            case DMap.lookup $(conE info.constructorName) dmap of
+                                              Just (ActionSet r) -> toList r
+                                              Nothing -> []
+                                       in smallArrayFromList sources
+                                      |]
+                                  pure (info.actionMapFieldName, val)
+                              )
+                              (toList ctorInfo)
+                          )
+                       )
+                    |]
+              )
+              []
+          ]
 
-          funD
-            'actionSources
-            [ clause
-                [varP actionMap, varP action]
-                ( normalB
-                    ( caseE
-                        (varE action)
-                        ( map
-                            ( \info ->
-                                match
-                                  (conP info.constructorName [])
-                                  (normalB (varE info.actionMapFieldName `appE` varE actionMap))
-                                  []
-                            )
-                            ctorInfo
-                        )
-                    )
-                )
-                []
-            ]
+      declareActionSources = do
+        actionMap <- newName "actionMap"
+        action <- newName "action"
+
+        funD
+          'actionSources
+          [ clause
+              [varP actionMap, varP action]
+              ( normalB
+                  ( caseE
+                      (varE action)
+                      ( map
+                          ( \info ->
+                              match
+                                (conP info.constructorName [])
+                                (normalB (varE info.actionMapFieldName `appE` varE actionMap))
+                                []
+                          )
+                          (toList ctorInfo)
+                      )
+                  )
+              )
+              []
+          ]
+
+  actionlike <-
+    instanceD
+      (cxt [])
+      (conT ''Actionlike `appT` conT n)
+      [ declareActionMap
+      , declareCompileActions
+      , declareActionSources
       , pragInlD 'actionSources Inline FunLike AllPhases
       ]
 
+  -- NFData via Generic
   nfDataActionMap <- instanceD (cxt []) (conT ''NFData `appT` (conT ''ActionMap `appT` conT n)) []
 
   gCompare <- deriveGCompare n
@@ -177,9 +183,6 @@ makeAction n = do
   validVariants = [Datatype, DataInstance]
 
   validateType dt = do
-    when (null dt.datatypeCons) do
-      fail "Can't generate Actionlike for a datatype with no constructors"
-
     for_ dt.datatypeCons \ctor -> do
       unless (null ctor.constructorFields) do
         fail "Actionlike instances cannot have any fields"
@@ -191,7 +194,7 @@ makeAction n = do
           <> ", but got "
           <> show dt.datatypeVariant
 
-    case dt.datatypeVars of
+    tyVar <- case dt.datatypeVars of
       [tv] -> pure $ tvName tv
       bad ->
         fail $
@@ -199,6 +202,10 @@ makeAction n = do
             <> nameBase n
             <> " has "
             <> show (length bad)
+
+    case NE.nonEmpty dt.datatypeCons of
+      Just ne -> pure $ mkCtorInfo tyVar ne
+      Nothing -> fail "Can't generate Actionlike for a datatype with no constructors"
 
 -- TODO: reintroduce validations and scrubbing
 

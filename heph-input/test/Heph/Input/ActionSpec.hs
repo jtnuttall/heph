@@ -34,19 +34,19 @@ unit_compileActionsEmpty = do
 
 unit_compileActionsSingleMapping :: Assertion
 unit_compileActionsSingleMapping = do
-  let actionMap = compileActions [Jump ~> [Key ScancodeSpace]]
+  let actionMap = compileActions [Jump :=> [Key ScancodeSpace]]
       sources = actionSources actionMap Jump
   SA.sizeofSmallArray sources @?= 1
 
 unit_compileActionsMultipleSources :: Assertion
 unit_compileActionsMultipleSources = do
-  let actionMap = compileActions [Jump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]]
+  let actionMap = compileActions [Jump :=> [Key ScancodeSpace, GamepadButton ControllerButtonA]]
       sources = actionSources actionMap Jump
   SA.sizeofSmallArray sources @?= 2
 
 unit_compileActionsFiltersEmptySources :: Assertion
 unit_compileActionsFiltersEmptySources = do
-  let actionMap = compileActions [Jump ~> []]
+  let actionMap = compileActions [Jump :=> []]
       sources = actionSources actionMap Jump
   SA.sizeofSmallArray sources @?= 0
 
@@ -110,7 +110,7 @@ hprop_deadzonePreservesLargeInputs = property $ do
 hprop_actionMappingPreservesType :: Property
 hprop_actionMappingPreservesType = property $ do
   -- Button action can only be mapped to button sources
-  let mapping = Jump ~> [Key ScancodeSpace]
+  let mapping = Jump :=> [Key ScancodeSpace]
       actionMap = compileActions [mapping]
       sources = actionSources actionMap Jump
 

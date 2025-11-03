@@ -9,9 +9,6 @@ cradle:
     - path: "heph-input/src"
       component: "heph-input:lib"
 
-    - path: "heph-input/examples/PlatformBasic.hs"
-      component: "heph-input:exe:platform-basic-example"
-
     - path: "heph-input/test"
       component: "heph-input:test:heph-input-test"
 

@@ -31,9 +31,9 @@
 -- -- Create input bindings
 -- bindings :: ['ActionMapping' GameAction]
 -- bindings =
---   [ Jump   '~>' ['Key' ScancodeSpace, 'GamepadButton' ControllerButtonA]
---   , Sprint '~>' ['Key' ScancodeLShift]
---   , Move   '~>' ['DPad' ('Key' ScancodeA) ('Key' ScancodeW) ('Key' ScancodeS) ('Key' ScancodeD)
+--   [ Jump   ':=>' ['Key' ScancodeSpace, 'GamepadButton' ControllerButtonA]
+--   , Sprint ':=>' ['Key' ScancodeLShift]
+--   , Move   ':=>' ['DPad' ('Key' ScancodeA) ('Key' ScancodeW) ('Key' ScancodeS) ('Key' ScancodeD)
 --               , 'LeftStick' 1.0 0.15
 --               ]
 --   ]
@@ -90,7 +90,6 @@ import Heph.Input.Action as Action (
   Sensitivity (..),
   absoluteInput,
   deltaInput,
-  (~>),
   pattern AsAxis,
   pattern DPad,
   pattern GamepadButton,

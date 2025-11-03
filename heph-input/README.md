@@ -41,12 +41,12 @@ makeAction ''GameAction
 -- 3. Create your input bindings
 gameBindings :: [ActionMapping GameAction]
 gameBindings =
-  [ Jump   ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
-  , Sprint ~> [Key ScancodeLShift, GamepadButton ControllerButtonB]
-  , Move   ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD)
+  [ Jump   :=> [Key ScancodeSpace, GamepadButton ControllerButtonA]
+  , Sprint :=> [Key ScancodeLShift, GamepadButton ControllerButtonB]
+  , Move   :=> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD)
               , LeftStick 1.0 0.15  -- sensitivity 1.0, deadzone 0.15
               ]
-  , Look   ~> [MouseMotion 0.5     -- sensitivity 0.5
+  , Look   :=> [MouseMotion 0.5     -- sensitivity 0.5
               , RightStick 2.0 0.2
               ]
   ]
@@ -124,10 +124,10 @@ Actions are defined as a GADT parameterized by `ActionSource`, which can be `But
 
 ```haskell
 -- This compiles - Button action with button sources
-Jump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
+Jump :=> [Key ScancodeSpace, GamepadButton ControllerButtonA]
 
 -- This won't compile - Button action can't use axis sources
-Jump ~> [LeftStick 1.0 0.15]  -- Type error!
+Jump :=> [LeftStick 1.0 0.15]  -- Type error!
 ```
 
 The type system prevents mismatched bindings at compile time, while runtime `Typeable` reflection provides additional validation in `newActionMap`.

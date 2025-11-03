@@ -218,78 +218,78 @@ actionMapBenchmarks =
     ]
  where
   smallGameSingleBindings =
-    [ SGJump ~> [Key ScancodeSpace]
-    , SGCrouch ~> [Key ScancodeLCtrl]
-    , SGSprint ~> [Key ScancodeLShift]
-    , SGInteract ~> [Key ScancodeE]
-    , SGShoot ~> [MouseButton MouseButtonLeft]
-    , SGReload ~> [Key ScancodeR]
-    , SGMove ~> [LeftStick 1.0 0.15]
-    , SGLook ~> [MouseMotion 1.0]
-    , SGZoom ~> [AsAxis (Key ScancodeEquals)]
-    , SGThrottle ~> [AsAxis (Key ScancodeW)]
+    [ SGJump :=> [Key ScancodeSpace]
+    , SGCrouch :=> [Key ScancodeLCtrl]
+    , SGSprint :=> [Key ScancodeLShift]
+    , SGInteract :=> [Key ScancodeE]
+    , SGShoot :=> [MouseButton MouseButtonLeft]
+    , SGReload :=> [Key ScancodeR]
+    , SGMove :=> [LeftStick 1.0 0.15]
+    , SGLook :=> [MouseMotion 1.0]
+    , SGZoom :=> [AsAxis (Key ScancodeEquals)]
+    , SGThrottle :=> [AsAxis (Key ScancodeW)]
     ]
 
   smallGameMultipleBindings =
-    [ SGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
-    , SGCrouch ~> [Key ScancodeLCtrl, GamepadButton ControllerButtonB]
-    , SGSprint ~> [Key ScancodeLShift, GamepadButton ControllerButtonLeftStick]
-    , SGInteract ~> [Key ScancodeE, GamepadButton ControllerButtonX]
-    , SGShoot ~> [MouseButton MouseButtonLeft, GamepadButton ControllerButtonRightShoulder]
-    , SGReload ~> [Key ScancodeR, GamepadButton ControllerButtonY]
+    [ SGJump :=> [Key ScancodeSpace, GamepadButton ControllerButtonA]
+    , SGCrouch :=> [Key ScancodeLCtrl, GamepadButton ControllerButtonB]
+    , SGSprint :=> [Key ScancodeLShift, GamepadButton ControllerButtonLeftStick]
+    , SGInteract :=> [Key ScancodeE, GamepadButton ControllerButtonX]
+    , SGShoot :=> [MouseButton MouseButtonLeft, GamepadButton ControllerButtonRightShoulder]
+    , SGReload :=> [Key ScancodeR, GamepadButton ControllerButtonY]
     , SGMove
-        ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
-    , SGLook ~> [MouseMotion 1.0, RightStick 2.0 0.2]
-    , SGZoom ~> [AsAxis (Key ScancodeEquals), AsAxis (GamepadButton ControllerButtonDpadUp)]
+        :=> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
+    , SGLook :=> [MouseMotion 1.0, RightStick 2.0 0.2]
+    , SGZoom :=> [AsAxis (Key ScancodeEquals), AsAxis (GamepadButton ControllerButtonDpadUp)]
     , SGThrottle
-        ~> [AsAxis (Key ScancodeW), GamepadTrigger ControllerAxisTriggerLeft 1.0 0.1]
+        :=> [AsAxis (Key ScancodeW), GamepadTrigger ControllerAxisTriggerLeft 1.0 0.1]
     ]
 
   smallGameManyBindings =
     [ SGJump
-        ~> [ Key ScancodeSpace
+        :=> [ Key ScancodeSpace
            , GamepadButton ControllerButtonA
            , GamepadButton ControllerButtonB
            , Key ScancodeUp
            , GamepadButton ControllerButtonDpadUp
            ]
     , SGCrouch
-        ~> [ Key ScancodeLCtrl
+        :=> [ Key ScancodeLCtrl
            , GamepadButton ControllerButtonB
            , Key ScancodeC
            , GamepadButton ControllerButtonRightStick
            , Key ScancodeDown
            ]
     , SGSprint
-        ~> [ Key ScancodeLShift
+        :=> [ Key ScancodeLShift
            , GamepadButton ControllerButtonLeftStick
            , Key ScancodeRShift
            , GamepadButton ControllerButtonX
            , GamepadButton ControllerButtonY
            ]
     , SGInteract
-        ~> [ Key ScancodeE
+        :=> [ Key ScancodeE
            , GamepadButton ControllerButtonX
            , Key ScancodeF
            , MouseButton MouseButtonMiddle
            , GamepadButton ControllerButtonA
            ]
     , SGShoot
-        ~> [ MouseButton MouseButtonLeft
+        :=> [ MouseButton MouseButtonLeft
            , GamepadButton ControllerButtonRightShoulder
            , Key ScancodeLCtrl
            , GamepadButton ControllerButtonA
            , MouseButton MouseButtonRight
            ]
     , SGReload
-        ~> [ Key ScancodeR
+        :=> [ Key ScancodeR
            , GamepadButton ControllerButtonY
            , Key ScancodeT
            , GamepadButton ControllerButtonLeftShoulder
            , MouseButton MouseButtonMiddle
            ]
     , SGMove
-        ~> [ DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD)
+        :=> [ DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD)
            , LeftStick 1.0 0.15
            , DPad (Key ScancodeLeft) (Key ScancodeUp) (Key ScancodeDown) (Key ScancodeRight)
            , DPad
@@ -300,21 +300,21 @@ actionMapBenchmarks =
            , DPad (Key Scancode4) (Key Scancode8) (Key Scancode5) (Key Scancode6)
            ]
     , SGLook
-        ~> [ MouseMotion 1.0
+        :=> [ MouseMotion 1.0
            , RightStick 2.0 0.2
            , GamepadStick ControllerAxisLeftX ControllerAxisLeftY 1.5 0.15
            , DPad (Key ScancodeJ) (Key ScancodeI) (Key ScancodeK) (Key ScancodeL)
            , MouseAxis2D MouseX MouseY 0.8
            ]
     , SGZoom
-        ~> [ AsAxis (Key ScancodeEquals)
+        :=> [ AsAxis (Key ScancodeEquals)
            , AsAxis (GamepadButton ControllerButtonDpadUp)
            , AsAxis (Key ScancodeEquals)
            , GamepadTrigger ControllerAxisTriggerRight 1.0 0.1
            , AsAxis (Key ScancodeMinus)
            ]
     , SGThrottle
-        ~> [ AsAxis (Key ScancodeW)
+        :=> [ AsAxis (Key ScancodeW)
            , GamepadTrigger ControllerAxisTriggerLeft 1.0 0.1
            , AsAxis (MouseButton MouseButtonRight)
            , GamepadTrigger ControllerAxisLeftY 1.0 0.15
@@ -323,278 +323,278 @@ actionMapBenchmarks =
     ]
 
   mediumGameSingleBindings =
-    [ MGJump ~> [Key ScancodeSpace]
-    , MGCrouch ~> [Key ScancodeLCtrl]
-    , MGSprint ~> [Key ScancodeLShift]
-    , MGInteract ~> [Key ScancodeE]
-    , MGShoot ~> [MouseButton MouseButtonLeft]
-    , MGReload ~> [Key ScancodeR]
-    , MGMelee ~> [Key ScancodeF]
-    , MGGrenade ~> [Key ScancodeG]
-    , MGSwitchWeapon ~> [Key ScancodeQ]
-    , MGUse ~> [Key ScancodeE]
-    , MGMap ~> [Key ScancodeM]
-    , MGInventory ~> [Key ScancodeI]
-    , MGPause ~> [Key ScancodeEscape]
-    , MGScreenshot ~> [Key ScancodeF12]
-    , MGMove ~> [LeftStick 1.0 0.15]
-    , MGLook ~> [MouseMotion 1.0]
-    , MGStrafe ~> [RightStick 1.0 0.15]
-    , MGZoom ~> [AsAxis (Key ScancodeEquals)]
-    , MGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.1]
-    , MGLeanAxis ~> [GamepadTrigger ControllerAxisRightX 1.0 0.2]
+    [ MGJump :=> [Key ScancodeSpace]
+    , MGCrouch :=> [Key ScancodeLCtrl]
+    , MGSprint :=> [Key ScancodeLShift]
+    , MGInteract :=> [Key ScancodeE]
+    , MGShoot :=> [MouseButton MouseButtonLeft]
+    , MGReload :=> [Key ScancodeR]
+    , MGMelee :=> [Key ScancodeF]
+    , MGGrenade :=> [Key ScancodeG]
+    , MGSwitchWeapon :=> [Key ScancodeQ]
+    , MGUse :=> [Key ScancodeE]
+    , MGMap :=> [Key ScancodeM]
+    , MGInventory :=> [Key ScancodeI]
+    , MGPause :=> [Key ScancodeEscape]
+    , MGScreenshot :=> [Key ScancodeF12]
+    , MGMove :=> [LeftStick 1.0 0.15]
+    , MGLook :=> [MouseMotion 1.0]
+    , MGStrafe :=> [RightStick 1.0 0.15]
+    , MGZoom :=> [AsAxis (Key ScancodeEquals)]
+    , MGThrottle :=> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.1]
+    , MGLeanAxis :=> [GamepadTrigger ControllerAxisRightX 1.0 0.2]
     ]
 
   mediumGameMultipleBindings =
-    [ MGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
-    , MGCrouch ~> [Key ScancodeLCtrl, GamepadButton ControllerButtonB]
-    , MGSprint ~> [Key ScancodeLShift, GamepadButton ControllerButtonLeftStick]
-    , MGInteract ~> [Key ScancodeE, GamepadButton ControllerButtonX]
-    , MGShoot ~> [MouseButton MouseButtonLeft, GamepadButton ControllerButtonRightShoulder]
-    , MGReload ~> [Key ScancodeR, GamepadButton ControllerButtonY]
-    , MGMelee ~> [Key ScancodeF, GamepadButton ControllerButtonRightStick]
-    , MGGrenade ~> [Key ScancodeG, GamepadButton ControllerButtonLeftShoulder]
-    , MGSwitchWeapon ~> [Key ScancodeQ, GamepadButton ControllerButtonDpadDown]
-    , MGUse ~> [Key ScancodeE, GamepadButton ControllerButtonX]
-    , MGMap ~> [Key ScancodeM, GamepadButton ControllerButtonBack]
-    , MGInventory ~> [Key ScancodeI, GamepadButton ControllerButtonStart]
-    , MGPause ~> [Key ScancodeEscape, GamepadButton ControllerButtonStart]
-    , MGScreenshot ~> [Key ScancodeF12, GamepadButton ControllerButtonGuide]
+    [ MGJump :=> [Key ScancodeSpace, GamepadButton ControllerButtonA]
+    , MGCrouch :=> [Key ScancodeLCtrl, GamepadButton ControllerButtonB]
+    , MGSprint :=> [Key ScancodeLShift, GamepadButton ControllerButtonLeftStick]
+    , MGInteract :=> [Key ScancodeE, GamepadButton ControllerButtonX]
+    , MGShoot :=> [MouseButton MouseButtonLeft, GamepadButton ControllerButtonRightShoulder]
+    , MGReload :=> [Key ScancodeR, GamepadButton ControllerButtonY]
+    , MGMelee :=> [Key ScancodeF, GamepadButton ControllerButtonRightStick]
+    , MGGrenade :=> [Key ScancodeG, GamepadButton ControllerButtonLeftShoulder]
+    , MGSwitchWeapon :=> [Key ScancodeQ, GamepadButton ControllerButtonDpadDown]
+    , MGUse :=> [Key ScancodeE, GamepadButton ControllerButtonX]
+    , MGMap :=> [Key ScancodeM, GamepadButton ControllerButtonBack]
+    , MGInventory :=> [Key ScancodeI, GamepadButton ControllerButtonStart]
+    , MGPause :=> [Key ScancodeEscape, GamepadButton ControllerButtonStart]
+    , MGScreenshot :=> [Key ScancodeF12, GamepadButton ControllerButtonGuide]
     , MGMove
-        ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
-    , MGLook ~> [MouseMotion 1.0, RightStick 2.0 0.2]
+        :=> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
+    , MGLook :=> [MouseMotion 1.0, RightStick 2.0 0.2]
     , MGStrafe
-        ~> [ DPad (Key ScancodeLeft) (Key ScancodeUp) (Key ScancodeDown) (Key ScancodeRight)
+        :=> [ DPad (Key ScancodeLeft) (Key ScancodeUp) (Key ScancodeDown) (Key ScancodeRight)
            , RightStick 1.0 0.15
            ]
-    , MGZoom ~> [AsAxis (Key ScancodeEquals), AsAxis (GamepadButton ControllerButtonDpadUp)]
+    , MGZoom :=> [AsAxis (Key ScancodeEquals), AsAxis (GamepadButton ControllerButtonDpadUp)]
     , MGThrottle
-        ~> [AsAxis (Key ScancodeW), GamepadTrigger ControllerAxisTriggerLeft 1.0 0.1]
+        :=> [AsAxis (Key ScancodeW), GamepadTrigger ControllerAxisTriggerLeft 1.0 0.1]
     , MGLeanAxis
-        ~> [ GamepadTrigger ControllerAxisLeftX 1.0 0.2
+        :=> [ GamepadTrigger ControllerAxisLeftX 1.0 0.2
            , GamepadTrigger ControllerAxisRightY 1.0 0.15
            ]
     ]
 
   largeGameSingleBindings =
-    [ LGJump ~> [Key ScancodeSpace]
-    , LGCrouch ~> [Key ScancodeLCtrl]
-    , LGSprint ~> [Key ScancodeLShift]
-    , LGWalk ~> [Key ScancodeLAlt]
-    , LGProne ~> [Key ScancodeZ]
-    , LGClimb ~> [Key ScancodeSpace]
-    , LGSlide ~> [Key ScancodeC]
-    , LGRoll ~> [Key ScancodeV]
-    , LGMove ~> [LeftStick 1.0 0.15]
-    , LGMoveVertical ~> [GamepadTrigger ControllerAxisRightY 1.0 0.1]
+    [ LGJump :=> [Key ScancodeSpace]
+    , LGCrouch :=> [Key ScancodeLCtrl]
+    , LGSprint :=> [Key ScancodeLShift]
+    , LGWalk :=> [Key ScancodeLAlt]
+    , LGProne :=> [Key ScancodeZ]
+    , LGClimb :=> [Key ScancodeSpace]
+    , LGSlide :=> [Key ScancodeC]
+    , LGRoll :=> [Key ScancodeV]
+    , LGMove :=> [LeftStick 1.0 0.15]
+    , LGMoveVertical :=> [GamepadTrigger ControllerAxisRightY 1.0 0.1]
     , -- Add remaining actions with bindings...
-      LGShoot ~> [MouseButton MouseButtonLeft]
-    , LGADS ~> [MouseButton MouseButtonRight]
-    , LGReload ~> [Key ScancodeR]
-    , LGMelee ~> [Key ScancodeF]
-    , LGGrenade ~> [Key ScancodeG]
-    , LGThrowGrenade ~> [Key ScancodeT]
-    , LGNextWeapon ~> [Key ScancodeE]
-    , LGPrevWeapon ~> [Key ScancodeQ]
-    , LGWeapon1 ~> [Key Scancode1]
-    , LGWeapon2 ~> [Key Scancode2]
-    , LGWeapon3 ~> [Key Scancode3]
-    , LGWeapon4 ~> [Key Scancode4]
-    , LGWeapon5 ~> [Key Scancode5]
-    , LGToggleFireMode ~> [Key ScancodeB]
-    , LGToggleSafety ~> [Key ScancodeN]
-    , LGLook ~> [MouseMotion 1.0]
-    , LGLookHorizontal ~> [MouseAxis1D MouseX 1.0]
-    , LGLookVertical ~> [MouseAxis1D MouseY 1.0]
-    , LGZoom ~> [AsAxis (Key ScancodeEquals)]
-    , LGCycleZoom ~> [Key ScancodeX]
-    , LGUse ~> [Key ScancodeE]
-    , LGInteract ~> [Key ScancodeF]
-    , LGPickUp ~> [Key ScancodeG]
-    , LGDrop ~> [Key ScancodeH]
-    , LGExamine ~> [Key ScancodeY]
-    , LGOpen ~> [Key ScancodeO]
-    , LGClose ~> [Key ScancodeP]
-    , LGLock ~> [Key ScancodeL]
-    , LGUnlock ~> [Key ScancodeU]
-    , LGTalk ~> [Key ScancodeT]
-    , LGTrade ~> [Key ScancodeJ]
-    , LGGive ~> [Key ScancodeK]
-    , LGTake ~> [Key ScancodeComma]
-    , LGCraft ~> [Key ScancodePeriod]
-    , LGRepair ~> [Key ScancodeSlash]
-    , LGInventory ~> [Key ScancodeI]
-    , LGMap ~> [Key ScancodeM]
-    , LGJournal ~> [Key ScancodeJ]
-    , LGQuests ~> [Key ScancodeQ]
-    , LGSkills ~> [Key ScancodeK]
-    , LGEquipment ~> [Key ScancodeE]
-    , LGStats ~> [Key ScancodeC]
-    , LGSettings ~> [Key ScancodeEscape]
-    , LGPause ~> [Key ScancodeEscape]
-    , LGQuickSave ~> [Key ScancodeF5]
-    , LGQuickLoad ~> [Key ScancodeF9]
-    , LGScreenshot ~> [Key ScancodeF12]
-    , LGMenuUp ~> [Key ScancodeUp]
-    , LGMenuDown ~> [Key ScancodeDown]
-    , LGMenuLeft ~> [Key ScancodeLeft]
-    , LGMenuRight ~> [Key ScancodeRight]
-    , LGMenuSelect ~> [Key ScancodeReturn]
-    , LGMenuBack ~> [Key ScancodeEscape]
-    , LGMenuNavigate ~> [DPad (Key ScancodeLeft) (Key ScancodeUp) (Key ScancodeDown) (Key ScancodeRight)]
-    , LGTabLeft ~> [Key ScancodeTab]
-    , LGVehicleEnter ~> [Key ScancodeF]
-    , LGVehicleExit ~> [Key ScancodeF]
-    , LGVehicleAccel ~> [AsAxis (Key ScancodeW)]
-    , LGVehicleBrake ~> [AsAxis (Key ScancodeS)]
-    , LGVehicleSteer ~> [GamepadTrigger ControllerAxisLeftX 1.0 0.1]
-    , LGVehicleSteerXY ~> [LeftStick 1.0 0.15]
-    , LGVehicleHandbrake ~> [Key ScancodeSpace]
-    , LGVehicleBoost ~> [Key ScancodeLShift]
-    , LGVehicleHorn ~> [Key ScancodeH]
-    , LGVehicleLights ~> [Key ScancodeL]
-    , LGVehicleCamera ~> [Key ScancodeC]
-    , LGVehicleRadio ~> [Key ScancodeR]
-    , LGVehicleShoot ~> [MouseButton MouseButtonLeft]
-    , LGVehicleSpecial ~> [Key ScancodeX]
-    , LGVehicleEject ~> [Key ScancodeE]
-    , LGVoiceChat ~> [Key ScancodeV]
-    , LGTextChat ~> [Key ScancodeT]
-    , LGEmote1 ~> [Key ScancodeZ]
-    , LGEmote2 ~> [Key ScancodeX]
-    , LGEmote3 ~> [Key ScancodeC]
-    , LGEmote4 ~> [Key ScancodeV]
-    , LGPing ~> [Key ScancodeG]
-    , LGMark ~> [MouseButton MouseButtonMiddle]
-    , LGTeamMenu ~> [Key ScancodeU]
-    , LGScoreboard ~> [Key ScancodeTab]
-    , LGToggleCamera ~> [Key ScancodeV]
-    , LGCameraZoom ~> [AsAxis (Key ScancodeEquals)]
-    , LGCameraRotate ~> [MouseMotion 1.0]
-    , LGCameraPan ~> [RightStick 1.0 0.2]
-    , LGCameraUp ~> [Key ScancodeUp]
-    , LGCameraDown ~> [Key ScancodeDown]
-    , LGCameraLeft ~> [Key ScancodeLeft]
-    , LGCameraRight ~> [Key ScancodeRight]
-    , LGFreeLook ~> [Key ScancodeLAlt]
-    , LGResetCamera ~> [Key ScancodeHome]
+      LGShoot :=> [MouseButton MouseButtonLeft]
+    , LGADS :=> [MouseButton MouseButtonRight]
+    , LGReload :=> [Key ScancodeR]
+    , LGMelee :=> [Key ScancodeF]
+    , LGGrenade :=> [Key ScancodeG]
+    , LGThrowGrenade :=> [Key ScancodeT]
+    , LGNextWeapon :=> [Key ScancodeE]
+    , LGPrevWeapon :=> [Key ScancodeQ]
+    , LGWeapon1 :=> [Key Scancode1]
+    , LGWeapon2 :=> [Key Scancode2]
+    , LGWeapon3 :=> [Key Scancode3]
+    , LGWeapon4 :=> [Key Scancode4]
+    , LGWeapon5 :=> [Key Scancode5]
+    , LGToggleFireMode :=> [Key ScancodeB]
+    , LGToggleSafety :=> [Key ScancodeN]
+    , LGLook :=> [MouseMotion 1.0]
+    , LGLookHorizontal :=> [MouseAxis1D MouseX 1.0]
+    , LGLookVertical :=> [MouseAxis1D MouseY 1.0]
+    , LGZoom :=> [AsAxis (Key ScancodeEquals)]
+    , LGCycleZoom :=> [Key ScancodeX]
+    , LGUse :=> [Key ScancodeE]
+    , LGInteract :=> [Key ScancodeF]
+    , LGPickUp :=> [Key ScancodeG]
+    , LGDrop :=> [Key ScancodeH]
+    , LGExamine :=> [Key ScancodeY]
+    , LGOpen :=> [Key ScancodeO]
+    , LGClose :=> [Key ScancodeP]
+    , LGLock :=> [Key ScancodeL]
+    , LGUnlock :=> [Key ScancodeU]
+    , LGTalk :=> [Key ScancodeT]
+    , LGTrade :=> [Key ScancodeJ]
+    , LGGive :=> [Key ScancodeK]
+    , LGTake :=> [Key ScancodeComma]
+    , LGCraft :=> [Key ScancodePeriod]
+    , LGRepair :=> [Key ScancodeSlash]
+    , LGInventory :=> [Key ScancodeI]
+    , LGMap :=> [Key ScancodeM]
+    , LGJournal :=> [Key ScancodeJ]
+    , LGQuests :=> [Key ScancodeQ]
+    , LGSkills :=> [Key ScancodeK]
+    , LGEquipment :=> [Key ScancodeE]
+    , LGStats :=> [Key ScancodeC]
+    , LGSettings :=> [Key ScancodeEscape]
+    , LGPause :=> [Key ScancodeEscape]
+    , LGQuickSave :=> [Key ScancodeF5]
+    , LGQuickLoad :=> [Key ScancodeF9]
+    , LGScreenshot :=> [Key ScancodeF12]
+    , LGMenuUp :=> [Key ScancodeUp]
+    , LGMenuDown :=> [Key ScancodeDown]
+    , LGMenuLeft :=> [Key ScancodeLeft]
+    , LGMenuRight :=> [Key ScancodeRight]
+    , LGMenuSelect :=> [Key ScancodeReturn]
+    , LGMenuBack :=> [Key ScancodeEscape]
+    , LGMenuNavigate :=> [DPad (Key ScancodeLeft) (Key ScancodeUp) (Key ScancodeDown) (Key ScancodeRight)]
+    , LGTabLeft :=> [Key ScancodeTab]
+    , LGVehicleEnter :=> [Key ScancodeF]
+    , LGVehicleExit :=> [Key ScancodeF]
+    , LGVehicleAccel :=> [AsAxis (Key ScancodeW)]
+    , LGVehicleBrake :=> [AsAxis (Key ScancodeS)]
+    , LGVehicleSteer :=> [GamepadTrigger ControllerAxisLeftX 1.0 0.1]
+    , LGVehicleSteerXY :=> [LeftStick 1.0 0.15]
+    , LGVehicleHandbrake :=> [Key ScancodeSpace]
+    , LGVehicleBoost :=> [Key ScancodeLShift]
+    , LGVehicleHorn :=> [Key ScancodeH]
+    , LGVehicleLights :=> [Key ScancodeL]
+    , LGVehicleCamera :=> [Key ScancodeC]
+    , LGVehicleRadio :=> [Key ScancodeR]
+    , LGVehicleShoot :=> [MouseButton MouseButtonLeft]
+    , LGVehicleSpecial :=> [Key ScancodeX]
+    , LGVehicleEject :=> [Key ScancodeE]
+    , LGVoiceChat :=> [Key ScancodeV]
+    , LGTextChat :=> [Key ScancodeT]
+    , LGEmote1 :=> [Key ScancodeZ]
+    , LGEmote2 :=> [Key ScancodeX]
+    , LGEmote3 :=> [Key ScancodeC]
+    , LGEmote4 :=> [Key ScancodeV]
+    , LGPing :=> [Key ScancodeG]
+    , LGMark :=> [MouseButton MouseButtonMiddle]
+    , LGTeamMenu :=> [Key ScancodeU]
+    , LGScoreboard :=> [Key ScancodeTab]
+    , LGToggleCamera :=> [Key ScancodeV]
+    , LGCameraZoom :=> [AsAxis (Key ScancodeEquals)]
+    , LGCameraRotate :=> [MouseMotion 1.0]
+    , LGCameraPan :=> [RightStick 1.0 0.2]
+    , LGCameraUp :=> [Key ScancodeUp]
+    , LGCameraDown :=> [Key ScancodeDown]
+    , LGCameraLeft :=> [Key ScancodeLeft]
+    , LGCameraRight :=> [Key ScancodeRight]
+    , LGFreeLook :=> [Key ScancodeLAlt]
+    , LGResetCamera :=> [Key ScancodeHome]
     ]
 
   largeGameMultipleBindings =
-    [ LGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
-    , LGCrouch ~> [Key ScancodeLCtrl, GamepadButton ControllerButtonB]
-    , LGSprint ~> [Key ScancodeLShift, GamepadButton ControllerButtonLeftStick]
-    , LGWalk ~> [Key ScancodeLAlt, GamepadButton ControllerButtonRightStick]
-    , LGProne ~> [Key ScancodeZ, GamepadButton ControllerButtonDpadDown]
-    , LGClimb ~> [Key ScancodeSpace, GamepadButton ControllerButtonY]
-    , LGSlide ~> [Key ScancodeC, GamepadButton ControllerButtonB]
-    , LGRoll ~> [Key ScancodeV, GamepadButton ControllerButtonX]
+    [ LGJump :=> [Key ScancodeSpace, GamepadButton ControllerButtonA]
+    , LGCrouch :=> [Key ScancodeLCtrl, GamepadButton ControllerButtonB]
+    , LGSprint :=> [Key ScancodeLShift, GamepadButton ControllerButtonLeftStick]
+    , LGWalk :=> [Key ScancodeLAlt, GamepadButton ControllerButtonRightStick]
+    , LGProne :=> [Key ScancodeZ, GamepadButton ControllerButtonDpadDown]
+    , LGClimb :=> [Key ScancodeSpace, GamepadButton ControllerButtonY]
+    , LGSlide :=> [Key ScancodeC, GamepadButton ControllerButtonB]
+    , LGRoll :=> [Key ScancodeV, GamepadButton ControllerButtonX]
     , LGMove
-        ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
+        :=> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
     , LGMoveVertical
-        ~> [GamepadTrigger ControllerAxisLeftY 1.0 0.1, AsAxis (Key ScancodeSpace)]
-    , LGShoot ~> [MouseButton MouseButtonLeft, GamepadButton ControllerButtonRightShoulder]
-    , LGADS ~> [MouseButton MouseButtonRight, GamepadButton ControllerButtonLeftShoulder]
-    , LGReload ~> [Key ScancodeR, GamepadButton ControllerButtonY]
-    , LGMelee ~> [Key ScancodeF, GamepadButton ControllerButtonRightStick]
-    , LGGrenade ~> [Key ScancodeG, GamepadButton ControllerButtonLeftShoulder]
-    , LGThrowGrenade ~> [Key ScancodeT, GamepadButton ControllerButtonDpadUp]
-    , LGNextWeapon ~> [Key ScancodeE, GamepadButton ControllerButtonDpadRight]
-    , LGPrevWeapon ~> [Key ScancodeQ, GamepadButton ControllerButtonDpadLeft]
-    , LGWeapon1 ~> [Key Scancode1, GamepadButton ControllerButtonA]
-    , LGWeapon2 ~> [Key Scancode2, GamepadButton ControllerButtonB]
-    , LGWeapon3 ~> [Key Scancode3, GamepadButton ControllerButtonX]
-    , LGWeapon4 ~> [Key Scancode4, GamepadButton ControllerButtonY]
-    , LGWeapon5 ~> [Key Scancode5, GamepadButton ControllerButtonLeftShoulder]
-    , LGToggleFireMode ~> [Key ScancodeB, GamepadButton ControllerButtonBack]
-    , LGToggleSafety ~> [Key ScancodeN, GamepadButton ControllerButtonStart]
-    , LGLook ~> [MouseMotion 1.0, RightStick 2.0 0.2]
+        :=> [GamepadTrigger ControllerAxisLeftY 1.0 0.1, AsAxis (Key ScancodeSpace)]
+    , LGShoot :=> [MouseButton MouseButtonLeft, GamepadButton ControllerButtonRightShoulder]
+    , LGADS :=> [MouseButton MouseButtonRight, GamepadButton ControllerButtonLeftShoulder]
+    , LGReload :=> [Key ScancodeR, GamepadButton ControllerButtonY]
+    , LGMelee :=> [Key ScancodeF, GamepadButton ControllerButtonRightStick]
+    , LGGrenade :=> [Key ScancodeG, GamepadButton ControllerButtonLeftShoulder]
+    , LGThrowGrenade :=> [Key ScancodeT, GamepadButton ControllerButtonDpadUp]
+    , LGNextWeapon :=> [Key ScancodeE, GamepadButton ControllerButtonDpadRight]
+    , LGPrevWeapon :=> [Key ScancodeQ, GamepadButton ControllerButtonDpadLeft]
+    , LGWeapon1 :=> [Key Scancode1, GamepadButton ControllerButtonA]
+    , LGWeapon2 :=> [Key Scancode2, GamepadButton ControllerButtonB]
+    , LGWeapon3 :=> [Key Scancode3, GamepadButton ControllerButtonX]
+    , LGWeapon4 :=> [Key Scancode4, GamepadButton ControllerButtonY]
+    , LGWeapon5 :=> [Key Scancode5, GamepadButton ControllerButtonLeftShoulder]
+    , LGToggleFireMode :=> [Key ScancodeB, GamepadButton ControllerButtonBack]
+    , LGToggleSafety :=> [Key ScancodeN, GamepadButton ControllerButtonStart]
+    , LGLook :=> [MouseMotion 1.0, RightStick 2.0 0.2]
     , LGLookHorizontal
-        ~> [MouseAxis1D MouseX 1.0, GamepadTrigger ControllerAxisLeftX 2.0 0.2]
+        :=> [MouseAxis1D MouseX 1.0, GamepadTrigger ControllerAxisLeftX 2.0 0.2]
     , LGLookVertical
-        ~> [MouseAxis1D MouseY 1.0, GamepadTrigger ControllerAxisLeftY 2.0 0.2]
-    , LGZoom ~> [AsAxis (Key ScancodeEquals), AsAxis (GamepadButton ControllerButtonDpadUp)]
-    , LGCycleZoom ~> [Key ScancodeX, GamepadButton ControllerButtonRightStick]
-    , LGUse ~> [Key ScancodeE, GamepadButton ControllerButtonX]
-    , LGInteract ~> [Key ScancodeF, GamepadButton ControllerButtonA]
-    , LGPickUp ~> [Key ScancodeG, GamepadButton ControllerButtonY]
-    , LGDrop ~> [Key ScancodeH, GamepadButton ControllerButtonB]
-    , LGExamine ~> [Key ScancodeY, GamepadButton ControllerButtonDpadDown]
-    , LGOpen ~> [Key ScancodeO, GamepadButton ControllerButtonDpadUp]
-    , LGClose ~> [Key ScancodeP, GamepadButton ControllerButtonDpadRight]
-    , LGLock ~> [Key ScancodeL, GamepadButton ControllerButtonLeftShoulder]
-    , LGUnlock ~> [Key ScancodeU, GamepadButton ControllerButtonRightShoulder]
-    , LGTalk ~> [Key ScancodeT, GamepadButton ControllerButtonStart]
-    , LGTrade ~> [Key ScancodeJ, GamepadButton ControllerButtonBack]
-    , LGGive ~> [Key ScancodeK, GamepadButton ControllerButtonDpadLeft]
-    , LGTake ~> [Key ScancodeComma, GamepadButton ControllerButtonDpadDown]
-    , LGCraft ~> [Key ScancodePeriod, GamepadButton ControllerButtonY]
-    , LGRepair ~> [Key ScancodeSlash, GamepadButton ControllerButtonB]
-    , LGInventory ~> [Key ScancodeI, GamepadButton ControllerButtonStart]
-    , LGMap ~> [Key ScancodeM, GamepadButton ControllerButtonBack]
-    , LGJournal ~> [Key ScancodeJ, GamepadButton ControllerButtonDpadUp]
-    , LGQuests ~> [Key ScancodeQ, GamepadButton ControllerButtonDpadRight]
-    , LGSkills ~> [Key ScancodeK, GamepadButton ControllerButtonDpadLeft]
-    , LGEquipment ~> [Key ScancodeE, GamepadButton ControllerButtonDpadDown]
-    , LGStats ~> [Key ScancodeC, GamepadButton ControllerButtonLeftStick]
-    , LGSettings ~> [Key ScancodeEscape, GamepadButton ControllerButtonStart]
-    , LGPause ~> [Key ScancodeEscape, GamepadButton ControllerButtonStart]
-    , LGQuickSave ~> [Key ScancodeF5, GamepadButton ControllerButtonLeftShoulder]
-    , LGQuickLoad ~> [Key ScancodeF9, GamepadButton ControllerButtonRightShoulder]
-    , LGScreenshot ~> [Key ScancodeF12, GamepadButton ControllerButtonGuide]
-    , LGMenuUp ~> [Key ScancodeUp, GamepadButton ControllerButtonDpadUp]
-    , LGMenuDown ~> [Key ScancodeDown, GamepadButton ControllerButtonDpadDown]
-    , LGMenuLeft ~> [Key ScancodeLeft, GamepadButton ControllerButtonDpadLeft]
-    , LGMenuRight ~> [Key ScancodeRight, GamepadButton ControllerButtonDpadRight]
-    , LGMenuSelect ~> [Key ScancodeReturn, GamepadButton ControllerButtonA]
-    , LGMenuBack ~> [Key ScancodeEscape, GamepadButton ControllerButtonB]
+        :=> [MouseAxis1D MouseY 1.0, GamepadTrigger ControllerAxisLeftY 2.0 0.2]
+    , LGZoom :=> [AsAxis (Key ScancodeEquals), AsAxis (GamepadButton ControllerButtonDpadUp)]
+    , LGCycleZoom :=> [Key ScancodeX, GamepadButton ControllerButtonRightStick]
+    , LGUse :=> [Key ScancodeE, GamepadButton ControllerButtonX]
+    , LGInteract :=> [Key ScancodeF, GamepadButton ControllerButtonA]
+    , LGPickUp :=> [Key ScancodeG, GamepadButton ControllerButtonY]
+    , LGDrop :=> [Key ScancodeH, GamepadButton ControllerButtonB]
+    , LGExamine :=> [Key ScancodeY, GamepadButton ControllerButtonDpadDown]
+    , LGOpen :=> [Key ScancodeO, GamepadButton ControllerButtonDpadUp]
+    , LGClose :=> [Key ScancodeP, GamepadButton ControllerButtonDpadRight]
+    , LGLock :=> [Key ScancodeL, GamepadButton ControllerButtonLeftShoulder]
+    , LGUnlock :=> [Key ScancodeU, GamepadButton ControllerButtonRightShoulder]
+    , LGTalk :=> [Key ScancodeT, GamepadButton ControllerButtonStart]
+    , LGTrade :=> [Key ScancodeJ, GamepadButton ControllerButtonBack]
+    , LGGive :=> [Key ScancodeK, GamepadButton ControllerButtonDpadLeft]
+    , LGTake :=> [Key ScancodeComma, GamepadButton ControllerButtonDpadDown]
+    , LGCraft :=> [Key ScancodePeriod, GamepadButton ControllerButtonY]
+    , LGRepair :=> [Key ScancodeSlash, GamepadButton ControllerButtonB]
+    , LGInventory :=> [Key ScancodeI, GamepadButton ControllerButtonStart]
+    , LGMap :=> [Key ScancodeM, GamepadButton ControllerButtonBack]
+    , LGJournal :=> [Key ScancodeJ, GamepadButton ControllerButtonDpadUp]
+    , LGQuests :=> [Key ScancodeQ, GamepadButton ControllerButtonDpadRight]
+    , LGSkills :=> [Key ScancodeK, GamepadButton ControllerButtonDpadLeft]
+    , LGEquipment :=> [Key ScancodeE, GamepadButton ControllerButtonDpadDown]
+    , LGStats :=> [Key ScancodeC, GamepadButton ControllerButtonLeftStick]
+    , LGSettings :=> [Key ScancodeEscape, GamepadButton ControllerButtonStart]
+    , LGPause :=> [Key ScancodeEscape, GamepadButton ControllerButtonStart]
+    , LGQuickSave :=> [Key ScancodeF5, GamepadButton ControllerButtonLeftShoulder]
+    , LGQuickLoad :=> [Key ScancodeF9, GamepadButton ControllerButtonRightShoulder]
+    , LGScreenshot :=> [Key ScancodeF12, GamepadButton ControllerButtonGuide]
+    , LGMenuUp :=> [Key ScancodeUp, GamepadButton ControllerButtonDpadUp]
+    , LGMenuDown :=> [Key ScancodeDown, GamepadButton ControllerButtonDpadDown]
+    , LGMenuLeft :=> [Key ScancodeLeft, GamepadButton ControllerButtonDpadLeft]
+    , LGMenuRight :=> [Key ScancodeRight, GamepadButton ControllerButtonDpadRight]
+    , LGMenuSelect :=> [Key ScancodeReturn, GamepadButton ControllerButtonA]
+    , LGMenuBack :=> [Key ScancodeEscape, GamepadButton ControllerButtonB]
     , LGMenuNavigate
-        ~> [ DPad (Key ScancodeLeft) (Key ScancodeUp) (Key ScancodeDown) (Key ScancodeRight)
+        :=> [ DPad (Key ScancodeLeft) (Key ScancodeUp) (Key ScancodeDown) (Key ScancodeRight)
            , LeftStick 1.0 0.15
            ]
-    , LGTabLeft ~> [Key ScancodeTab, GamepadButton ControllerButtonLeftShoulder]
-    , LGVehicleEnter ~> [Key ScancodeF, GamepadButton ControllerButtonY]
-    , LGVehicleExit ~> [Key ScancodeF, GamepadButton ControllerButtonB]
+    , LGTabLeft :=> [Key ScancodeTab, GamepadButton ControllerButtonLeftShoulder]
+    , LGVehicleEnter :=> [Key ScancodeF, GamepadButton ControllerButtonY]
+    , LGVehicleExit :=> [Key ScancodeF, GamepadButton ControllerButtonB]
     , LGVehicleAccel
-        ~> [AsAxis (Key ScancodeW), GamepadTrigger ControllerAxisTriggerRight 1.0 0.1]
+        :=> [AsAxis (Key ScancodeW), GamepadTrigger ControllerAxisTriggerRight 1.0 0.1]
     , LGVehicleBrake
-        ~> [AsAxis (Key ScancodeS), GamepadTrigger ControllerAxisTriggerLeft 1.0 0.1]
+        :=> [AsAxis (Key ScancodeS), GamepadTrigger ControllerAxisTriggerLeft 1.0 0.1]
     , LGVehicleSteer
-        ~> [ GamepadTrigger ControllerAxisRightX 1.0 0.1
+        :=> [ GamepadTrigger ControllerAxisRightX 1.0 0.1
            , GamepadTrigger ControllerAxisLeftX 1.0 0.15
            ]
     , LGVehicleSteerXY
-        ~> [LeftStick 1.0 0.15, DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD)]
-    , LGVehicleHandbrake ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
-    , LGVehicleBoost ~> [Key ScancodeLShift, GamepadButton ControllerButtonX]
-    , LGVehicleHorn ~> [Key ScancodeH, GamepadButton ControllerButtonLeftStick]
-    , LGVehicleLights ~> [Key ScancodeL, GamepadButton ControllerButtonRightStick]
-    , LGVehicleCamera ~> [Key ScancodeC, GamepadButton ControllerButtonBack]
-    , LGVehicleRadio ~> [Key ScancodeR, GamepadButton ControllerButtonStart]
-    , LGVehicleShoot ~> [MouseButton MouseButtonLeft, GamepadButton ControllerButtonRightShoulder]
-    , LGVehicleSpecial ~> [Key ScancodeX, GamepadButton ControllerButtonY]
-    , LGVehicleEject ~> [Key ScancodeE, GamepadButton ControllerButtonB]
-    , LGVoiceChat ~> [Key ScancodeV, GamepadButton ControllerButtonDpadUp]
-    , LGTextChat ~> [Key ScancodeT, GamepadButton ControllerButtonDpadDown]
-    , LGEmote1 ~> [Key ScancodeZ, GamepadButton ControllerButtonDpadLeft]
-    , LGEmote2 ~> [Key ScancodeX, GamepadButton ControllerButtonDpadRight]
-    , LGEmote3 ~> [Key ScancodeC, GamepadButton ControllerButtonDpadUp]
-    , LGEmote4 ~> [Key ScancodeV, GamepadButton ControllerButtonDpadDown]
-    , LGPing ~> [Key ScancodeG, GamepadButton ControllerButtonLeftShoulder]
-    , LGMark ~> [MouseButton MouseButtonMiddle, GamepadButton ControllerButtonRightShoulder]
-    , LGTeamMenu ~> [Key ScancodeU, GamepadButton ControllerButtonBack]
-    , LGScoreboard ~> [Key ScancodeTab, GamepadButton ControllerButtonStart]
-    , LGToggleCamera ~> [Key ScancodeV, GamepadButton ControllerButtonRightStick]
+        :=> [LeftStick 1.0 0.15, DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD)]
+    , LGVehicleHandbrake :=> [Key ScancodeSpace, GamepadButton ControllerButtonA]
+    , LGVehicleBoost :=> [Key ScancodeLShift, GamepadButton ControllerButtonX]
+    , LGVehicleHorn :=> [Key ScancodeH, GamepadButton ControllerButtonLeftStick]
+    , LGVehicleLights :=> [Key ScancodeL, GamepadButton ControllerButtonRightStick]
+    , LGVehicleCamera :=> [Key ScancodeC, GamepadButton ControllerButtonBack]
+    , LGVehicleRadio :=> [Key ScancodeR, GamepadButton ControllerButtonStart]
+    , LGVehicleShoot :=> [MouseButton MouseButtonLeft, GamepadButton ControllerButtonRightShoulder]
+    , LGVehicleSpecial :=> [Key ScancodeX, GamepadButton ControllerButtonY]
+    , LGVehicleEject :=> [Key ScancodeE, GamepadButton ControllerButtonB]
+    , LGVoiceChat :=> [Key ScancodeV, GamepadButton ControllerButtonDpadUp]
+    , LGTextChat :=> [Key ScancodeT, GamepadButton ControllerButtonDpadDown]
+    , LGEmote1 :=> [Key ScancodeZ, GamepadButton ControllerButtonDpadLeft]
+    , LGEmote2 :=> [Key ScancodeX, GamepadButton ControllerButtonDpadRight]
+    , LGEmote3 :=> [Key ScancodeC, GamepadButton ControllerButtonDpadUp]
+    , LGEmote4 :=> [Key ScancodeV, GamepadButton ControllerButtonDpadDown]
+    , LGPing :=> [Key ScancodeG, GamepadButton ControllerButtonLeftShoulder]
+    , LGMark :=> [MouseButton MouseButtonMiddle, GamepadButton ControllerButtonRightShoulder]
+    , LGTeamMenu :=> [Key ScancodeU, GamepadButton ControllerButtonBack]
+    , LGScoreboard :=> [Key ScancodeTab, GamepadButton ControllerButtonStart]
+    , LGToggleCamera :=> [Key ScancodeV, GamepadButton ControllerButtonRightStick]
     , LGCameraZoom
-        ~> [AsAxis (Key ScancodeEquals), GamepadTrigger ControllerAxisLeftY 1.0 0.2]
-    , LGCameraRotate ~> [MouseMotion 1.0, RightStick 1.5 0.2]
-    , LGCameraPan ~> [RightStick 1.0 0.2, MouseMotion 0.5]
-    , LGCameraUp ~> [Key ScancodeUp, GamepadButton ControllerButtonDpadUp]
-    , LGCameraDown ~> [Key ScancodeDown, GamepadButton ControllerButtonDpadDown]
-    , LGCameraLeft ~> [Key ScancodeLeft, GamepadButton ControllerButtonDpadLeft]
-    , LGCameraRight ~> [Key ScancodeRight, GamepadButton ControllerButtonDpadRight]
-    , LGFreeLook ~> [Key ScancodeLAlt, GamepadButton ControllerButtonLeftShoulder]
-    , LGResetCamera ~> [Key ScancodeHome, GamepadButton ControllerButtonLeftStick]
+        :=> [AsAxis (Key ScancodeEquals), GamepadTrigger ControllerAxisLeftY 1.0 0.2]
+    , LGCameraRotate :=> [MouseMotion 1.0, RightStick 1.5 0.2]
+    , LGCameraPan :=> [RightStick 1.0 0.2, MouseMotion 0.5]
+    , LGCameraUp :=> [Key ScancodeUp, GamepadButton ControllerButtonDpadUp]
+    , LGCameraDown :=> [Key ScancodeDown, GamepadButton ControllerButtonDpadDown]
+    , LGCameraLeft :=> [Key ScancodeLeft, GamepadButton ControllerButtonDpadLeft]
+    , LGCameraRight :=> [Key ScancodeRight, GamepadButton ControllerButtonDpadRight]
+    , LGFreeLook :=> [Key ScancodeLAlt, GamepadButton ControllerButtonLeftShoulder]
+    , LGResetCamera :=> [Key ScancodeHome, GamepadButton ControllerButtonLeftStick]
     ]
 
 -- ============================================================================
@@ -726,16 +726,16 @@ inputQueryBenchmarks =
    where
     smallGameSingleBindings =
       compileActions @SmallGame
-        [ SGJump ~> [Key ScancodeSpace]
-        , SGCrouch ~> [Key ScancodeLCtrl]
-        , SGSprint ~> [Key ScancodeLShift]
-        , SGInteract ~> [Key ScancodeE]
-        , SGShoot ~> [MouseButton MouseButtonLeft]
-        , SGReload ~> [Key ScancodeR]
-        , SGMove ~> [LeftStick 1.0 0.15]
-        , SGLook ~> [MouseMotion 1.0]
-        , SGZoom ~> [AsAxis (Key ScancodeEquals)]
-        , SGThrottle ~> [AsAxis (Key ScancodeW)]
+        [ SGJump :=> [Key ScancodeSpace]
+        , SGCrouch :=> [Key ScancodeLCtrl]
+        , SGSprint :=> [Key ScancodeLShift]
+        , SGInteract :=> [Key ScancodeE]
+        , SGShoot :=> [MouseButton MouseButtonLeft]
+        , SGReload :=> [Key ScancodeR]
+        , SGMove :=> [LeftStick 1.0 0.15]
+        , SGLook :=> [MouseMotion 1.0]
+        , SGZoom :=> [AsAxis (Key ScancodeEquals)]
+        , SGThrottle :=> [AsAxis (Key ScancodeW)]
         ]
 
   setupSmallGameMultiple = do
@@ -761,18 +761,18 @@ inputQueryBenchmarks =
    where
     smallGameMultipleBindings =
       compileActions @SmallGame
-        [ SGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
-        , SGCrouch ~> [Key ScancodeLCtrl, GamepadButton ControllerButtonB]
-        , SGSprint ~> [Key ScancodeLShift, GamepadButton ControllerButtonLeftStick]
-        , SGInteract ~> [Key ScancodeE, GamepadButton ControllerButtonX]
-        , SGShoot ~> [MouseButton MouseButtonLeft, GamepadButton ControllerButtonRightShoulder]
-        , SGReload ~> [Key ScancodeR, GamepadButton ControllerButtonY]
+        [ SGJump :=> [Key ScancodeSpace, GamepadButton ControllerButtonA]
+        , SGCrouch :=> [Key ScancodeLCtrl, GamepadButton ControllerButtonB]
+        , SGSprint :=> [Key ScancodeLShift, GamepadButton ControllerButtonLeftStick]
+        , SGInteract :=> [Key ScancodeE, GamepadButton ControllerButtonX]
+        , SGShoot :=> [MouseButton MouseButtonLeft, GamepadButton ControllerButtonRightShoulder]
+        , SGReload :=> [Key ScancodeR, GamepadButton ControllerButtonY]
         , SGMove
-            ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
-        , SGLook ~> [MouseMotion 1.0, RightStick 2.0 0.2]
-        , SGZoom ~> [AsAxis (Key ScancodeEquals), AsAxis (GamepadButton ControllerButtonDpadUp)]
+            :=> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
+        , SGLook :=> [MouseMotion 1.0, RightStick 2.0 0.2]
+        , SGZoom :=> [AsAxis (Key ScancodeEquals), AsAxis (GamepadButton ControllerButtonDpadUp)]
         , SGThrottle
-            ~> [AsAxis (Key ScancodeW), GamepadTrigger ControllerAxisTriggerRight 1.0 0.1]
+            :=> [AsAxis (Key ScancodeW), GamepadTrigger ControllerAxisTriggerRight 1.0 0.1]
         ]
 
   setupSmallGameMany = do
@@ -800,49 +800,49 @@ inputQueryBenchmarks =
     smallGameManyBindings =
       compileActions @SmallGame
         [ SGJump
-            ~> [ Key ScancodeSpace
+            :=> [ Key ScancodeSpace
                , GamepadButton ControllerButtonA
                , GamepadButton ControllerButtonB
                , Key ScancodeUp
                , GamepadButton ControllerButtonDpadUp
                ]
         , SGCrouch
-            ~> [ Key ScancodeLCtrl
+            :=> [ Key ScancodeLCtrl
                , GamepadButton ControllerButtonB
                , Key ScancodeC
                , GamepadButton ControllerButtonRightStick
                , Key ScancodeDown
                ]
         , SGSprint
-            ~> [ Key ScancodeLShift
+            :=> [ Key ScancodeLShift
                , GamepadButton ControllerButtonLeftStick
                , Key ScancodeRShift
                , GamepadButton ControllerButtonX
                , GamepadButton ControllerButtonY
                ]
         , SGInteract
-            ~> [ Key ScancodeE
+            :=> [ Key ScancodeE
                , GamepadButton ControllerButtonX
                , Key ScancodeF
                , MouseButton MouseButtonMiddle
                , GamepadButton ControllerButtonA
                ]
         , SGShoot
-            ~> [ MouseButton MouseButtonLeft
+            :=> [ MouseButton MouseButtonLeft
                , GamepadButton ControllerButtonRightShoulder
                , Key ScancodeLCtrl
                , GamepadButton ControllerButtonA
                , MouseButton MouseButtonRight
                ]
         , SGReload
-            ~> [ Key ScancodeR
+            :=> [ Key ScancodeR
                , GamepadButton ControllerButtonY
                , Key ScancodeT
                , GamepadButton ControllerButtonLeftShoulder
                , MouseButton MouseButtonMiddle
                ]
         , SGMove
-            ~> [ DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD)
+            :=> [ DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD)
                , LeftStick 1.0 0.15
                , DPad (Key ScancodeLeft) (Key ScancodeUp) (Key ScancodeDown) (Key ScancodeRight)
                , DPad
@@ -853,21 +853,21 @@ inputQueryBenchmarks =
                , DPad (Key Scancode4) (Key Scancode8) (Key Scancode5) (Key Scancode6)
                ]
         , SGLook
-            ~> [ MouseMotion 1.0
+            :=> [ MouseMotion 1.0
                , RightStick 2.0 0.2
                , GamepadStick ControllerAxisLeftX ControllerAxisLeftY 1.5 0.15
                , DPad (Key ScancodeJ) (Key ScancodeI) (Key ScancodeK) (Key ScancodeL)
                , MouseAxis2D MouseX MouseY 0.8
                ]
         , SGZoom
-            ~> [ AsAxis (Key ScancodeEquals)
+            :=> [ AsAxis (Key ScancodeEquals)
                , AsAxis (GamepadButton ControllerButtonDpadUp)
                , AsAxis (Key ScancodeEquals)
                , GamepadTrigger ControllerAxisTriggerLeft 1.0 0.1
                , AsAxis (Key ScancodeMinus)
                ]
         , SGThrottle
-            ~> [ AsAxis (Key ScancodeW)
+            :=> [ AsAxis (Key ScancodeW)
                , GamepadTrigger ControllerAxisTriggerLeft 1.0 0.1
                , AsAxis (MouseButton MouseButtonRight)
                , GamepadTrigger ControllerAxisLeftY 1.0 0.15
@@ -891,32 +891,32 @@ inputQueryBenchmarks =
    where
     mediumGameMultipleBindings =
       compileActions @MediumGame
-        [ MGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA]
-        , MGCrouch ~> [Key ScancodeLCtrl, GamepadButton ControllerButtonB]
-        , MGSprint ~> [Key ScancodeLShift, GamepadButton ControllerButtonLeftStick]
-        , MGInteract ~> [Key ScancodeE, GamepadButton ControllerButtonX]
-        , MGShoot ~> [MouseButton MouseButtonLeft, GamepadButton ControllerButtonRightShoulder]
-        , MGReload ~> [Key ScancodeR, GamepadButton ControllerButtonY]
-        , MGMelee ~> [Key ScancodeF, GamepadButton ControllerButtonRightStick]
-        , MGGrenade ~> [Key ScancodeG, GamepadButton ControllerButtonLeftShoulder]
-        , MGSwitchWeapon ~> [Key ScancodeQ, GamepadButton ControllerButtonDpadDown]
-        , MGUse ~> [Key ScancodeE, GamepadButton ControllerButtonX]
-        , MGMap ~> [Key ScancodeM, GamepadButton ControllerButtonBack]
-        , MGInventory ~> [Key ScancodeI, GamepadButton ControllerButtonStart]
-        , MGPause ~> [Key ScancodeEscape, GamepadButton ControllerButtonStart]
-        , MGScreenshot ~> [Key ScancodeF12, GamepadButton ControllerButtonGuide]
+        [ MGJump :=> [Key ScancodeSpace, GamepadButton ControllerButtonA]
+        , MGCrouch :=> [Key ScancodeLCtrl, GamepadButton ControllerButtonB]
+        , MGSprint :=> [Key ScancodeLShift, GamepadButton ControllerButtonLeftStick]
+        , MGInteract :=> [Key ScancodeE, GamepadButton ControllerButtonX]
+        , MGShoot :=> [MouseButton MouseButtonLeft, GamepadButton ControllerButtonRightShoulder]
+        , MGReload :=> [Key ScancodeR, GamepadButton ControllerButtonY]
+        , MGMelee :=> [Key ScancodeF, GamepadButton ControllerButtonRightStick]
+        , MGGrenade :=> [Key ScancodeG, GamepadButton ControllerButtonLeftShoulder]
+        , MGSwitchWeapon :=> [Key ScancodeQ, GamepadButton ControllerButtonDpadDown]
+        , MGUse :=> [Key ScancodeE, GamepadButton ControllerButtonX]
+        , MGMap :=> [Key ScancodeM, GamepadButton ControllerButtonBack]
+        , MGInventory :=> [Key ScancodeI, GamepadButton ControllerButtonStart]
+        , MGPause :=> [Key ScancodeEscape, GamepadButton ControllerButtonStart]
+        , MGScreenshot :=> [Key ScancodeF12, GamepadButton ControllerButtonGuide]
         , MGMove
-            ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
-        , MGLook ~> [MouseMotion 1.0, RightStick 2.0 0.2]
+            :=> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
+        , MGLook :=> [MouseMotion 1.0, RightStick 2.0 0.2]
         , MGStrafe
-            ~> [ DPad (Key ScancodeLeft) (Key ScancodeUp) (Key ScancodeDown) (Key ScancodeRight)
+            :=> [ DPad (Key ScancodeLeft) (Key ScancodeUp) (Key ScancodeDown) (Key ScancodeRight)
                , RightStick 1.0 0.15
                ]
-        , MGZoom ~> [AsAxis (Key ScancodeEquals), AsAxis (GamepadButton ControllerButtonDpadUp)]
+        , MGZoom :=> [AsAxis (Key ScancodeEquals), AsAxis (GamepadButton ControllerButtonDpadUp)]
         , MGThrottle
-            ~> [AsAxis (Key ScancodeW), GamepadTrigger ControllerAxisTriggerRight 1.0 0.1]
+            :=> [AsAxis (Key ScancodeW), GamepadTrigger ControllerAxisTriggerRight 1.0 0.1]
         , MGLeanAxis
-            ~> [ GamepadTrigger ControllerAxisRightX 1.0 0.2
+            :=> [ GamepadTrigger ControllerAxisRightX 1.0 0.2
                , GamepadTrigger ControllerAxisLeftY 1.0 0.15
                ]
         ]
@@ -993,7 +993,7 @@ aggregationBenchmarks =
     -- Leave all buttons as False (default)
     let mp =
           compileActions @SmallGame
-            [SGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA, Key ScancodeUp]]
+            [SGJump :=> [Key ScancodeSpace, GamepadButton ControllerButtonA, Key ScancodeUp]]
     pure (buf, mp)
 
   setupButtonMixed = do
@@ -1002,7 +1002,7 @@ aggregationBenchmarks =
     MPA.write buf.thisInput.controllerButtons ControllerButtonA True
     let mp =
           compileActions @SmallGame
-            [SGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA, Key ScancodeUp]]
+            [SGJump :=> [Key ScancodeSpace, GamepadButton ControllerButtonA, Key ScancodeUp]]
     pure (buf, mp)
 
   setupButtonAllTrue = do
@@ -1013,7 +1013,7 @@ aggregationBenchmarks =
     MPA.write buf.thisInput.kbScancodes ScancodeUp True
     let mp =
           compileActions @SmallGame
-            [SGJump ~> [Key ScancodeSpace, GamepadButton ControllerButtonA, Key ScancodeUp]]
+            [SGJump :=> [Key ScancodeSpace, GamepadButton ControllerButtonA, Key ScancodeUp]]
     pure (buf, mp)
 
   -- Axis2D magnitude comparison tests
@@ -1027,7 +1027,7 @@ aggregationBenchmarks =
     MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY 0.3
     let mp =
           compileActions @SmallGame
-            [ SGMove ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
+            [ SGMove :=> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
             ]
     pure (buf, mp)
 
@@ -1039,7 +1039,7 @@ aggregationBenchmarks =
     MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY 0.8
     let mp =
           compileActions @SmallGame
-            [ SGMove ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
+            [ SGMove :=> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
             ]
     pure (buf, mp)
 
@@ -1051,7 +1051,7 @@ aggregationBenchmarks =
     MPA.write buf.thisInput.controllerAxes ControllerAxisLeftY 0.0
     let mp =
           compileActions @SmallGame
-            [ SGMove ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
+            [ SGMove :=> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD), LeftStick 1.0 0.15]
             ]
     pure (buf, mp)
 
@@ -1060,21 +1060,21 @@ aggregationBenchmarks =
     buf <- Buf.newBufferedInput
     -- 0.12 < 0.15 deadzone -> should become 0
     MPA.write buf.thisInput.controllerAxes ControllerAxisTriggerRight 0.12
-    let mp = compileActions @SmallGame [SGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
+    let mp = compileActions @SmallGame [SGThrottle :=> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
     pure (buf, mp)
 
   setupAboveDeadzone = do
     buf <- Buf.newBufferedInput
     -- 0.75 > 0.15 deadzone -> normalize to (0.75 - 0.15) / (1.0 - 0.15) = 0.706
     MPA.write buf.thisInput.controllerAxes ControllerAxisTriggerRight 0.75
-    let mp = compileActions @SmallGame [SGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
+    let mp = compileActions @SmallGame [SGThrottle :=> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
     pure (buf, mp)
 
   setupAtDeadzoneEdge = do
     buf <- Buf.newBufferedInput
     -- Exactly at deadzone edge
     MPA.write buf.thisInput.controllerAxes ControllerAxisTriggerRight 0.15
-    let mp = compileActions @SmallGame [SGThrottle ~> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
+    let mp = compileActions @SmallGame [SGThrottle :=> [GamepadTrigger ControllerAxisTriggerRight 1.0 0.15]]
     pure (buf, mp)
 
   -- Sensitivity tests
@@ -1083,7 +1083,7 @@ aggregationBenchmarks =
     -- Full mouse movement with 2x sensitivity
     MPA.write buf.thisInput.mouseAxes MouseX 50.0
     MPA.write buf.thisInput.mouseAxes MouseY (-30.0)
-    let mp = compileActions @SmallGame [SGLook ~> [MouseMotion 2.0]]
+    let mp = compileActions @SmallGame [SGLook :=> [MouseMotion 2.0]]
     pure (buf, mp)
 
   setupPartialDeflection = do
@@ -1091,7 +1091,7 @@ aggregationBenchmarks =
     -- Partial mouse movement with 0.5x sensitivity
     MPA.write buf.thisInput.mouseAxes MouseX 10.0
     MPA.write buf.thisInput.mouseAxes MouseY (-5.0)
-    let mp = compileActions @SmallGame [SGLook ~> [MouseMotion 0.5]]
+    let mp = compileActions @SmallGame [SGLook :=> [MouseMotion 0.5]]
     pure (buf, mp)
 
 -- ============================================================================
@@ -1126,16 +1126,16 @@ frameManagementBenchmarks =
     buf <- Buf.newBufferedInput
     let mp =
           compileActions @SmallGame
-            [ SGJump ~> [Key ScancodeSpace]
-            , SGMove ~> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD)]
-            , SGLook ~> [MouseMotion 1.0]
-            , SGShoot ~> [MouseButton MouseButtonLeft]
-            , SGReload ~> [Key ScancodeR]
-            , SGCrouch ~> [Key ScancodeLCtrl]
-            , SGSprint ~> [Key ScancodeLShift]
-            , SGInteract ~> [Key ScancodeE]
-            , SGZoom ~> [AsAxis (Key ScancodeEquals)]
-            , SGThrottle ~> [AsAxis (Key ScancodeW)]
+            [ SGJump :=> [Key ScancodeSpace]
+            , SGMove :=> [DPad (Key ScancodeA) (Key ScancodeW) (Key ScancodeS) (Key ScancodeD)]
+            , SGLook :=> [MouseMotion 1.0]
+            , SGShoot :=> [MouseButton MouseButtonLeft]
+            , SGReload :=> [Key ScancodeR]
+            , SGCrouch :=> [Key ScancodeLCtrl]
+            , SGSprint :=> [Key ScancodeLShift]
+            , SGInteract :=> [Key ScancodeE]
+            , SGZoom :=> [AsAxis (Key ScancodeEquals)]
+            , SGThrottle :=> [AsAxis (Key ScancodeW)]
             ]
     pure (buf, mp)
 

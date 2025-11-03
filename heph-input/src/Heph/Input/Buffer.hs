@@ -1,3 +1,24 @@
+-- TODO: Need to rethink this module a bit
+--
+-- There are a few issues:
+-- 1. Related to action, mouse motion and joystick input are not the same and
+--    the abstraction must make this distinction cleanly and clearly.
+-- 2. It would be best to have the benefit of let-floating, sharing, etc on the
+--    array reads. To do this, I'll need something like:
+--
+-- withFrameInput :: (PrimMonad m, HasInputState (Immutable mut))
+--                => mut -- The mutable input state
+--                -> (forall b. HasInputState b => b -> m r) -- The action
+--                -> m r
+-- withFrameInput mut act = do
+--     updateFrameInput mut
+--     immut <- unsafeFreeze mut
+--     act immut
+--
+-- I then need to hide all the implementation details of this module behind
+-- a nonleaky abstraction.
+--
+-- The module as it stands is super leaky.
 {-# LANGUAGE OverloadedRecordDot #-}
 {-# LANGUAGE StrictData #-}
 {-# LANGUAGE NoFieldSelectors #-}
