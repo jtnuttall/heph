@@ -24,6 +24,7 @@ class (G.MBoundedArray (Mutable a) i e) => BoundedArray a i e where
   {-# INLINE replicate #-}
   index :: a i e -> i -> e
   runArray :: (forall s. ST s (Mutable a s i e)) -> a i e
+  freeze :: (PrimMonad m) => Mutable a (PrimState m) i e -> m (a i e)
   unsafeFreeze :: (PrimMonad m) => Mutable a (PrimState m) i e -> m (a i e)
 
 length :: forall a i e. (BoundedArray a i e) => a i e -> Int

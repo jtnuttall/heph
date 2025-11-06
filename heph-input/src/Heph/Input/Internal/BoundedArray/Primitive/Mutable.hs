@@ -13,6 +13,7 @@ module Heph.Input.Internal.BoundedArray.Primitive.Mutable (
   write,
   copy,
   set,
+  modify,
 ) where
 
 import Control.Monad.Primitive
@@ -81,6 +82,10 @@ instance (Enum i, Bounded i, Primlike e) => G.MBoundedArray MBoundedArray i e wh
 
   set (MBA arr) = setPrimArray arr 0 (size @i) . toPrim
 
+  modify arr i f = do
+    v <- read arr i
+    write arr i (f v)
+
 new :: (Enum i, Bounded i, Primlike e, PrimMonad m) => e -> m (MBoundedArray (PrimState m) i e)
 new = G.new @MBoundedArray
 {-# INLINE new #-}
@@ -105,3 +110,11 @@ copy = G.copy
 set
   :: (Enum i, Bounded i, Primlike e, PrimMonad m) => MBoundedArray (PrimState m) i e -> e -> m ()
 set = G.set
+
+modify
+  :: (Enum i, Bounded i, Primlike e, PrimMonad m)
+  => MBoundedArray (PrimState m) i e
+  -> i
+  -> (e -> e)
+  -> m ()
+modify = G.modify
