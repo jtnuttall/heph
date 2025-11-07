@@ -27,6 +27,7 @@ module Heph.Input.Action2 (
   pattern DPad,
   pattern AsAxis,
   Actionlike (..),
+  HasAggregationStrategy (..),
 )
 where
 
@@ -36,13 +37,27 @@ import Heph.Input.Types.Mouse
 import Heph.Input.Types.Scancode
 
 import Control.DeepSeq
+import Data.Bits
+import Data.Foldable
 import Data.Kind
+import Data.Ord (comparing)
 import Data.Primitive.SmallArray
 import GHC.Generics
+import Linear (V2, quadrance)
 import Type.Reflection
 
 data ActionSource = Button | Axis1D | Axis2D
   deriving (Generic, Show, Eq, Ord, Enum, Bounded)
+
+type family CurrentInputOf (src :: ActionSource) = (input :: Type) | input -> src where
+  CurrentInputOf Button = Bool
+  CurrentInputOf Axis1D = Float
+  CurrentInputOf Axis2D = V2 Float
+
+type family DeltaInputOf (src :: ActionSource) = (input :: Type) | input -> src where
+  DeltaInputOf Button = ButtonState
+  DeltaInputOf Axis1D = Float
+  DeltaInputOf Axis2D = V2 Float
 
 -- | A newtype for holding input sources - eta reduces the type so it can be
 -- used with 'DMap'
@@ -65,24 +80,18 @@ newtype Deadzone = Deadzone Float
 class (Typeable act, NFData (ActionMap act)) => Actionlike (act :: ActionSource -> Type) where
   data ActionMap act
 
-  -- | Prefer 'compileActionsIO'. If you use this function, be sure to force it:
+  -- | Be sure to force:
   --
   -- @@
   -- let !myActionMap = compileActions myActionMappings
   -- @@
-  compileActions :: [ActionMapping act] -> ActionMap act
+  compileActions :: (Foldable t) => t (ActionMapping act) -> ActionMap act
 
   actionSources
     :: (Typeable src)
     => ActionMap act
     -> act src
     -> SmallArray (InputSource src)
-
--- compileActionsIO :: MonadIO m => Actionlike act => [ActionMapping act] -> m (ActionMap act)
--- compileActionsIO mappings = do
---   let !m = compileActions mappings
---   evaluate (rnf m)
---   pure m
 
 data InputSource (k :: ActionSource) where
   SourceButton :: InputButton -> InputSource Button
@@ -208,3 +217,28 @@ pattern AsAxis btn <- (unAxis -> Just btn)
 unAxis :: InputSource Axis1D -> Maybe (InputSource Button)
 unAxis (SourceButtonAsAxis btn) = Just (SourceButton btn)
 unAxis _ = Nothing
+
+class HasAggregationStrategy (c :: act src) where
+  aggregateThisInput :: (Traversable t) => proxy c -> t (CurrentInputOf src) -> CurrentInputOf src
+  aggregateDeltaInput :: (Traversable t) => proxy c -> t (DeltaInputOf src) -> DeltaInputOf src
+
+instance {-# OVERLAPPABLE #-} HasAggregationStrategy (c :: act Button) where
+  aggregateThisInput _ = getIor . foldMap Ior
+  aggregateDeltaInput _ = fold
+
+instance {-# OVERLAPPABLE #-} HasAggregationStrategy (c :: act Axis1D) where
+  aggregateThisInput _ = safeMaximumBy abs 0
+  aggregateDeltaInput _ = safeMaximumBy abs 0
+
+instance {-# OVERLAPPABLE #-} HasAggregationStrategy (c :: act Axis2D) where
+  aggregateThisInput _ = safeMaximumBy quadrance 0
+  aggregateDeltaInput _ = safeMaximumBy quadrance 0
+
+--------------------------------------------------------------------------------
+-- Utitilities
+--------------------------------------------------------------------------------
+
+safeMaximumBy :: (Foldable t, Ord a) => (p -> a) -> p -> t p -> p
+safeMaximumBy f def xs
+  | null xs = def
+  | otherwise = maximumBy (comparing f) xs

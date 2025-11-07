@@ -105,7 +105,7 @@ makeAction n = do
                       -- to maintain insertion order.
                       dmap :: DMap $(conT n) ActionSet
                       !dmap =
-                        DMap.map (ActionSet . L.nub . unActionSet)
+                        DMap.map (\(ActionSet set) -> ActionSet (L.nub set))
                           . foldr
                             ( \(act :=> set) ->
                                 DMap.insertWith' (<>) act (ActionSet set)

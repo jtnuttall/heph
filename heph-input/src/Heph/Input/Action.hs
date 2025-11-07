@@ -115,7 +115,7 @@ class (Typeable act, NFData (ActionMap act)) => Actionlike (act :: ActionSource 
   -- @@
   -- let !myActionMap = compileActions myActionMappings
   -- @@
-  compileActions :: [ActionMapping act] -> ActionMap act
+  compileActions :: (Foldable t) => t (ActionMapping act) -> ActionMap act
 
   actionSources
     :: (Typeable src)
