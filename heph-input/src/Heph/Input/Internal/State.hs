@@ -3,6 +3,7 @@
 {-# LANGUAGE NoFieldSelectors #-}
 
 module Heph.Input.Internal.State (
+  InputState,
   InputButton (..),
   ButtonState (..),
   Axis (..),
@@ -20,6 +21,7 @@ module Heph.Input.Internal.State (
   buttonValue,
   buttonDelta,
   axisValue,
+  axisDelta,
 )
 where
 
@@ -45,17 +47,14 @@ data ButtonState = JustPressed | JustReleased | Held | NotPressed
 
 instance NFData ButtonState
 
--- | This is a `maximum` operation, where 'Held' is maximum and 'NotPressed' is minimum.
--- It is a reasonable default for aggregating multiple input sources.
 instance Semigroup ButtonState where
+  JustPressed <> _ = JustPressed
+  _ <> JustPressed = JustPressed
+  JustReleased <> _ = JustReleased
+  _ <> JustReleased = JustReleased
   Held <> _ = Held
   _ <> Held = Held
-  JustPressed <> JustReleased = Held
-  JustPressed <> JustPressed = JustPressed
-  JustReleased <> JustPressed = Held
-  JustReleased <> JustReleased = JustReleased
-  NotPressed <> a = a
-  a <> NotPressed = a
+  NotPressed <> NotPressed = NotPressed
 
 instance Monoid ButtonState where
   mempty = NotPressed
@@ -159,6 +158,12 @@ axisValue s = \case
   MouseAxis ma -> thisValue s.mouseAxes ma
   ControllerAxis ca -> thisValue s.controllerAxes ca
 {-# INLINE axisValue #-}
+
+axisDelta :: (PrimMonad m) => InputState (PrimState m) -> Axis -> m (Float, Float)
+axisDelta s = \case
+  MouseAxis ma -> deltaInput s.mouseAxes ma
+  ControllerAxis ca -> deltaInput s.controllerAxes ca
+{-# INLINE axisDelta #-}
 
 newInputState :: (PrimMonad m) => m (InputState (PrimState m))
 newInputState =

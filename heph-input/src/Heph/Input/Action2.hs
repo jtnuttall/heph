@@ -27,6 +27,7 @@ module Heph.Input.Action2 (
   pattern DPad,
   pattern AsAxis,
   Actionlike (..),
+  HasInput (..),
   HasAggregationStrategy (..),
 )
 where
@@ -37,11 +38,13 @@ import Heph.Input.Types.Mouse
 import Heph.Input.Types.Scancode
 
 import Control.DeepSeq
+import Control.Monad.Primitive
 import Data.Bits
 import Data.Foldable
 import Data.Kind
 import Data.Ord (comparing)
 import Data.Primitive.SmallArray
+import Data.Traversable
 import GHC.Generics
 import Linear (V2, quadrance)
 import Type.Reflection
@@ -49,15 +52,32 @@ import Type.Reflection
 data ActionSource = Button | Axis1D | Axis2D
   deriving (Generic, Show, Eq, Ord, Enum, Bounded)
 
-type family CurrentInputOf (src :: ActionSource) = (input :: Type) | input -> src where
-  CurrentInputOf Button = Bool
-  CurrentInputOf Axis1D = Float
-  CurrentInputOf Axis2D = V2 Float
+data SActionSource (src :: ActionSource) where
+  SButton :: SActionSource Button
+  SAxis1D :: SActionSource Axis1D
+  SAxis2D :: SActionSource Axis2D
 
-type family DeltaInputOf (src :: ActionSource) = (input :: Type) | input -> src where
-  DeltaInputOf Button = ButtonState
-  DeltaInputOf Axis1D = Float
-  DeltaInputOf Axis2D = V2 Float
+class KnownActionSource (src :: ActionSource) where
+  actionSourceSing :: SActionSource src
+
+instance KnownActionSource Button where
+  actionSourceSing = SButton
+
+instance KnownActionSource Axis1D where
+  actionSourceSing = SAxis1D
+
+instance KnownActionSource Axis2D where
+  actionSourceSing = SAxis2D
+
+type family ThisInput (src :: ActionSource) = (input :: Type) | input -> src where
+  ThisInput Button = Bool
+  ThisInput Axis1D = Float
+  ThisInput Axis2D = V2 Float
+
+type family DeltaInput (src :: ActionSource) = (input :: Type) | input -> src where
+  DeltaInput Button = ButtonState
+  DeltaInput Axis1D = Float
+  DeltaInput Axis2D = V2 Float
 
 -- | A newtype for holding input sources - eta reduces the type so it can be
 -- used with 'DMap'
@@ -88,8 +108,7 @@ class (Typeable act, NFData (ActionMap act)) => Actionlike (act :: ActionSource 
   compileActions :: (Foldable t) => t (ActionMapping act) -> ActionMap act
 
   actionSources
-    :: (Typeable src)
-    => ActionMap act
+    :: ActionMap act
     -> act src
     -> SmallArray (InputSource src)
 
@@ -218,21 +237,73 @@ unAxis :: InputSource Axis1D -> Maybe (InputSource Button)
 unAxis (SourceButtonAsAxis btn) = Just (SourceButton btn)
 unAxis _ = Nothing
 
-class HasAggregationStrategy (c :: act src) where
-  aggregateThisInput :: (Traversable t) => proxy c -> t (CurrentInputOf src) -> CurrentInputOf src
-  aggregateDeltaInput :: (Traversable t) => proxy c -> t (DeltaInputOf src) -> DeltaInputOf src
+class HasAggregationStrategy (act :: ActionSource -> Type) (src :: ActionSource) where
+  aggregateTheseInputs :: (Traversable t) => act src -> t (ThisInput src) -> ThisInput src
+  aggregateInputDeltas :: (Traversable t) => act src -> t (DeltaInput src) -> DeltaInput src
 
-instance {-# OVERLAPPABLE #-} HasAggregationStrategy (c :: act Button) where
-  aggregateThisInput _ = getIor . foldMap Ior
-  aggregateDeltaInput _ = fold
+instance {-# OVERLAPPABLE #-} HasAggregationStrategy act Button where
+  aggregateTheseInputs _ = getIor . foldMap Ior
+  aggregateInputDeltas _ = fold
 
-instance {-# OVERLAPPABLE #-} HasAggregationStrategy (c :: act Axis1D) where
-  aggregateThisInput _ = safeMaximumBy abs 0
-  aggregateDeltaInput _ = safeMaximumBy abs 0
+instance {-# OVERLAPPABLE #-} HasAggregationStrategy act Axis1D where
+  aggregateTheseInputs _ = safeMaximumBy abs 0
+  aggregateInputDeltas _ = safeMaximumBy abs 0
 
-instance {-# OVERLAPPABLE #-} HasAggregationStrategy (c :: act Axis2D) where
-  aggregateThisInput _ = safeMaximumBy quadrance 0
-  aggregateDeltaInput _ = safeMaximumBy quadrance 0
+instance {-# OVERLAPPABLE #-} HasAggregationStrategy act Axis2D where
+  aggregateTheseInputs _ = safeMaximumBy quadrance 0
+  aggregateInputDeltas _ = safeMaximumBy quadrance 0
+
+aggregateThisInput
+  :: (Actionlike act, HasAggregationStrategy act src, Monad m)
+  => ActionMap act
+  -> act src
+  -> (InputSource src -> m (ThisInput src))
+  -> m (ThisInput src)
+aggregateThisInput m act = fmap (aggregateTheseInputs act) . for (actionSources m act)
+
+aggregateDeltaInput
+  :: (Actionlike act, HasAggregationStrategy act src, Monad m)
+  => ActionMap act
+  -> act src
+  -> (InputSource src -> m (DeltaInput src))
+  -> m (DeltaInput src)
+aggregateDeltaInput m act = fmap (aggregateInputDeltas act) . for (actionSources m act)
+
+class (Actionlike act) => HasInput act (src :: ActionSource) where
+  readInput
+    :: (PrimMonad m) => InputState (PrimState m) -> ActionMap act -> act src -> m (ThisInput src)
+
+  readDeltaInput
+    :: (PrimMonad m) => InputState (PrimState m) -> ActionMap act -> act src -> m (DeltaInput src)
+
+instance (Actionlike act) => HasInput act Button where
+  readInput s m act = aggregateThisInput m act \case
+    SourceButton but -> buttonValue s but
+
+  readDeltaInput s m act = aggregateDeltaInput m act \case
+    SourceButton but -> buttonDelta s but
+
+instance (Actionlike act) => HasInput act Axis1D where
+  readInput s m act = aggregateThisInput m act \case
+    SourceMouse1D _ _ -> undefined
+    SourceStick1D _ _ _ -> undefined
+    SourceButtonAsAxis _ -> undefined
+
+  readDeltaInput s m act = aggregateDeltaInput m act \case
+    SourceMouse1D _ _ -> undefined
+    SourceStick1D _ _ _ -> undefined
+    SourceButtonAsAxis _ -> undefined
+
+instance (Actionlike act) => HasInput act Axis2D where
+  readInput s m act = aggregateThisInput m act \case
+    SourceStick _ _ _ _ -> undefined
+    SourceMouseMotion _ _ _ -> undefined
+    SourceDPad _ _ _ _ -> undefined
+
+  readDeltaInput s m act = aggregateDeltaInput m act \case
+    SourceStick _ _ _ _ -> undefined
+    SourceMouseMotion _ _ _ -> undefined
+    SourceDPad _ _ _ _ -> undefined
 
 --------------------------------------------------------------------------------
 -- Utitilities
