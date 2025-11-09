@@ -6,6 +6,18 @@ cradle:
     - path: "heph-aligned-storable/test"
       component: "heph-aligned-storable:test:heph-aligned-storable-test"
 
+    - path: "heph-input/src"
+      component: "heph-input:lib"
+
+    - path: "heph-input/test"
+      component: "heph-input:test:heph-input-test"
+
+    - path: "heph-input/bench/Bench.hs"
+      component: "heph-input:bench:heph-input-bench"
+
+    - path: "heph-input/bench/BenchLib.hs"
+      component: "heph-input:bench:heph-input-bench"
+
     - path: "heph-sparse-set/src"
       component: "heph-sparse-set:lib"
 
