@@ -6,14 +6,14 @@
 {-# LANGUAGE NoMonomorphismRestriction #-}
 
 -- |
--- Description : Utilities for marshaling values aligned to GPU requirements
+-- Description : Zero-initialized allocation for GPU-aligned types
 -- Copyright   : (c) Jeremy Nuttall, 2025
 -- License     : BSD-3-Clause
 -- Maintainer  : jeremy@jeremy-nuttall.com
 -- Stability   : experimental
 --
--- This module provides convenience functions for allocating and manipulating
--- pointers to 'AlignedStorable' types, built on 'UnliftIO.Foreign'.
+-- Allocation helpers with guaranteed zero-initialized padding.
+-- Use these instead of 'alloca' or 'malloc' to avoid garbage in padding bytes.
 module Foreign.GPU.Marshal.Aligned (
   -- * Utilities for 'Packed' values
   PackedPtr,

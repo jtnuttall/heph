@@ -18,8 +18,7 @@ category: Graphics
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:
-  Please see the README on GitHub at
+description: Please see the README on GitHub at
   <https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable#readme>
 homepage: https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable#readme
 
@@ -31,8 +30,6 @@ dependencies:
   - unliftio >= 0.2 && < 0.3
   - vector >= 0.12.3.0 && < 0.14
   - vector-sized >= 1.4 && < 1.7
-  - template-haskell >= 2.14 && < 2.24
-  - th-abstraction >= 0.4 && < 0.8
 
 ghc-options:
   - -Wall

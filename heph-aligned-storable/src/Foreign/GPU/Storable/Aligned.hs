@@ -17,32 +17,32 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 -- |
--- Description : Generically derive Storable instances suitable for CPU-GPU synchronization
+-- Description : Generically derive Storable instances for GPU memory layouts
 -- Copyright   : (c) Jeremy Nuttall, 2025
 -- License     : BSD-3-Clause
 -- Maintainer  : jeremy@jeremy-nuttall.com
 -- Stability   : experimental
 --
--- This module contains everything you need to derive storable instances sufficient for
--- CPU-GPU transfer.
+-- Derive @Storable@ instances that respect GPU memory layout rules (@std140@,
+-- @std430@, @scalar@). Works with any product type that has a 'Generic' instance.
 --
--- == Example
+-- @
+-- data Uniforms = Uniforms
+--   { viewProj  :: M44 Float
+--   , cameraPos :: V3 Float
+--   } deriving Generic
 --
--- > data MyUniforms = MyUniforms
--- >   { cameraViewProj :: M44 Float
--- >   , cameraPos :: V3 Float
--- >   } deriving (Generic)
--- >
--- > instance AlignedStorable Std140 MyUniforms
--- >
--- > -- later
--- >
--- > withPacked (myUniforms) $ \ptr -> uploadBuffer buf ptr
+-- instance AlignedStorable Std140 Uniforms
+-- @
 --
--- NB: It's often best to pretend that `vec3` and `mat3` just don't exist in
--- your shaders. This library should implement their layout rules correctly, but
--- historically there has been inconsistency in driver handling of the round-up
--- rules.
+-- Then use "Foreign.GPU.Marshal.Aligned" to get properly-padded pointers:
+--
+-- @
+-- withPacked \@Std140 uniforms $ \\ptr -> uploadToGPU ptr
+-- @
+--
+-- __NB:__ @vec3@ and @mat3@ types have historically had driver bugs
+-- around alignment. Prefer @vec4@/@mat4@ when possible.
 module Foreign.GPU.Storable.Aligned (
   -- * The AlignedStorable class
   AlignedStorable (..),
@@ -163,41 +163,16 @@ memoryLayoutVal _ = case memoryLayoutSing @layout of
 
 -- | Defines the precise calculation rules for a given 'MemoryLayout'.
 --
--- This typeclass serves as the low-level specification that underpins the
--- entire 'AlignedStorable' deriving mechanism. For authors of higher-level
--- libraries, you will not need to _implement_ instances of this class.
--- Instead, understanding these rules is key to trusting the output of functions
--- like 'alignedSizeOf' and 'layoutStride', which you may use to build your own
--- abstractions (like type-safe descriptor sets).
---
--- These rules directly correspond to the memory layout requirements found in
--- the OpenGL and Vulkan specifications.
+-- These rules correspond to the memory layout requirements found in the OpenGL
+-- and Vulkan specifications.
 class MemoryLayoutRules (layout :: MemoryLayout) where
   -- | The alignment rule for top-level structs, matrix rows, and array members.
-  --
-  -- This determines the final alignment of a composite type. For 'Std140', this
-  -- means rounding the base alignment of the members up to a multiple of 16.
-  -- For other layouts, it may be a no-op.
   alignBlock :: Proxy layout -> Int -> Int
 
   -- | The final size rule for a top-level struct.
-  --
-  -- This rule ensures the total size of a struct is a multiple of its final
-  -- (potentially rounded) alignment. This is what adds the padding at the
-  -- _end_ of a struct.
   roundStructSize :: Proxy layout -> Int -> Int -> Int
 
   -- | The stride rule for an element within an array.
-  --
-  -- This is a critical function for library authors. It determines the byte-spacing
-  -- between consecutive elements in an array, which may be larger than the
-  -- struct's padded size. For 'Std140', this stride is always rounded up to a
-  -- multiple of 16.
-  --
-  -- When building descriptor sets or calculating buffer sizes for arrays of
-  -- uniforms, the value returned by this function is the "true" size of each
-  -- element from the GPU's perspective. The 'Storable' instance for the
-  -- 'Strided' newtype uses this function to determine its 'sizeOf'.
   layoutStride :: Proxy layout -> Int -> Int -> Int
 
 std140Align :: Int
@@ -231,54 +206,35 @@ instance MemoryLayoutRules Scalar where
 -- Layout-aware Storable
 --------------------------------------------------------------------------------
 
--- | A newtype wrapper that instructs the 'Storable' instance to include
--- full stride padding, making it suitable for use in arrays.
---
--- For example, when creating a @SV.Vector (Strided Std140 MyType)@, each element
--- will be spaced correctly in memory, allowing the entire vector to be copied
--- to the GPU in a single `memcpy`.
+-- | Wrapper whose 'sizeOf' includes stride padding, for use in arrays.
+-- @SV.Vector (Strided Std140 MyType)@ can be 'copyBytes'd to the GPU in one shot.
 newtype Strided (layout :: MemoryLayout) a = Strided {unStrided :: a}
   deriving (Generic, Typeable, Show, Eq, Ord)
 
--- | A newtype wrapper that instructs the 'Storable' instance to use the
--- packed size of a type, without the final stride padding that 'Strided' adds.
--- This is useful for single, non-array uniform buffer objects.
+-- | Wrapper without stride padding. Use for single values (push constants, lone UBOs).
 newtype Packed (layout :: MemoryLayout) a = Packed {unPacked :: a}
   deriving (Generic, Typeable, Show, Eq, Ord)
 
 -- | A convenience type for Data.Vector.Storable.Vector (Strided layout a)
 type StridedVector (layout :: MemoryLayout) a = SV.Vector (Strided layout a)
 
--- | A newtype wrapper over fixed-size storable vectors that signals that the
--- entire array should be treated as a single, contiguous block of memory.
+-- | Opt-in 'copyBytes' for fixed-size arrays. Parameterize your struct by layout:
 --
--- The 'AlignedStorable' instance for this type uses 'copyBytes' for its
--- 'alignedPoke' and 'alignedPeek' implementations. This provides a significant
--- performance boost for large arrays.
---
--- To use this type, you must parameterize your datatype by its layout.
+-- @
+-- data MyStruct layout = MyStruct { pixels :: AlignedArray layout 64 (V4 Float) }
+-- @
 newtype AlignedArray (layout :: MemoryLayout) (n :: Nat) a = AlignedArray
   {unAlignedArray :: SSV.Vector n (Strided layout a)}
   deriving (Generic, Typeable, Show, Eq, Ord)
 
--- | Construct an 'AlignedArray' from a sized vector. The resulting array
--- uses 'copyBytes' instead of individual pokes.
---
--- > data MyStruct layout = MyStruct
--- >   { metadata :: Float
--- >   , pixels :: AlignedArray layout 64 (V4 Float)
--- >   } deriving Generic
--- >
--- > instance AlignedStorable Std140 (MyStruct Std140)
+-- | Construct an 'AlignedArray' from a sized vector.
 mkAlignedArray
   :: (AlignedStorable layout a, Storable a) => SSV.Vector n a -> AlignedArray layout n a
 mkAlignedArray = AlignedArray . SSV.map Strided
 {-# INLINE CONLIKE mkAlignedArray #-}
 
 -- | Helper function to unwrap an 'AlignedArray' and manipulate its contents.
---
--- __NOTE__: It is not safe to manipulate the underling Ptr or perform an unsafe
--- thaw or freeze during this operation.
+-- Don't do unsafe pointer tricks in the closure.
 withAlignedArray
   :: AlignedArray layout n a
   -> (SSV.Vector n (Strided layout a) -> SSV.Vector n (Strided layout a))
@@ -286,9 +242,7 @@ withAlignedArray
 withAlignedArray (AlignedArray v) f = AlignedArray (f v)
 {-# INLINE withAlignedArray #-}
 
--- | A newtype wrapper for a 'Ptr' that is tagged with a 'MemoryLayout'.
--- This is used internally by the generic machinery to pass the layout
--- context during peeking and poking operations.
+-- | A 'Ptr' that is tagged with its 'MemoryLayout'.
 newtype AlignedPtr (layout :: MemoryLayout) a = AlignedPtr {unAlignedPtr :: Ptr a}
   deriving (Generic, Typeable, Show)
 
@@ -296,25 +250,8 @@ type role AlignedPtr nominal nominal
 
 -- | A class for types that have calculable layouts according to GPU requirements.
 --
--- Instances can be derived generically for any data type that is an instance of
--- 'GHC.Generics.Generic'. The performance of a derived instance is equivalent
--- to a carefully hand-written one. All abstraction overhead from the generic
--- deriving mechanism is eliminated by GHC's optimizer. This is verified via
--- inspection testing.
---
--- === The `AlignedStorable` Contract
---
--- Instances of this class adhere to a specific contract designed for performance.
---
--- 1.  __`alignedPoke` only writes member data.__ To avoid performance penalties,
---     `alignedPoke` operations write *only* the bytes corresponding to the fields
---     of your type. They __will not__ initialize any padding bytes that may exist
---     within the type, _either between members or within the stride_.
--- 2.  __`alignedPeek` and `alignedPoke` are inverse operations__ for the data's members.
---     That is, `alignedPeek ptr` after `alignedPoke ptr x` will reconstruct `x`.
--- 3.  __Layouts are accurate.__ `packedAlignedSizeOf`, `alignedSizeOf`, and
---     `alignedAlignment` correctly represent the type's memory layout as
---     required by the given layout standard.
+-- __NB__: `alignedPoke` only writes member data. Only poke into zeroed buffers
+-- unless you really enjoy parsing through garbage in RenderDoc.
 class (MemoryLayoutRules layout) => AlignedStorable (layout :: MemoryLayout) a where
   -- | The size of the type 'a' after its contents are laid out, but *before*
   -- any final padding is applied to the container struct itself. This is
@@ -374,16 +311,10 @@ class (MemoryLayoutRules layout) => AlignedStorable (layout :: MemoryLayout) a w
   alignedPoke (AlignedPtr ptr) val = void $ galignedPoke @layout (AlignedPtr (castPtr ptr)) (from val) 0
   {-# INLINE alignedPoke #-}
 
--- | \$sizeOf @(Strided layout a)$ calculates the full stride of the type,
+-- | @sizeOf @(Strided layout a)@ calculates the full stride of the type,
 -- including final padding, making it suitable for array allocations.
 --
--- This storable instance lies a bit about it size so that you can create a
--- \$SV.Vector (Strided layout a)$ and then do a straight 'copyBytes' on the
--- underlying 'Ptr'.
---
--- __This means that 'poke' does not zero out the remaining space in the buffer.__
--- It can't do so safely because it doesn't know whether you have allocated a singleton
--- buffer or an array.
+-- Use zeroed buffers when using this newtype.
 instance (MemoryLayoutRules layout, AlignedStorable layout a) => Storable (Strided layout a) where
   sizeOf _ =
     layoutStride
@@ -409,14 +340,10 @@ instance (AlignedStorable layout a) => Storable (Packed layout a) where
   {-# INLINE poke #-}
 
 --------------------------------------------------------------------------------
--- Generic Deriving Machinery
+-- Generic deriving
 --------------------------------------------------------------------------------
 
--- | Internal class for generic 'AlignedStorable' derivation. Operates on
--- 'GHC.Generics.Rep' to calculate layouts and implement peek/poke.
---
--- You don't need to interact with this unless you're writing custom instances
--- or debugging the generic machinery.
+-- | Generically derive 'AlignedStorable'.
 --
 -- > data MyType = MyType { field1 :: Float, field2 :: V3 Float }
 -- >   deriving (Generic)
@@ -638,8 +565,9 @@ garrayAlignedPoke (AlignedPtr ptr) =
 
 -- | Bit-twiddling hack. Assumes multiple is a power of 2.
 -- The assumption holds for all standard GPU layouts.
--- GHC's optimizer seems to choke if this function becomes too complex (e.g.,
--- branching).
+--
+-- __NB__: As of writing, GHC's optimizer fails when optimizing GAlignedStorable
+-- if this function branches.
 roundUpTo :: (Bits a, Num a) => a -> a -> a
 roundUpTo multiple val = (val + multiple - 1) .&. complement (multiple - 1)
 {-# INLINE roundUpTo #-}
@@ -856,11 +784,8 @@ alignedPokeM4 aptr (V4 x y z w) = do
 --------------------------------------------------------------------------------
 -- Base instances for primitive shader types
 --
--- I decided to use CPP macros because they are idiomatic, homoiconic, purely
--- functional, and safe. :)
---
--- Joking aside, CPP is a simple way to stamp out the instances. I'll probably
--- switch to TH at some point.
+-- CPP is the simple way to stamp out the instances. I'll probably switch to TH
+-- at some point.
 --------------------------------------------------------------------------------
 
 -- schema: (MemoryLayout, Type, size, alignment)
