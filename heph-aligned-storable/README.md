@@ -8,6 +8,20 @@ Generically derive `Storable` instances for GPU memory layouts (`std140`, `std43
 
 ## Quick Start
 
+**IMPORTANT**: Be sure to use `layout(row_major)` if you are using `linear` with this library.
+
+GLSL:
+
+```glsl
+layout(std140, row_major, binding = 0) uniform myuniforms {
+  mat4 modelViewProjection;
+  vec3 cameraPosition;
+  float time;
+};
+```
+
+Haskell:
+
 ```haskell
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DataKinds #-}
@@ -73,9 +87,9 @@ instance AlignedStorable Std140 (MyStruct Std140)
 - `M32 Float` (3 rows, 2 cols) → `mat2x3`
 - `M24 Double` (2 rows, 4 cols) → `dmat4x2`
 
-### `row_major` doesn't mean what you think
+### `row_major`
 
-GLSL's `layout(row_major)` affects memory layout, not matrix semantics. Matrices are still column-major for arithmetic. This library implements the memory layout correctly—you don't need to transpose before upload.
+GLSL's `layout(row_major)` affects memory layout, not matrix semantics. Matrices are still column-major for arithmetic. This library implements the memory layout correctly. You don't need to transpose before upload.
 
 ### `vec3` and `mat3` are cursed
 
