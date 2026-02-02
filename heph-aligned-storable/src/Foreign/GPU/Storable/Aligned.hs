@@ -6,6 +6,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE RoleAnnotations #-}
@@ -44,9 +45,13 @@
 -- rules.
 module Foreign.GPU.Storable.Aligned (
   -- * The AlignedStorable class
-  MemoryLayout (..),
-  KnownMemoryLayout (..),
   AlignedStorable (..),
+
+  -- * Memory layout
+  MemoryLayout (..),
+  SMemoryLayout (..),
+  KnownMemoryLayout (..),
+  memoryLayoutVal,
 
   -- * Storable Wrappers
   Strided (..),
@@ -118,13 +123,14 @@ data MemoryLayout
 
 instance Hashable MemoryLayout
 
--- | This class gives the value associated with a type-level 'MemoryLayout'.
---
--- This is primarily useful for authors of higher-level libraries (e.g.,
--- shader eDSLs, descriptor set builders) who need to inspect the layout
--- at runtime to make decisions. It allows you to write functions that are
--- polymorphic over the layout but can still access a concrete representation
--- of which layout is being used.
+-- | Singled 'MemoryLayout', primarily useful for authors of higher-level libraries
+-- (e.g., shader eDSLs, descriptor set builders).
+data SMemoryLayout (layout :: MemoryLayout) where
+  SStd140 :: SMemoryLayout Std140
+  SStd430 :: SMemoryLayout Std430
+  SScalar :: SMemoryLayout Scalar
+
+-- | This class gives the 'SMemoryLayout' associated with a 'MemoryLayout'.
 --
 -- A very rough sketch of this use case:
 --
@@ -134,19 +140,26 @@ instance Hashable MemoryLayout
 -- >   Std430 -> "layout(std430)"
 -- >   Scalar -> "layout(scalar)"
 class KnownMemoryLayout (layout :: MemoryLayout) where
-  memoryLayoutVal :: Proxy layout -> MemoryLayout
+  memoryLayoutSing :: SMemoryLayout layout
 
 instance KnownMemoryLayout Std140 where
-  memoryLayoutVal _ = Std140
-  {-# INLINE memoryLayoutVal #-}
+  memoryLayoutSing = SStd140
+  {-# INLINE memoryLayoutSing #-}
 
 instance KnownMemoryLayout Std430 where
-  memoryLayoutVal _ = Std430
-  {-# INLINE memoryLayoutVal #-}
+  memoryLayoutSing = SStd430
+  {-# INLINE memoryLayoutSing #-}
 
 instance KnownMemoryLayout Scalar where
-  memoryLayoutVal _ = Scalar
-  {-# INLINE memoryLayoutVal #-}
+  memoryLayoutSing = SScalar
+  {-# INLINE memoryLayoutSing #-}
+
+memoryLayoutVal :: forall layout. (KnownMemoryLayout layout) => Proxy layout -> MemoryLayout
+memoryLayoutVal _ = case memoryLayoutSing @layout of
+  SStd140 -> Std140
+  SStd430 -> Std430
+  SScalar -> Scalar
+{-# INLINE memoryLayoutVal #-}
 
 -- | Defines the precise calculation rules for a given 'MemoryLayout'.
 --
@@ -846,14 +859,8 @@ alignedPokeM4 aptr (V4 x y z w) = do
 -- I decided to use CPP macros because they are idiomatic, homoiconic, purely
 -- functional, and safe. :)
 --
--- Joking aside, CPP seems like the best solution for this portion of the code.
--- For the library to hold its contract:
---
--- 1. We need coherent instances.
--- 2. We can't overlap on `Storable`, as `AlignedStorable` is orthogonal, and
---    has a fundamentally different contract.
--- 3. Template Haskell would require 3 modules and orphan instances for a job
---    that's basically just copy+paste, which is a nonstarter for this grug.
+-- Joking aside, CPP is a simple way to stamp out the instances. I'll probably
+-- switch to TH at some point.
 --------------------------------------------------------------------------------
 
 -- schema: (MemoryLayout, Type, size, alignment)

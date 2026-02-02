@@ -47,7 +47,7 @@ for your target layout. The library handles the rest.
 import Foreign.GPU.Storable.Aligned
 import Foreign.GPU.Marshal.Aligned
 import GHC.Generics (Generic)
-import Linear (V3, M44)
+import Linear (M44, V3, V4(..))
 
 -- 1. Your data type
 data Uniforms = Uniforms
@@ -128,7 +128,7 @@ you work with is zero-initialized _before_ you poke your data into it,
 preventing garbage in padding bytes.
 
 1. **Use This Library's Helpers (Strongly Recommended):** The functions in
-   `Foreign.GPU.Marshal.Aligned` (like `withPacked`, `newPacked`, etc.) are the
+   `Foreign.GPU.Marshal.Aligned` (like `withPacked`, `allocaPacked`, etc.) are the
    simplest and safest way to work with pointers to single structs. They have
    been designed to explicitly zero-out the memory region before poking your
    data.
