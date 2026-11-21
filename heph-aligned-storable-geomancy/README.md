@@ -77,7 +77,9 @@ Every type below has an instance under `Std140`, `Std430` and `Scalar`.
 
 The 64-bit integer vectors need `GL_EXT_shader_explicit_arithmetic_types_int64`
 in the shader. A `Quaternion`'s components are in the order of `quaternion`'s
-arguments.
+arguments, scalar part first: a `Quaternion w x y z` lands in GLSL as
+`vec4(w, x, y, z)`, so the scalar part is `.x`, not `.w` as most shader code
+assumes. Likewise `DQuaternion`.
 
 ## Matrices: no `row_major`
 
@@ -105,9 +107,10 @@ GLSL matrix shapes have no geomancy counterpart.
 
 ## `Vec3` and `Packed`
 
-geomancy's `Storable` instance for `Vec3` is 16 bytes and writes a fourth
-component (`IVec3` and `UVec3` likewise; `DVec3`, `I64Vec3` and `U64Vec3` are
-32 bytes), while the `Packed` newtypes are exactly 12 (or 24) bytes. These
+geomancy's `Storable` instances pad the 3-vectors: `Vec3`, `IVec3` and `UVec3`
+are 16 bytes, `DVec3`, `I64Vec3` and `U64Vec3` are 32 bytes, and the ones for
+`Vec3` and `DVec3` also write `1.0` as a fourth component. The `Packed`
+newtypes are exactly 12 (or 24) bytes. These
 instances never use the `Storable` instance of a vector: they write the three
 components one at a time. So `Vec3` and `Vec3.Packed` are both a GLSL `vec3`,
 with the same size and alignment, and neither writes into the bytes that

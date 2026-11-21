@@ -31,14 +31,17 @@
 -- * @Mat4@, @Transform@: @mat4@. @DMat4@, @DTransform@: @dmat4@. Upload them
 --   with GLSL's default (column-major) matrix layout, not @row_major@.
 -- * @Quaternion@: @vec4@. @DQuaternion@: @dvec4@. Components in the order of
---   @quaternion@'s arguments.
+--   @quaternion@'s arguments, scalar part first: a @Quaternion w x y z@ is
+--   @vec4(w, x, y, z)@ in GLSL, so the scalar part is @.x@, not the @.w@ most
+--   shader code expects. Likewise @DQuaternion@.
 -- * Each 3-vector's @Packed@ newtype (@Geomancy.Vec3.Packed@, ...): the same
 --   @vec3@ (or @dvec3@, ...) as the vector it wraps.
 -- * @Point v@ for each of the 18 vector types @v@: the same as @v@.
 --
 -- Vectors are read and written one component at a time, so geomancy's
--- 'Foreign.Storable.Storable' instances, which give 3-vectors a fourth
--- component, are never used for them.
+-- 'Foreign.Storable.Storable' instances are never used for them. Those pad
+-- every 3-vector to 16 or 32 bytes, and the ones for @Vec3@ and @DVec3@ also
+-- write @1.0@ as a fourth component.
 module Foreign.GPU.Storable.Aligned.Geomancy () where
 
 import Data.Int
@@ -133,6 +136,8 @@ deriveAll $
         Scalar -> Fixed s scalarA
         _ -> Fixed s a
    in [deriveVector l (vector v) | l <- allLayouts, v <- vectors]
+        -- Mat4's Storable peek loads 8 bytes at a time; under Scalar a Mat4 may sit at a 4-aligned
+        -- offset, so that load is unaligned (fine on x86-64 and AArch64).
         ++ [deriveFixed l [t|Mat4|] (fixed 64 16 4 l) | l <- allLayouts]
         ++ [deriveFixed l [t|DMat4|] (fixed 128 32 8 l) | l <- allLayouts]
         ++ [deriveFixed l [t|Quaternion|] (fixed 16 16 4 l) | l <- allLayouts]
