@@ -1,0 +1,286 @@
+{-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
+
+-- |
+-- Description : Round-trip harness for AlignedStorable conformance tests
+-- Copyright   : (c) Jeremy Nuttall, 2025
+-- License     : BSD-3-Clause
+-- Maintainer  : jeremy@jeremy-nuttall.com
+-- Stability   : experimental
+module Foreign.GPU.Storable.Aligned.Test.Harness (
+  -- * Round trips
+  Canary (..),
+  genCanary,
+  genCanaries,
+  ptrTripping,
+
+  -- * Generators
+  genFloat,
+  genInt,
+  genV,
+  genMat,
+  infinity,
+
+  -- * Sized vectors
+  peekSizedVector,
+  pokeSizedVector,
+  peekSized3DVector,
+  pokeSized3DVector,
+)
+where
+
+import Control.Exception.Lifted (bracket)
+import Control.Monad (replicateM)
+import Control.Monad.IO.Class
+import Control.Monad.Trans.Control (MonadBaseControl)
+import Data.Coerce
+import Data.Foldable (traverse_)
+import Data.Proxy
+import Data.Typeable (Typeable, showsTypeRep, typeRep)
+import qualified Data.Vector.Generic as GV
+import qualified Data.Vector.Generic.Sized as SGV
+import Foreign
+import GHC.Stack (HasCallStack)
+import GHC.TypeLits
+import Hedgehog
+import qualified Hedgehog.Gen as Gen
+import qualified Hedgehog.Range as Range
+import Numeric (showHex)
+
+--------------------------------------------------------------------------------
+-- Test harness
+--------------------------------------------------------------------------------
+
+newtype Canary = Canary {unCanary :: Word64}
+  deriving newtype (Storable, Num, Eq)
+
+instance Show Canary where
+  showsPrec _ (Canary n) = showHex n
+
+genCanary :: Gen Canary
+genCanary =
+  Gen.element
+    [ 0xDEADBEEFDEADBEEF
+    , 0xCAFEBABECAFEBABE
+    , 0xABADBABEABADBABE
+    , 0xCDCDCDCDCDCDCDCD
+    , 0x5555555555555555
+    , 0xAAAAAAAAAAAAAAAA
+    , 0x0000000000000000
+    , 0xFFFFFFFFFFFFFFFF
+    , 0x0123456789ABCDEF
+    , 0xFEDCBA9876543210
+    ]
+
+genCanaries :: Int -> Gen [Canary]
+genCanaries sz = replicateM sz genCanary
+
+-- |
+-- Given a SUT and an oracle, checks that they round trip with oneself and one another.
+--
+-- We validate four ways: SUT vs. SUT, Oracle vs. Oracle, SUT vs. Oracle, Oracle vs. SUT.
+-- At the top of the test, the SUT size and alignment is verified to match the Oracle's.
+--
+-- This verifies:
+-- 1. The SUT is coherent.
+-- 2. The Oracle is coherent.
+-- 3. The SUT's 'peek' is the inverse of the Oracle's 'poke'.
+-- 4. The Oracle's 'peek' is the inverse of the SUT's 'poke'.
+--
+-- This makes it highly probable that we catch subtle unidirectional bugs.
+--
+-- For each combination (a, b):
+-- 1. Allocate a buffer approximately 3*sizeOf(SUT) - rounded up to the next multiple of sizeof(Canary)
+-- 2. Poison the buffer with a repeating bit pattern (0xCD)
+-- 3. Fill the edges of the buffer with a canary value.
+-- 4. Check that the canaries got written to the right place.
+-- 5. Poke `a` into the middle of the buffer
+-- 6. Check the canaries -- if we overrun or undrrun the buffer, it's very likely to show here.
+-- 7. Peek `b` out of the middle of the buffer
+-- 8. Out of an overabundance of caution, check the canaries again
+-- 9. Check that the peeked value of `b` is equal to the poked value of `a`
+-- 10. Check that the peeked value of `b` is equal to the poked value of `b`
+--
+-- This makes it incredibly unlikely (but not impossible) that this module corrupts memory in a way
+-- that isn't caught in test.
+ptrTripping
+  :: forall s o m
+   . ( HasCallStack
+     , Coercible s o
+     , MonadBaseControl IO m
+     , MonadIO m
+     , Typeable s
+     , Typeable o
+     , Eq s
+     , Eq o
+     , Show s
+     , Show o
+     , Storable s
+     , Storable o
+     )
+  => s
+  -> o
+  -> PropertyT m ()
+ptrTripping sut oracle = do
+  let sz = sizeOf sut
+      cSz = sizeOf @Canary undefined
+      pSz = roundUpTo cSz sz
+      tSz = sz + 2 * pSz
+      lPadOffsets = [0, cSz .. pSz - cSz]
+      rPadOffsets = [pSz + sz, pSz + sz + cSz .. tSz - cSz]
+      poison = 0xCD
+  sz === sizeOf oracle
+  alignment sut === alignment oracle
+
+  lCanaries <- zip lPadOffsets <$> forAll (genCanaries (length lPadOffsets))
+  rCanaries <- zip rPadOffsets <$> forAll (genCanaries (length rPadOffsets))
+
+  let populateCanaries ptr = liftIO do
+        traverse_ (uncurry (pokeByteOff ptr)) lCanaries
+        traverse_ (uncurry (pokeByteOff ptr)) rCanaries
+
+      checkCanary ptr offset canary = do
+        result <- liftIO $ peekByteOff ptr offset
+        Canary result === canary
+
+      checkCanaries ptr = do
+        annotate $ "Left pad: 0-" <> show pSz
+        traverse_ (uncurry (checkCanary ptr)) lCanaries
+        annotate $ "Right pad: " <> show (pSz + sz) <> "-" <> show tSz
+        traverse_ (uncurry (checkCanary ptr)) rCanaries
+
+      checkRoundTrip
+        :: forall a b
+         . ( HasCallStack
+           , Coercible a b
+           , Typeable a
+           , Typeable b
+           , Eq b
+           , Show b
+           , Storable a
+           , Storable b
+           )
+        => a
+        -> b
+        -> PropertyT m ()
+      checkRoundTrip a b = bracket (liftIO $ mallocBytes @a tSz) (liftIO . free) \ptr -> do
+        annotate
+          $ showsTypeRep (typeRep (Proxy @a))
+            . showString " x "
+            . showsTypeRep (typeRep (Proxy @b))
+          $ ""
+        liftIO $ fillBytes ptr poison tSz
+        populateCanaries ptr
+        checkCanaries ptr
+
+        liftIO $ pokeByteOff ptr pSz a
+        checkCanaries ptr
+
+        (result :: b) <- liftIO $ peekByteOff (castPtr @a @b ptr) pSz
+        checkCanaries ptr
+
+        result === coerce a
+        result === b
+
+  checkRoundTrip sut sut
+  checkRoundTrip oracle oracle
+  checkRoundTrip sut oracle
+  checkRoundTrip oracle sut
+
+--------------------------------------------------------------------------------
+-- Utils
+--------------------------------------------------------------------------------
+genFloat :: (RealFloat a) => Gen a
+genFloat = Gen.realFloat (Range.linearFrac (-infinity) infinity)
+
+genInt :: (Bounded a, Integral a) => Gen a
+genInt = Gen.integral (Range.linear minBound maxBound)
+
+genV :: (Traversable t, Applicative t) => Gen a -> Gen (t a)
+genV = sequence . pure
+
+genMat :: (Traversable t, Applicative t, Traversable f, Applicative f) => Gen a -> Gen (t (f a))
+genMat = sequence . pure . genV
+
+infinity :: (Fractional a) => a
+infinity = 1 / 0
+
+peekSizedVector
+  :: forall n a b c v
+   . (KnownNat n, Storable a, Coercible a b, GV.Vector v b)
+  => Proxy a
+  -> Ptr c
+  -> Int
+  -> IO (SGV.Vector v n b)
+peekSizedVector _ p baseOffset = SGV.generateM \i ->
+  coerce <$> peekByteOff @a p (baseOffset + fromIntegral i * sizeOf @a undefined)
+
+pokeSizedVector
+  :: forall n a b v
+   . (KnownNat n, Storable a, GV.Vector v a)
+  => Ptr b
+  -> Int
+  -> SGV.Vector v n a
+  -> IO ()
+pokeSizedVector p baseOffset = SGV.imapM_ \i a -> pokeByteOff p (baseOffset + sizeOf @a undefined * fromIntegral i) a
+
+peekSized3DVector
+  :: forall n m o a b c v
+   . ( KnownNat n
+     , KnownNat m
+     , KnownNat o
+     , Storable a
+     , Coercible a b
+     , GV.Vector v b
+     , GV.Vector v (SGV.Vector v o b)
+     , GV.Vector v (SGV.Vector v m (SGV.Vector v o b))
+     )
+  => Proxy a
+  -> Ptr c
+  -> Int
+  -> IO (SGV.Vector v n (SGV.Vector v m (SGV.Vector v o b)))
+peekSized3DVector _ p baseOffset =
+  let strideO = sizeOf @a undefined
+      strideM = strideO * fromIntegral (natVal @o Proxy)
+      strideN = strideM * fromIntegral (natVal @m Proxy)
+   in SGV.generateM \i ->
+        SGV.generateM \j ->
+          SGV.generateM \k ->
+            let offset = baseOffset + fromIntegral i * strideN + fromIntegral j * strideM + fromIntegral k * strideO
+             in coerce <$> peekByteOff @a p offset
+
+pokeSized3DVector
+  :: forall n m o a b c v
+   . ( KnownNat n
+     , KnownNat m
+     , KnownNat o
+     , Storable a
+     , Coercible a b
+     , GV.Vector v b
+     , GV.Vector v (SGV.Vector v o b)
+     , GV.Vector v (SGV.Vector v m (SGV.Vector v o b))
+     )
+  => Proxy a
+  -> Ptr c
+  -> Int
+  -> SGV.Vector v n (SGV.Vector v m (SGV.Vector v o b))
+  -> IO ()
+pokeSized3DVector _ p baseOffset =
+  let strideO = sizeOf @a undefined
+      strideM = strideO * fromIntegral (natVal @o Proxy)
+      strideN = strideM * fromIntegral (natVal @m Proxy)
+   in SGV.imapM_ \i ->
+        SGV.imapM_ \j ->
+          SGV.imapM_ \k a ->
+            let offset = baseOffset + fromIntegral i * strideN + fromIntegral j * strideM + fromIntegral k * strideO
+             in pokeByteOff @a p offset (coerce a)
+
+-- Duplicating this from the main module so it doesn't need to be exported.
+roundUpTo :: (Bits a, Num a) => a -> a -> a
+roundUpTo multiple val = (val + multiple - 1) .&. complement (multiple - 1)

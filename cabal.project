@@ -1,3 +1,4 @@
 packages:
   ./heph-aligned-storable
+  ./heph-aligned-storable-testlib
   ./heph-sparse-set

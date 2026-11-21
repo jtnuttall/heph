@@ -6,72 +6,49 @@
 {-# LANGUAGE TypeApplications #-}
 {-# OPTIONS_GHC -O -dsuppress-all -dno-suppress-type-signatures -fplugin=Test.Tasty.Inspection.Plugin #-}
 
-module Foreign.GPU.Storable.AlignedInspectionSpec where
+module LinearInspectionSpec where
 
 import Data.Proxy
-import GHC.Generics (Generic)
 import Test.Tasty
 import Test.Tasty.Inspection
 
 import Foreign.GPU.Storable.Aligned
-import Foreign.GPU.Storable.AlignedSpec
+import Foreign.GPU.Storable.Aligned.Test
+import LinearConformanceSpec
 
--- | Any type that pokes an array incurs allocations, even if it uses `copyBytes` internally.
--- I suspect llvm will unroll the loop if it is used, but I can't prove this by inspecting core.
-data Stress
-  = Stress
-      Insanity
-      Insanity
-      Insanity
-      Insanity
-      Insanity
-      Insanity
-      Insanity
-      Insanity
-      Insanity
-      Insanity
-      Insanity
-      Insanity
-      Insanity
-  deriving (Generic)
-
-instance AlignedStorable Std140 Stress
-instance AlignedStorable Std430 Stress
-instance AlignedStorable Scalar Stress
-
-packedAlignedSizeOf140Stress :: Proxy Std140 -> Proxy Stress -> Int
+packedAlignedSizeOf140Stress :: Proxy Std140 -> Proxy (Stress Insanity) -> Int
 packedAlignedSizeOf140Stress = packedAlignedSizeOf
-packedAlignedSizeOf430Stress :: Proxy Std430 -> Proxy Stress -> Int
+packedAlignedSizeOf430Stress :: Proxy Std430 -> Proxy (Stress Insanity) -> Int
 packedAlignedSizeOf430Stress = packedAlignedSizeOf
-packedAlignedSizeOfScalarStress :: Proxy Scalar -> Proxy Stress -> Int
+packedAlignedSizeOfScalarStress :: Proxy Scalar -> Proxy (Stress Insanity) -> Int
 packedAlignedSizeOfScalarStress = packedAlignedSizeOf
 
-alignedAlignment140Stress :: Proxy Std140 -> Proxy Stress -> Int
+alignedAlignment140Stress :: Proxy Std140 -> Proxy (Stress Insanity) -> Int
 alignedAlignment140Stress = alignedAlignment
-alignedAlignment430Stress :: Proxy Std430 -> Proxy Stress -> Int
+alignedAlignment430Stress :: Proxy Std430 -> Proxy (Stress Insanity) -> Int
 alignedAlignment430Stress = alignedAlignment
-alignedAlignmentScalarStress :: Proxy Scalar -> Proxy Stress -> Int
+alignedAlignmentScalarStress :: Proxy Scalar -> Proxy (Stress Insanity) -> Int
 alignedAlignmentScalarStress = alignedAlignment
 
-alignedSizeOf140Stress :: Proxy Std140 -> Proxy Stress -> Int
+alignedSizeOf140Stress :: Proxy Std140 -> Proxy (Stress Insanity) -> Int
 alignedSizeOf140Stress = alignedSizeOf
-alignedSizeOf430Stress :: Proxy Std430 -> Proxy Stress -> Int
+alignedSizeOf430Stress :: Proxy Std430 -> Proxy (Stress Insanity) -> Int
 alignedSizeOf430Stress = alignedSizeOf
-alignedSizeOfScalarStress :: Proxy Scalar -> Proxy Stress -> Int
+alignedSizeOfScalarStress :: Proxy Scalar -> Proxy (Stress Insanity) -> Int
 alignedSizeOfScalarStress = alignedSizeOf
 
-alignedPoke140Stress :: AlignedPtr Std140 Stress -> Stress -> IO ()
+alignedPoke140Stress :: AlignedPtr Std140 (Stress Insanity) -> Stress Insanity -> IO ()
 alignedPoke140Stress = alignedPoke
-alignedPoke430Stress :: AlignedPtr Std430 Stress -> Stress -> IO ()
+alignedPoke430Stress :: AlignedPtr Std430 (Stress Insanity) -> Stress Insanity -> IO ()
 alignedPoke430Stress = alignedPoke
-alignedPokeScalarStress :: AlignedPtr Scalar Stress -> Stress -> IO ()
+alignedPokeScalarStress :: AlignedPtr Scalar (Stress Insanity) -> Stress Insanity -> IO ()
 alignedPokeScalarStress = alignedPoke
 
-alignedPeek140Stress :: AlignedPtr Std140 Stress -> IO Stress
+alignedPeek140Stress :: AlignedPtr Std140 (Stress Insanity) -> IO (Stress Insanity)
 alignedPeek140Stress = alignedPeek
-alignedPeek430Stress :: AlignedPtr Std430 Stress -> IO Stress
+alignedPeek430Stress :: AlignedPtr Std430 (Stress Insanity) -> IO (Stress Insanity)
 alignedPeek430Stress = alignedPeek
-alignedPeekScalarStress :: AlignedPtr Scalar Stress -> IO Stress
+alignedPeekScalarStress :: AlignedPtr Scalar (Stress Insanity) -> IO (Stress Insanity)
 alignedPeekScalarStress = alignedPeek
 
 packedAlignedSizeOf140Nested :: Proxy Std140 -> Proxy Nested -> Int

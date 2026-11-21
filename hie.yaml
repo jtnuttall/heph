@@ -3,8 +3,11 @@ cradle:
     - path: "heph-aligned-storable/src"
       component: "heph-aligned-storable:lib:heph-aligned-storable"
 
-    - path: "heph-aligned-storable/test"
-      component: "heph-aligned-storable:test:heph-aligned-storable-test"
+    - path: "heph-aligned-storable-testlib/src"
+      component: "heph-aligned-storable-testlib:lib:heph-aligned-storable-testlib"
+
+    - path: "heph-aligned-storable-testlib/test"
+      component: "heph-aligned-storable-testlib:test:heph-aligned-storable-testlib-test"
 
     - path: "heph-sparse-set/src"
       component: "heph-sparse-set:lib:heph-sparse-set"

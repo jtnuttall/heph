@@ -3,3 +3,4 @@ snapshot: lts-24.29
 packages:
   - heph-sparse-set
   - heph-aligned-storable
+  - heph-aligned-storable-testlib

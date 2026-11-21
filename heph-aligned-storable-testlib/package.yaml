@@ -1,0 +1,70 @@
+name: heph-aligned-storable-testlib
+version: 0.1.0.0
+github: "jtnuttall/heph"
+license: BSD-3-Clause
+author: "Jeremy Nuttall"
+maintainer: "jeremy@jeremy-nuttall.com"
+copyright: "2025 Jeremy Nuttall"
+tested-with: GHC == 9.14.1 || == 9.12.4 || == 9.10.3 || == 9.8.4
+
+extra-source-files:
+  - glsl/*.glsl
+
+extra-doc-files:
+  - README.md
+  - CHANGELOG.md
+
+# Metadata used when publishing your package
+synopsis: Conformance tests for heph-aligned-storable and its instance packages
+category: Graphics, Testing
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description: Please see the README on GitHub at
+  <https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-testlib#readme>
+homepage: https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-testlib#readme
+
+dependencies:
+  - base >= 4.19 && < 5
+  - heph-aligned-storable
+  - hedgehog >= 1.0.4 && < 1.8
+  - lifted-base >= 0.2 && < 0.3
+  - monad-control >= 1.0 && < 1.1
+  - tasty >= 1.4.1 && < 1.6
+  - tasty-hedgehog >= 1.1 && < 1.5
+  - tasty-hunit >= 0.10 && < 0.11
+  - vector >= 0.12.3.0 && < 0.14
+  - vector-sized >= 1.4 && < 1.7
+
+ghc-options:
+  - -Wall
+  - -Wcompat
+
+library:
+  source-dirs: src
+  ghc-options:
+    - -Widentities
+    - -Wincomplete-record-updates
+    - -Wincomplete-uni-patterns
+    - -Wmissing-export-lists
+    - -Wmissing-home-modules
+    - -Wpartial-fields
+    - -Wredundant-constraints
+
+tests:
+  heph-aligned-storable-testlib-test:
+    main: Driver.hs
+    source-dirs: test
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - heph-aligned-storable-testlib
+      - half >= 0.3 && < 0.5
+      - linear >= 1.20 && < 1.24
+      - tasty-discover >= 4.2.1 && < 6
+      - tasty-inspection-testing >= 0.1 && < 0.3
+    build-tools:
+      - tasty-discover

@@ -13,6 +13,10 @@ and this project adheres to the
 - Require GHC >= 9.8 (dropped 8.10 and 9.6); tested with GHC 9.8–9.14.
 - Raised dependency upper bounds for current Hackage and GHC 9.14 boot libraries.
 
+### Removed
+
+- The test suite moved to `heph-aligned-storable-testlib`.
+
 ## 0.1.0.0 - 2026-02-02
 
 ### Added
