@@ -8,14 +8,19 @@ and this project adheres to the
 
 ## Unreleased
 
+### Added
+
+- `Foreign.GPU.Storable.Aligned.TH`: the generators behind the built-in instances,
+  exposed so that other packages can bind their own math libraries.
+- `Foreign.GPU.Storable.Aligned.Internal`: the class, layouts and helpers the
+  generated code refers to. No PVP guarantees.
+
 ### Changed
 
 - Require GHC >= 9.8 (dropped 8.10 and 9.6); tested with GHC 9.8–9.14.
 - Raised dependency upper bounds for current Hackage and GHC 9.14 boot libraries.
-- Instances are generated with Template Haskell instead of CPP.
-  `Foreign.GPU.Storable.Aligned.Internal` and `Foreign.GPU.Storable.Aligned.TH`
-  are new exposed modules. The `.TH` generators let other packages bind their
-  own math libraries.
+- Instances are generated with Template Haskell instead of CPP; `template-haskell`
+  is a new dependency.
 
 ### Removed
 

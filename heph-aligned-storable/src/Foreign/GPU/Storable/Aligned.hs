@@ -14,10 +14,10 @@
 -- Derive @Storable@ instances that respect GPU memory layout rules (@std140@,
 -- @std430@, @scalar@). Works with any product type that has a t'GHC.Generics.Generic' instance.
 --
--- The vector and matrix types in the example below are linear's. Instances for
--- them live in @heph-aligned-storable-linear@, and
--- @heph-aligned-storable-geomancy@ provides them for geomancy;
--- "Foreign.GPU.Storable.Aligned.TH" binds other libraries.
+-- The vector and matrix types in the example below are linear's; their instances
+-- live in @heph-aligned-storable-linear@. @heph-aligned-storable-geomancy@ does
+-- the same for geomancy, and "Foreign.GPU.Storable.Aligned.TH" lets other
+-- packages bind other libraries.
 --
 -- @
 -- data Uniforms = Uniforms

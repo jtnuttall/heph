@@ -30,7 +30,7 @@ import Foreign.GPU.Storable.Aligned
 import Foreign.GPU.Storable.Aligned.Linear ()
 import Foreign.GPU.Marshal.Aligned
 import GHC.Generics (Generic)
-import Linear (M44, V3, V4(..))
+import Linear (M44, V3(..), V4(..))
 
 data Uniforms = Uniforms
   { modelViewProjection :: M44 Float

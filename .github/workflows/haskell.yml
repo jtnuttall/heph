@@ -29,8 +29,8 @@ jobs:
         with:
           version: "0.21.0.0"
 
-      - name: Keep linear out of the testlib library
-        run: '! grep -rn "import.*Linear" heph-aligned-storable-testlib/src'
+      - name: Keep linear out of the core and the testlib library
+        run: '! grep -rn "import.*Linear" heph-aligned-storable/src heph-aligned-storable-testlib/src'
 
       - name: Setup Haskell environment
         id: setup
