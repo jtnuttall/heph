@@ -33,7 +33,6 @@ import Control.DeepSeq (NFData)
 import Control.Monad (when)
 import Control.Monad.Primitive
 import Data.Maybe (isJust)
-import Data.Typeable (Typeable)
 import Data.Vector.Generic.Mutable qualified as VGM
 import Data.Vector.Primitive qualified as VP
 import Data.Vector.Primitive.Mutable qualified as VPM
@@ -49,7 +48,7 @@ pattern ABSURD = -1
 newtype MutableSparseArray s = MutableSparseArray
   {getSparseArray :: VPM.MVector s Int}
   deriving newtype (NFData)
-  deriving stock (Generic, Typeable)
+  deriving stock (Generic)
 
 -- | Create a new, empty array from a given capacity.
 --

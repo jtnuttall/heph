@@ -14,68 +14,46 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        include:
-          - ghc: "9.8.4"
-            resolver: "lts-23.24"
-            build_tool: stack
-          - ghc: "9.6.5"
-            resolver: "lts-22.20"
-            build_tool: stack
-          - ghc: "8.10.7"
-            resolver: "lts-18.28"
-            build_tool: cabal
-          - ghc: "8.10.4"
-            resolver: "lts-18.0"
-            build_tool: cabal
+        ghc: ['9.8', '9.10', '9.12', '9.14']
 
-    name: GHC ${{ matrix.ghc }} (${{ matrix.resolver }}) - ${{ matrix.build_tool }}
+    name: GHC ${{ matrix.ghc }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup Haskell environment (${{ matrix.build_tool }})
+      - name: Run fourmolu
+        uses: haskell-actions/run-fourmolu@v13
+        with:
+          version: "0.21.0.0"
+
+      - name: Keep linear out of the core and the testlib library
+        run: '! grep -rn "import.*Linear" heph-aligned-storable/src heph-aligned-storable-testlib/src'
+
+      - name: Setup Haskell environment
+        id: setup
         uses: haskell-actions/setup@v2
         with:
           ghc-version: ${{ matrix.ghc }}
-          enable-stack: ${{ matrix.build_tool == 'stack' && 'true' || '' }}
-          stack-no-global: ${{ matrix.build_tool == 'stack' && 'true' || '' }}
-          stack-setup-ghc: ${{ matrix.build_tool == 'stack' && 'true' || '' }}
+          cabal-version: latest
 
-      - name: Run fourmolu
-        uses: haskell-actions/run-fourmolu@v9
-        with:
-          version: "0.15.0.0"
+      - name: Update package index
+        run: cabal update
 
-      - name: Cache dependencies (${{ matrix.build_tool }})
-        uses: actions/cache@v4
+      - name: Cache dependencies
+        uses: actions/cache@v5
         with:
           path: |
-            # Paths are conditional based on the build tool
-            ${{ (matrix.build_tool == 'stack' && '~/.stack') || '' }}
-            ${{ (matrix.build_tool == 'stack' && '.stack-work') || '' }}
-            ${{ (matrix.build_tool == 'cabal' && '~/.cabal') || '' }}
-            ${{ (matrix.build_tool == 'cabal' && 'dist-newstyle') || '' }}
-          key: ${{ runner.os }}-${{ matrix.build_tool }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('cabal.project') }}-${{ matrix.ghc }}-${{ matrix.resolver }}-${{ hashFiles('**/*.cabal') }}-${{ hashFiles('**/*.hs') }}
+            ${{ steps.setup.outputs.cabal-store }}
+            dist-newstyle
+          key: ${{ runner.os }}-ghc-${{ steps.setup.outputs.ghc-version }}-${{ hashFiles('**/*.cabal', 'cabal.project') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.build_tool }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('cabal.project') }}-${{ matrix.ghc }}-${{ matrix.resolver }}-
-            ${{ runner.os }}-${{ matrix.build_tool }}-${{ hashFiles('stack.yaml') }}-${{ hashFiles('cabal.project') }}-${{ matrix.ghc }}-
+            ${{ runner.os }}-ghc-${{ steps.setup.outputs.ghc-version }}-
 
-      - name: Install dependencies & Build (Stack)
-        if: matrix.build_tool == 'stack'
-        run: stack build --resolver ${{ matrix.resolver }} --test --bench --only-dependencies
+      - name: Build
+        run: cabal build all --enable-tests --enable-benchmarks
 
-      - name: Install dependencies & Build (Cabal)
-        if: matrix.build_tool == 'cabal'
-        run: |
-          cabal configure --enable-tests --enable-benchmarks
-          cabal build all --only-dependencies # 'all' builds all packages in cabal.project
-
-      - name: Run Tests (Stack)
-        if: matrix.build_tool == 'stack'
-        run: stack test --resolver ${{ matrix.resolver }}
-
-      - name: Run Tests (Cabal)
-        if: matrix.build_tool == 'cabal'
+      - name: Run tests
         run: cabal test all

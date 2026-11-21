@@ -46,7 +46,6 @@ module Data.SparseSet.Mutable (
 where
 
 import Control.Monad.Primitive
-import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
 import Prelude hiding (length, lookup, mapM_)
 
@@ -61,7 +60,7 @@ import Data.Vector.Mutable qualified as MV
 import Data.SparseSet.Generic.Mutable qualified as G
 
 newtype MutableSparseSet s a = MSS (G.MutableSparseSet MV.MVector s a)
-  deriving stock (Generic, Typeable)
+  deriving stock (Generic)
 
 type IOMutableSparseSet = MutableSparseSet RealWorld
 type STMutableSparseSet s = MutableSparseSet s

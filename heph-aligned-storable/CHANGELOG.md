@@ -8,6 +8,26 @@ and this project adheres to the
 
 ## Unreleased
 
+### Added
+
+- `Foreign.GPU.Storable.Aligned.TH`: the generators behind the built-in instances,
+  exposed so that other packages can bind their own math libraries.
+- `Foreign.GPU.Storable.Aligned.Internal`: the class, layouts and helpers the
+  generated code refers to. No PVP guarantees.
+
+### Changed
+
+- Require GHC >= 9.8 (dropped 8.10 and 9.6); tested with GHC 9.8–9.14.
+- Raised dependency upper bounds for current Hackage and GHC 9.14 boot libraries.
+- Instances are generated with Template Haskell instead of CPP; `template-haskell`
+  is a new dependency.
+
+### Removed
+
+- The test suite moved to `heph-aligned-storable-testlib`.
+- The instances for linear's vectors and matrices, and the dependency on
+  `linear`. They moved to `heph-aligned-storable-linear`.
+
 ## 0.1.0.0 - 2026-02-02
 
 ### Added

@@ -1,0 +1,74 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.39.6.
+--
+-- see: https://github.com/sol/hpack
+
+name:           heph-aligned-storable-geomancy
+version:        0.1.0.0
+synopsis:       AlignedStorable instances for geomancy's vectors and matrices
+description:    Please see the README on GitHub at <https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-geomancy#readme>
+category:       Graphics
+homepage:       https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-geomancy#readme
+bug-reports:    https://github.com/jtnuttall/heph/issues
+author:         Jeremy Nuttall
+maintainer:     jeremy@jeremy-nuttall.com
+copyright:      2025 Jeremy Nuttall
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+tested-with:
+    GHC == 9.14.1 || == 9.12.4 || == 9.10.3 || == 9.8.4
+extra-source-files:
+    glsl/Geomancy.glsl
+extra-doc-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/jtnuttall/heph
+
+library
+  exposed-modules:
+      Foreign.GPU.Storable.Aligned.Geomancy
+  other-modules:
+      Paths_heph_aligned_storable_geomancy
+  autogen-modules:
+      Paths_heph_aligned_storable_geomancy
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      base >=4.19 && <5
+    , geomancy ==0.4.*
+    , heph-aligned-storable ==0.2.*
+    , template-haskell >=2.21 && <2.25
+  default-language: Haskell2010
+
+test-suite heph-aligned-storable-geomancy-test
+  type: exitcode-stdio-1.0
+  main-is: Driver.hs
+  other-modules:
+      GeomancyConformanceSpec
+      GeomancyInspectionSpec
+      GeomancySpec
+      Paths_heph_aligned_storable_geomancy
+  autogen-modules:
+      Paths_heph_aligned_storable_geomancy
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -threaded -rtsopts -with-rtsopts=-N -Wno-orphans
+  build-tool-depends:
+      tasty-discover:tasty-discover
+  build-depends:
+      base >=4.19 && <5
+    , geomancy ==0.4.*
+    , hedgehog >=1.0.4 && <1.8
+    , heph-aligned-storable ==0.2.*
+    , heph-aligned-storable-geomancy
+    , heph-aligned-storable-testlib ==0.1.*
+    , tasty >=1.4.1 && <1.6
+    , tasty-discover >=4.2.1 && <6
+    , tasty-inspection-testing >=0.1 && <0.3
+  default-language: Haskell2010

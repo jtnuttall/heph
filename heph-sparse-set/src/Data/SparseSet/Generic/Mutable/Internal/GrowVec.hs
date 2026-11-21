@@ -32,14 +32,13 @@ where
 
 import Control.DeepSeq (NFData)
 import Control.Monad.Primitive
-import Data.Typeable (Typeable)
 import Data.Vector.Generic qualified as VG
 import Data.Vector.Generic.Mutable qualified as VGM
 import GHC.Generics (Generic)
 import Prelude hiding (length, mapM_, maximum)
 
 data GrowVec v s a = GrowVec {-# UNPACK #-} !Int (v s a)
-  deriving (Show, Generic, Typeable)
+  deriving (Show, Generic)
 
 instance (NFData (v s a)) => NFData (GrowVec v s a)
 

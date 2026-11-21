@@ -1,0 +1,71 @@
+cabal-version: 2.2
+
+-- This file has been generated from package.yaml by hpack version 0.39.6.
+--
+-- see: https://github.com/sol/hpack
+
+name:           heph-aligned-storable-linear
+version:        0.1.0.0
+synopsis:       AlignedStorable instances for linear's vectors and matrices
+description:    Please see the README on GitHub at <https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-linear#readme>
+category:       Graphics
+homepage:       https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-linear#readme
+bug-reports:    https://github.com/jtnuttall/heph/issues
+author:         Jeremy Nuttall
+maintainer:     jeremy@jeremy-nuttall.com
+copyright:      2025 Jeremy Nuttall
+license:        BSD-3-Clause
+license-file:   LICENSE
+build-type:     Simple
+tested-with:
+    GHC == 9.14.1 || == 9.12.4 || == 9.10.3 || == 9.8.4
+extra-doc-files:
+    README.md
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/jtnuttall/heph
+
+library
+  exposed-modules:
+      Foreign.GPU.Storable.Aligned.Linear
+  other-modules:
+      Paths_heph_aligned_storable_linear
+  autogen-modules:
+      Paths_heph_aligned_storable_linear
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      base >=4.19 && <5
+    , heph-aligned-storable ==0.2.*
+    , linear >=1.20 && <1.24
+    , template-haskell >=2.21 && <2.25
+  default-language: Haskell2010
+
+test-suite heph-aligned-storable-linear-test
+  type: exitcode-stdio-1.0
+  main-is: Driver.hs
+  other-modules:
+      LinearConformanceSpec
+      LinearInspectionSpec
+      Paths_heph_aligned_storable_linear
+  autogen-modules:
+      Paths_heph_aligned_storable_linear
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -Wcompat -threaded -rtsopts -with-rtsopts=-N -Wno-orphans
+  build-tool-depends:
+      tasty-discover:tasty-discover
+  build-depends:
+      base >=4.19 && <5
+    , half >=0.3 && <0.5
+    , heph-aligned-storable ==0.2.*
+    , heph-aligned-storable-linear
+    , heph-aligned-storable-testlib ==0.1.*
+    , linear >=1.20 && <1.24
+    , tasty >=1.4.1 && <1.6
+    , tasty-discover >=4.2.1 && <6
+    , tasty-inspection-testing >=0.1 && <0.3
+  default-language: Haskell2010
