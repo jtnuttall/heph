@@ -1,8 +1,13 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE GADTSyntax #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
@@ -14,17 +19,31 @@
 -- Maintainer  : jeremy@jeremy-nuttall.com
 -- Stability   : experimental
 module Foreign.GPU.Storable.Aligned.Test.Harness (
+  -- * Oracles
+  Oracle (..),
+  peekOracleAt,
+  pokeOracleAt,
+
   -- * Round trips
   Canary (..),
   genCanary,
   genCanaries,
   ptrTripping,
+  ptrTrippingWith,
+  TripOpts (..),
+  defaultTripOpts,
+
+  -- * Test trees
+  LayoutCase (..),
+  at,
+  sutTests,
+  sutTestsWith,
+  layoutCaseTests,
+  layoutName,
 
   -- * Generators
   genFloat,
   genInt,
-  genV,
-  genMat,
   infinity,
 
   -- * Sized vectors
@@ -36,11 +55,12 @@ module Foreign.GPU.Storable.Aligned.Test.Harness (
 where
 
 import Control.Exception.Lifted (bracket)
-import Control.Monad (replicateM)
+import Control.Monad (replicateM, when)
 import Control.Monad.IO.Class
 import Control.Monad.Trans.Control (MonadBaseControl)
 import Data.Coerce
 import Data.Foldable (traverse_)
+import Data.Kind (Type)
 import Data.Proxy
 import Data.Typeable (Typeable, showsTypeRep, typeRep)
 import qualified Data.Vector.Generic as GV
@@ -52,6 +72,32 @@ import Hedgehog
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
 import Numeric (showHex)
+import Test.Tasty (TestTree, testGroup)
+import Test.Tasty.HUnit (testCase, (@?=))
+import Test.Tasty.Hedgehog (testProperty)
+
+import Foreign.GPU.Storable.Aligned
+
+--------------------------------------------------------------------------------
+-- Oracles
+--------------------------------------------------------------------------------
+
+-- | A value whose 'Storable' instance is a hand-written oracle for layout @l@:
+-- every offset, size and alignment is a literal read off glslang's output for
+-- the GLSL twin of @a@ (see @glsl/Conformance.glsl@).
+--
+-- @Oracle l a@ and @'Strided' l a@ are both newtypes over @a@, so 'ptrTripping'
+-- can compare them directly.
+newtype Oracle (l :: MemoryLayout) (a :: Type) = Oracle {unOracle :: a}
+  deriving stock (Eq, Show)
+
+-- | Peek a member through its oracle for layout @l@.
+peekOracleAt :: forall l a b. (Storable (Oracle l a)) => Ptr b -> Int -> IO a
+peekOracleAt ptr off = unOracle <$> peekByteOff @(Oracle l a) ptr off
+
+-- | Poke a member through its oracle for layout @l@.
+pokeOracleAt :: forall l a b. (Storable (Oracle l a)) => Ptr b -> Int -> a -> IO ()
+pokeOracleAt ptr off = pokeByteOff ptr off . Oracle @l
 
 --------------------------------------------------------------------------------
 -- Test harness
@@ -109,6 +155,10 @@ genCanaries sz = replicateM sz genCanary
 --
 -- This makes it incredibly unlikely (but not impossible) that this module corrupts memory in a way
 -- that isn't caught in test.
+--
+-- Finally, unless 'checkByteImage' is off, the SUT and the Oracle are each poked into a zeroed
+-- buffer of the SUT's size and the two byte images are compared. This catches writes into padding,
+-- which neither the round trips nor the canaries can see.
 ptrTripping
   :: forall s o m
    . ( HasCallStack
@@ -127,7 +177,42 @@ ptrTripping
   => s
   -> o
   -> PropertyT m ()
-ptrTripping sut oracle = do
+ptrTripping = ptrTrippingWith defaultTripOpts
+
+-- | Options for 'ptrTrippingWith'.
+newtype TripOpts = TripOpts
+  { checkByteImage :: Bool
+  -- ^ Compare the bytes the SUT and the Oracle poke into zeroed buffers. Turn
+  -- this off for SUTs containing an t'AlignedArray': it copies the padding of
+  -- its elements, which is uninitialized.
+  }
+  deriving stock (Show)
+
+-- | All checks on.
+defaultTripOpts :: TripOpts
+defaultTripOpts = TripOpts{checkByteImage = True}
+
+-- | 'ptrTripping' with options.
+ptrTrippingWith
+  :: forall s o m
+   . ( HasCallStack
+     , Coercible s o
+     , MonadBaseControl IO m
+     , MonadIO m
+     , Typeable s
+     , Typeable o
+     , Eq s
+     , Eq o
+     , Show s
+     , Show o
+     , Storable s
+     , Storable o
+     )
+  => TripOpts
+  -> s
+  -> o
+  -> PropertyT m ()
+ptrTrippingWith opts sut oracle = do
   let sz = sizeOf sut
       cSz = sizeOf @Canary undefined
       pSz = roundUpTo cSz sz
@@ -193,6 +278,84 @@ ptrTripping sut oracle = do
   checkRoundTrip sut oracle
   checkRoundTrip oracle sut
 
+  when (checkByteImage opts) do
+    let byteImage :: forall a. (Storable a) => a -> IO [Word8]
+        byteImage x = allocaBytesAligned sz (alignment sut) \ptr -> do
+          fillBytes ptr 0 sz
+          poke (castPtr ptr) x
+          peekArray sz ptr
+    sutImage <- liftIO $ byteImage sut
+    oracleImage <- liftIO $ byteImage oracle
+    annotate "Byte image: SUT, then Oracle"
+    sutImage === oracleImage
+
+--------------------------------------------------------------------------------
+-- Test trees
+--------------------------------------------------------------------------------
+
+-- | One layout to test a struct under: the layout, plus the expected
+-- 'packedAlignedSizeOf' when it is asserted.
+data LayoutCase a where
+  LayoutCase
+    :: (KnownMemoryLayout l, Typeable l, AlignedStorable l a, Storable (Oracle l a))
+    => Proxy l
+    -> Maybe Int
+    -> LayoutCase a
+
+-- | @at \@'Std140 (Just 40)@: test under 'Std140' and assert a packed size of 40.
+at
+  :: forall l a
+   . (KnownMemoryLayout l, Typeable l, AlignedStorable l a, Storable (Oracle l a))
+  => Maybe Int
+  -> LayoutCase a
+at = LayoutCase (Proxy @l)
+
+-- | A group named after the struct with, per layout, a @"\<layout\> packed size"@
+-- unit test (when the size is given) and a @"\<layout\> round trip"@ property
+-- that runs 'ptrTripping' on @'Strided' l a@ against @'Oracle' l a@.
+sutTests :: (Eq a, Show a, Typeable a) => String -> Gen a -> [LayoutCase a] -> TestTree
+sutTests = sutTestsWith id defaultTripOpts
+
+-- | 'sutTests' with a modifier for each property (e.g. @'withShrinks' 10@) and
+-- 'TripOpts'.
+sutTestsWith
+  :: (Eq a, Show a, Typeable a)
+  => (Property -> Property)
+  -> TripOpts
+  -> String
+  -> Gen a
+  -> [LayoutCase a]
+  -> TestTree
+sutTestsWith modify opts name gen = testGroup name . concatMap (layoutCaseTests modify opts gen)
+
+-- | The tests 'sutTestsWith' generates for one layout, for structs whose type
+-- depends on the layout (and so need one 'LayoutCase' per type).
+layoutCaseTests
+  :: forall a
+   . (Eq a, Show a, Typeable a)
+  => (Property -> Property)
+  -> TripOpts
+  -> Gen a
+  -> LayoutCase a
+  -> [TestTree]
+layoutCaseTests modify opts gen (LayoutCase (pl :: Proxy l) expected) =
+  [ testCase (lname <> " packed size") (packedAlignedSizeOf pl (Proxy @a) @?= n)
+  | Just n <- [expected]
+  ]
+    <> [ testProperty (lname <> " round trip") . modify $ property do
+           x <- forAll gen
+           ptrTrippingWith opts (Strided @l x) (Oracle @l x)
+       ]
+ where
+  lname = layoutName (memoryLayoutVal pl)
+
+-- | The lower-case GLSL name of a layout, as used in test names.
+layoutName :: MemoryLayout -> String
+layoutName = \case
+  Std140 -> "std140"
+  Std430 -> "std430"
+  Scalar -> "scalar"
+
 --------------------------------------------------------------------------------
 -- Utils
 --------------------------------------------------------------------------------
@@ -201,12 +364,6 @@ genFloat = Gen.realFloat (Range.linearFrac (-infinity) infinity)
 
 genInt :: (Bounded a, Integral a) => Gen a
 genInt = Gen.integral (Range.linear minBound maxBound)
-
-genV :: (Traversable t, Applicative t) => Gen a -> Gen (t a)
-genV = sequence . pure
-
-genMat :: (Traversable t, Applicative t, Traversable f, Applicative f) => Gen a -> Gen (t (f a))
-genMat = sequence . pure . genV
 
 infinity :: (Fractional a) => a
 infinity = 1 / 0

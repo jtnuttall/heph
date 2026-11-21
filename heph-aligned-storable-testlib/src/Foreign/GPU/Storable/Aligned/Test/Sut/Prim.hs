@@ -1,101 +1,80 @@
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 
 -- |
--- Description : Conformance tests for structs of GLSL scalars
+-- Description : Structs of GLSL scalars and their oracles
 -- Copyright   : (c) Jeremy Nuttall, 2025
 -- License     : BSD-3-Clause
 -- Maintainer  : jeremy@jeremy-nuttall.com
 -- Stability   : experimental
+--
+-- Structs under test that hold only GLSL scalars, structs of scalars and arrays
+-- of them. They need no vector library, so they test the core package alone.
 module Foreign.GPU.Storable.Aligned.Test.Sut.Prim (
-  -- * Base checks
-  hprop_base_float_is_storable,
-  hprop_base_int16_round_trips,
+  -- * Suites
+  baseSuite,
+  simpleSuite,
+  layoutBugSuite,
+  largePrimitivesSuite,
+  mixedAlignSuite,
+  boolTestSuite,
+  nestedPrimSuite,
+  arrayStructSuite,
+  deepNestSuite,
 
-  -- * Simple
-  Simple (..),
+  -- * Structs
+  Simple (Simple),
   genSimple,
-  SimpleStd140 (..),
-  SimpleStd430 (..),
-  SimpleScalar (..),
-  unit_simple_std140_packed_size,
-  hprop_simple_std140_round_trip,
-  unit_simple_std430_packed_size,
-  hprop_simple_std430_round_trip,
-  unit_simple_scalar_packed_size,
-  hprop_simple_scalar_round_trip,
-
-  -- * LayoutBug
-  LayoutBug (..),
+  LayoutBug (LayoutBug),
   genLayoutBug,
-  LayoutBugStd140 (..),
-  LayoutBugStd430 (..),
-  LayoutBugScalar (..),
-  unit_layoutbug_std140_packed_size,
-  hprop_layoutbug_std140_round_trip,
-  unit_layoutbug_std430_packed_size,
-  hprop_layoutbug_std430_round_trip,
-  unit_layoutbug_scalar_packed_size,
-  hprop_layoutbug_scalar_round_trip,
-
-  -- * LargePrimitives
-  LargePrimitives (..),
+  LargePrimitives (LargePrimitives),
   genLargePrimitives,
-  LargePrimitivesStd140 (..),
-  LargePrimitivesStd430 (..),
-  LargePrimitivesScalar (..),
-  unit_largeprimitives_std140_packed_size,
-  hprop_largeprimitives_std140_round_trip,
-  unit_largeprimitives_std430_packed_size,
-  hprop_largeprimitives_std430_round_trip,
-  hprop_largeprimitives_scalar_round_trip,
-
-  -- * MixedAlign
-  MixedAlign (..),
+  MixedAlign (MixedAlign),
   genMixedAlign,
-  MixedAlignStd140 (..),
-  MixedAlignStd430 (..),
-  MixedAlignScalar (..),
-  hprop_mixedalign_std140_round_trip,
-  hprop_mixedalign_std430_round_trip,
-  hprop_mixedalign_scalar_round_trip,
-
-  -- * BoolTest
-  BoolTest (..),
+  BoolTest (BoolTest),
   genBoolTest,
-  BoolTestStd140 (..),
-  BoolTestStd430 (..),
-  BoolTestScalar (..),
-  hprop_booltest_std140_round_trip,
-  hprop_booltest_std430_round_trip,
-  hprop_booltest_scalar_round_trip,
+  NestedPrim (NestedPrim),
+  genNestedPrim,
+  ArrayStruct (ArrayStruct),
+  genArrayStruct,
+  DeepNest (DeepNest),
+  genDeepNest,
 )
 where
 
 import Data.Int
 import Data.Proxy
+import qualified Data.Vector.Sized as SV
+import qualified Data.Vector.Storable.Sized as SSV
 import Foreign
 import GHC.Generics
 import Hedgehog
 import qualified Hedgehog.Gen as Gen
-import Test.Tasty.HUnit
+import Test.Tasty (TestTree, testGroup)
+import Test.Tasty.Hedgehog (testProperty)
 
 import Foreign.GPU.Storable.Aligned
+import Foreign.GPU.Storable.Aligned.Test.Glsl
 import Foreign.GPU.Storable.Aligned.Test.Harness
 
-hprop_base_float_is_storable :: Property
-hprop_base_float_is_storable = property do
-  let x = Strided @Std140 (1.0 :: Float)
-  let _ = sizeOf x
-  success
-
-hprop_base_int16_round_trips :: Property
-hprop_base_int16_round_trips = property do
-  ptrTripping @Int16 @Int16 12 12
+-- | Sanity checks of the harness on bare scalars.
+baseSuite :: TestTree
+baseSuite =
+  testGroup
+    "Base"
+    [ testProperty "float is storable" $ property do
+        let x = Strided @Std140 (1.0 :: Float)
+        let _ = sizeOf x
+        success
+    , testProperty "int16 round trips" $ property do
+        ptrTripping @Int16 @Int16 12 12
+    ]
 
 --------------------------------------------------------------------------------
 -- Simple
@@ -114,71 +93,36 @@ instance AlignedStorable Std140 Simple
 instance AlignedStorable Std430 Simple
 instance AlignedStorable Scalar Simple
 
-newtype SimpleStd140 = SimpleStd140 Simple
-  deriving (Generic, Show, Eq)
-
-instance Storable SimpleStd140 where
+-- GLSL: struct Simple (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std140 Simple) where
   sizeOf _ = 16
   alignment _ = 16
-  peek ptr = SimpleStd140 <$> (Simple <$> peekByteOff ptr 0 <*> peekByteOff ptr 4)
-  poke ptr (SimpleStd140 Simple{..}) = do
+  peek ptr = Oracle <$> (Simple <$> peekByteOff ptr 0 <*> peekByteOff ptr 4)
+  poke ptr (Oracle Simple{..}) = do
     pokeByteOff ptr 0 simpleA
     pokeByteOff ptr 4 simpleB
 
-unit_simple_std140_packed_size :: Assertion
-unit_simple_std140_packed_size =
-  packedAlignedSizeOf @Std140 @Simple Proxy Proxy @?= 8
-
-hprop_simple_std140_round_trip :: Property
-hprop_simple_std140_round_trip = property do
-  simple <- forAll genSimple
-  let sut = Strided @Std140 simple
-      oracle = SimpleStd140 simple
-  ptrTripping sut oracle
-
-newtype SimpleStd430 = SimpleStd430 Simple
-  deriving (Generic, Show, Eq)
-
-instance Storable SimpleStd430 where
+-- GLSL: struct Simple (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std430 Simple) where
   sizeOf _ = 8
   alignment _ = 4
-  peek ptr = SimpleStd430 <$> (Simple <$> peekByteOff ptr 0 <*> peekByteOff ptr 4)
-  poke ptr (SimpleStd430 Simple{..}) = do
+  peek ptr = Oracle <$> (Simple <$> peekByteOff ptr 0 <*> peekByteOff ptr 4)
+  poke ptr (Oracle Simple{..}) = do
     pokeByteOff ptr 0 simpleA
     pokeByteOff ptr 4 simpleB
 
-unit_simple_std430_packed_size :: Assertion
-unit_simple_std430_packed_size =
-  packedAlignedSizeOf @Std430 @Simple Proxy Proxy @?= 8
-
-hprop_simple_std430_round_trip :: Property
-hprop_simple_std430_round_trip = property do
-  val <- forAll genSimple
-  let sut = Strided @Std430 val
-  let oracle = SimpleStd430 val
-  ptrTripping sut oracle
-
-newtype SimpleScalar = SimpleScalar Simple
-  deriving (Generic, Show, Eq)
-
-instance Storable SimpleScalar where
+-- GLSL: struct Simple (glsl/Conformance.glsl)
+instance Storable (Oracle 'Scalar Simple) where
   sizeOf _ = 8
   alignment _ = 4
-  peek ptr = SimpleScalar <$> (Simple <$> peekByteOff ptr 0 <*> peekByteOff ptr 4)
-  poke ptr (SimpleScalar Simple{..}) = do
+  peek ptr = Oracle <$> (Simple <$> peekByteOff ptr 0 <*> peekByteOff ptr 4)
+  poke ptr (Oracle Simple{..}) = do
     pokeByteOff ptr 0 simpleA
     pokeByteOff ptr 4 simpleB
 
-unit_simple_scalar_packed_size :: Assertion
-unit_simple_scalar_packed_size =
-  packedAlignedSizeOf @Scalar @Simple Proxy Proxy @?= 8
-
-hprop_simple_scalar_round_trip :: Property
-hprop_simple_scalar_round_trip = property do
-  val <- forAll genSimple
-  let sut = Strided @Scalar val
-  let oracle = SimpleScalar val
-  ptrTripping sut oracle
+-- | The Simple tests.
+simpleSuite :: TestTree
+simpleSuite = sutTests "Simple" genSimple [at @'Std140 (Just 8), at @'Std430 (Just 8), at @'Scalar (Just 8)]
 
 --------------------------------------------------------------------------------
 -- LayoutBug
@@ -198,74 +142,43 @@ instance AlignedStorable Std140 LayoutBug
 instance AlignedStorable Std430 LayoutBug
 instance AlignedStorable Scalar LayoutBug
 
-newtype LayoutBugStd140 = LayoutBugStd140 LayoutBug
-  deriving (Generic, Show, Eq)
-
-instance Storable LayoutBugStd140 where
+-- GLSL: struct LayoutBug (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std140 LayoutBug) where
   sizeOf _ = 16
   alignment _ = 16
-  peek ptr = LayoutBugStd140 <$> (LayoutBug <$> peekByteOff ptr 0 <*> peekByteOff ptr 4 <*> peekByteOff ptr 8)
-  poke ptr (LayoutBugStd140 LayoutBug{..}) = do
+  peek ptr = Oracle <$> (LayoutBug <$> peekByteOff ptr 0 <*> peekByteOff ptr 4 <*> peekByteOff ptr 8)
+  poke ptr (Oracle LayoutBug{..}) = do
     pokeByteOff ptr 0 fieldA
     pokeByteOff ptr 4 fieldB
     pokeByteOff ptr 8 fieldC
 
-unit_layoutbug_std140_packed_size :: Assertion
-unit_layoutbug_std140_packed_size =
-  packedAlignedSizeOf @Std140 @LayoutBug Proxy Proxy @?= 16
-
-hprop_layoutbug_std140_round_trip :: Property
-hprop_layoutbug_std140_round_trip = property do
-  val <- forAll genLayoutBug
-  let sut = Strided @Std140 val
-      oracle = LayoutBugStd140 val
-  ptrTripping sut oracle
-
-newtype LayoutBugStd430 = LayoutBugStd430 LayoutBug
-  deriving (Generic, Show, Eq)
-
-instance Storable LayoutBugStd430 where
+-- GLSL: struct LayoutBug (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std430 LayoutBug) where
   sizeOf _ = 16
   alignment _ = 8
-  peek ptr = LayoutBugStd430 <$> (LayoutBug <$> peekByteOff ptr 0 <*> peekByteOff ptr 4 <*> peekByteOff ptr 8)
-  poke ptr (LayoutBugStd430 LayoutBug{..}) = do
+  peek ptr = Oracle <$> (LayoutBug <$> peekByteOff ptr 0 <*> peekByteOff ptr 4 <*> peekByteOff ptr 8)
+  poke ptr (Oracle LayoutBug{..}) = do
     pokeByteOff ptr 0 fieldA
     pokeByteOff ptr 4 fieldB
     pokeByteOff ptr 8 fieldC
 
-unit_layoutbug_std430_packed_size :: Assertion
-unit_layoutbug_std430_packed_size =
-  packedAlignedSizeOf @Std430 @LayoutBug Proxy Proxy @?= 16
-
-hprop_layoutbug_std430_round_trip :: Property
-hprop_layoutbug_std430_round_trip = property do
-  val <- forAll genLayoutBug
-  let sut = Strided @Std430 val
-  let oracle = LayoutBugStd430 val
-  ptrTripping sut oracle
-
-newtype LayoutBugScalar = LayoutBugScalar LayoutBug
-  deriving (Generic, Show, Eq)
-
-instance Storable LayoutBugScalar where
+-- GLSL: struct LayoutBug (glsl/Conformance.glsl)
+instance Storable (Oracle 'Scalar LayoutBug) where
   sizeOf _ = 16
   alignment _ = 8
-  peek ptr = LayoutBugScalar <$> (LayoutBug <$> peekByteOff ptr 0 <*> peekByteOff ptr 4 <*> peekByteOff ptr 8)
-  poke ptr (LayoutBugScalar LayoutBug{..}) = do
+  peek ptr = Oracle <$> (LayoutBug <$> peekByteOff ptr 0 <*> peekByteOff ptr 4 <*> peekByteOff ptr 8)
+  poke ptr (Oracle LayoutBug{..}) = do
     pokeByteOff ptr 0 fieldA
     pokeByteOff ptr 4 fieldB
     pokeByteOff ptr 8 fieldC
 
-unit_layoutbug_scalar_packed_size :: Assertion
-unit_layoutbug_scalar_packed_size =
-  packedAlignedSizeOf @Scalar @LayoutBug Proxy Proxy @?= 16
-
-hprop_layoutbug_scalar_round_trip :: Property
-hprop_layoutbug_scalar_round_trip = property do
-  val <- forAll genLayoutBug
-  let sut = Strided @Scalar val
-  let oracle = LayoutBugScalar val
-  ptrTripping sut oracle
+-- | The LayoutBug tests.
+layoutBugSuite :: TestTree
+layoutBugSuite =
+  sutTests
+    "LayoutBug"
+    genLayoutBug
+    [at @'Std140 (Just 16), at @'Std430 (Just 16), at @'Scalar (Just 16)]
 
 --------------------------------------------------------------------------------
 -- LargePrimitives
@@ -284,67 +197,40 @@ instance AlignedStorable Std140 LargePrimitives
 instance AlignedStorable Std430 LargePrimitives
 instance AlignedStorable Scalar LargePrimitives
 
-newtype LargePrimitivesStd140 = LargePrimitivesStd140 LargePrimitives
-  deriving (Generic, Show, Eq)
-
-instance Storable LargePrimitivesStd140 where
+-- GLSL: struct LargePrimitives (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std140 LargePrimitives) where
   sizeOf _ = 16
   alignment _ = 16
-  peek ptr = LargePrimitivesStd140 <$> (LargePrimitives <$> peekByteOff ptr 0 <*> peekByteOff ptr 8)
-  poke ptr (LargePrimitivesStd140 LargePrimitives{..}) = do
+  peek ptr = Oracle <$> (LargePrimitives <$> peekByteOff ptr 0 <*> peekByteOff ptr 8)
+  poke ptr (Oracle LargePrimitives{..}) = do
     pokeByteOff ptr 0 d
     pokeByteOff ptr 8 l
 
-unit_largeprimitives_std140_packed_size :: Assertion
-unit_largeprimitives_std140_packed_size =
-  packedAlignedSizeOf @Std140 @LargePrimitives Proxy Proxy @?= 16
-
-hprop_largeprimitives_std140_round_trip :: Property
-hprop_largeprimitives_std140_round_trip = property do
-  val <- forAll genLargePrimitives
-  let sut = Strided @Std140 val
-  let oracle = LargePrimitivesStd140 val
-  ptrTripping sut oracle
-
-newtype LargePrimitivesStd430 = LargePrimitivesStd430 LargePrimitives
-  deriving (Generic, Show, Eq)
-
-instance Storable LargePrimitivesStd430 where
+-- GLSL: struct LargePrimitives (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std430 LargePrimitives) where
   sizeOf _ = 16
   alignment _ = 8
-  peek ptr = LargePrimitivesStd430 <$> (LargePrimitives <$> peekByteOff ptr 0 <*> peekByteOff ptr 8)
-  poke ptr (LargePrimitivesStd430 LargePrimitives{..}) = do
+  peek ptr = Oracle <$> (LargePrimitives <$> peekByteOff ptr 0 <*> peekByteOff ptr 8)
+  poke ptr (Oracle LargePrimitives{..}) = do
     pokeByteOff ptr 0 d
     pokeByteOff ptr 8 l
 
-unit_largeprimitives_std430_packed_size :: Assertion
-unit_largeprimitives_std430_packed_size =
-  packedAlignedSizeOf @Std430 @LargePrimitives Proxy Proxy @?= 16
-
-hprop_largeprimitives_std430_round_trip :: Property
-hprop_largeprimitives_std430_round_trip = property do
-  val <- forAll genLargePrimitives
-  let sut = Strided @Std430 val
-  let oracle = LargePrimitivesStd430 val
-  ptrTripping sut oracle
-
-newtype LargePrimitivesScalar = LargePrimitivesScalar LargePrimitives
-  deriving (Generic, Show, Eq)
-
-instance Storable LargePrimitivesScalar where
+-- GLSL: struct LargePrimitives (glsl/Conformance.glsl)
+instance Storable (Oracle 'Scalar LargePrimitives) where
   sizeOf _ = 16
   alignment _ = 8
-  peek ptr = LargePrimitivesScalar <$> (LargePrimitives <$> peekByteOff ptr 0 <*> peekByteOff ptr 8)
-  poke ptr (LargePrimitivesScalar LargePrimitives{..}) = do
+  peek ptr = Oracle <$> (LargePrimitives <$> peekByteOff ptr 0 <*> peekByteOff ptr 8)
+  poke ptr (Oracle LargePrimitives{..}) = do
     pokeByteOff ptr 0 d
     pokeByteOff ptr 8 l
 
-hprop_largeprimitives_scalar_round_trip :: Property
-hprop_largeprimitives_scalar_round_trip = property do
-  val <- forAll genLargePrimitives
-  let sut = Strided @Scalar val
-  let oracle = LargePrimitivesScalar val
-  ptrTripping sut oracle
+-- | The LargePrimitives tests.
+largePrimitivesSuite :: TestTree
+largePrimitivesSuite =
+  sutTests
+    "LargePrimitives"
+    genLargePrimitives
+    [at @'Std140 (Just 16), at @'Std430 (Just 16), at @'Scalar Nothing]
 
 --------------------------------------------------------------------------------
 -- MixedAlign (explicitly tests the difference between std140 and std430)
@@ -364,65 +250,46 @@ instance AlignedStorable Std140 MixedAlign
 instance AlignedStorable Std430 MixedAlign
 instance AlignedStorable Scalar MixedAlign
 
-newtype MixedAlignStd140 = MixedAlignStd140 MixedAlign
-  deriving (Generic, Show, Eq)
-
-instance Storable MixedAlignStd140 where
+-- GLSL: struct MixedAlign (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std140 MixedAlign) where
   sizeOf _ = 32
   alignment _ = 16
   peek ptr =
-    MixedAlignStd140 <$> (MixedAlign <$> peekByteOff ptr 0 <*> peekByteOff ptr 8 <*> peekByteOff ptr 16)
-  poke ptr (MixedAlignStd140 MixedAlign{..}) = do
+    Oracle <$> (MixedAlign <$> peekByteOff ptr 0 <*> peekByteOff ptr 8 <*> peekByteOff ptr 16)
+  poke ptr (Oracle MixedAlign{..}) = do
     pokeByteOff ptr 0 a
     pokeByteOff ptr 8 b
     pokeByteOff ptr 16 c
 
-hprop_mixedalign_std140_round_trip :: Property
-hprop_mixedalign_std140_round_trip = property do
-  val <- forAll genMixedAlign
-  let sut = Strided @Std140 val
-  let oracle = MixedAlignStd140 val
-  ptrTripping sut oracle
-
-newtype MixedAlignStd430 = MixedAlignStd430 MixedAlign
-  deriving (Generic, Show, Eq)
-
-instance Storable MixedAlignStd430 where
+-- GLSL: struct MixedAlign (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std430 MixedAlign) where
   sizeOf _ = 24
   alignment _ = 8
   peek ptr =
-    MixedAlignStd430 <$> (MixedAlign <$> peekByteOff ptr 0 <*> peekByteOff ptr 8 <*> peekByteOff ptr 16)
-  poke ptr (MixedAlignStd430 MixedAlign{..}) = do
+    Oracle <$> (MixedAlign <$> peekByteOff ptr 0 <*> peekByteOff ptr 8 <*> peekByteOff ptr 16)
+  poke ptr (Oracle MixedAlign{..}) = do
     pokeByteOff ptr 0 a
     pokeByteOff ptr 8 b
     pokeByteOff ptr 16 c
 
-hprop_mixedalign_std430_round_trip :: Property
-hprop_mixedalign_std430_round_trip = property do
-  val <- forAll genMixedAlign
-  let sut = Strided @Std430 val
-  let oracle = MixedAlignStd430 val
-  ptrTripping sut oracle
-
-newtype MixedAlignScalar = MixedAlignScalar MixedAlign
-  deriving (Generic, Show, Eq)
-
-instance Storable MixedAlignScalar where
+-- GLSL: struct MixedAlign (glsl/Conformance.glsl)
+instance Storable (Oracle 'Scalar MixedAlign) where
   sizeOf _ = 24
   alignment _ = 8
   peek ptr =
-    MixedAlignScalar <$> (MixedAlign <$> peekByteOff ptr 0 <*> peekByteOff ptr 8 <*> peekByteOff ptr 16)
-  poke ptr (MixedAlignScalar MixedAlign{..}) = do
+    Oracle <$> (MixedAlign <$> peekByteOff ptr 0 <*> peekByteOff ptr 8 <*> peekByteOff ptr 16)
+  poke ptr (Oracle MixedAlign{..}) = do
     pokeByteOff ptr 0 a
     pokeByteOff ptr 8 b
     pokeByteOff ptr 16 c
 
-hprop_mixedalign_scalar_round_trip :: Property
-hprop_mixedalign_scalar_round_trip = property do
-  val <- forAll genMixedAlign
-  let sut = Strided @Scalar val
-  let oracle = MixedAlignScalar val
-  ptrTripping sut oracle
+-- | The MixedAlign tests.
+mixedAlignSuite :: TestTree
+mixedAlignSuite =
+  sutTests
+    "MixedAlign"
+    genMixedAlign
+    [at @'Std140 Nothing, at @'Std430 Nothing, at @'Scalar Nothing]
 
 --------------------------------------------------------------------------------
 -- BoolTest
@@ -441,56 +308,316 @@ instance AlignedStorable Std140 BoolTest
 instance AlignedStorable Std430 BoolTest
 instance AlignedStorable Scalar BoolTest
 
-newtype BoolTestStd140 = BoolTestStd140 BoolTest
-  deriving (Generic, Show, Eq)
-
-instance Storable BoolTestStd140 where
+-- GLSL: struct BoolTest (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std140 BoolTest) where
   sizeOf _ = 16
   alignment _ = 16
-  peek ptr = BoolTestStd140 <$> (BoolTest <$> peekByteOff ptr 0 <*> peekByteOff ptr 4)
-  poke ptr (BoolTestStd140 BoolTest{..}) = do
+  peek ptr = Oracle <$> (BoolTest <$> peekByteOff ptr 0 <*> peekByteOff ptr 4)
+  poke ptr (Oracle BoolTest{..}) = do
     pokeByteOff ptr 0 isEnabled
     pokeByteOff ptr 4 value
 
-hprop_booltest_std140_round_trip :: Property
-hprop_booltest_std140_round_trip = property do
-  val <- forAll genBoolTest
-  let sut = Strided @Std140 val
-      oracle = BoolTestStd140 val
-  ptrTripping sut oracle
-
-newtype BoolTestStd430 = BoolTestStd430 BoolTest
-  deriving (Generic, Show, Eq)
-
-instance Storable BoolTestStd430 where
+-- GLSL: struct BoolTest (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std430 BoolTest) where
   sizeOf _ = 8
   alignment _ = 4
-  peek ptr = BoolTestStd430 <$> (BoolTest <$> peekByteOff ptr 0 <*> peekByteOff ptr 4)
-  poke ptr (BoolTestStd430 BoolTest{..}) = do
+  peek ptr = Oracle <$> (BoolTest <$> peekByteOff ptr 0 <*> peekByteOff ptr 4)
+  poke ptr (Oracle BoolTest{..}) = do
     pokeByteOff ptr 0 isEnabled
     pokeByteOff ptr 4 value
 
-hprop_booltest_std430_round_trip :: Property
-hprop_booltest_std430_round_trip = property do
-  val <- forAll genBoolTest
-  let sut = Strided @Std430 val
-      oracle = BoolTestStd430 val
-  ptrTripping sut oracle
-
-newtype BoolTestScalar = BoolTestScalar BoolTest
-  deriving (Generic, Show, Eq)
-
-instance Storable BoolTestScalar where
+-- GLSL: struct BoolTest (glsl/Conformance.glsl)
+instance Storable (Oracle 'Scalar BoolTest) where
   sizeOf _ = 8
   alignment _ = 4
-  peek ptr = BoolTestScalar <$> (BoolTest <$> peekByteOff ptr 0 <*> peekByteOff ptr 4)
-  poke ptr (BoolTestScalar BoolTest{..}) = do
+  peek ptr = Oracle <$> (BoolTest <$> peekByteOff ptr 0 <*> peekByteOff ptr 4)
+  poke ptr (Oracle BoolTest{..}) = do
     pokeByteOff ptr 0 isEnabled
     pokeByteOff ptr 4 value
 
-hprop_booltest_scalar_round_trip :: Property
-hprop_booltest_scalar_round_trip = property do
-  val <- forAll genBoolTest
-  let sut = Strided @Scalar val
-      oracle = BoolTestScalar val
-  ptrTripping sut oracle
+-- | The BoolTest tests.
+boolTestSuite :: TestTree
+boolTestSuite =
+  sutTests
+    "BoolTest"
+    genBoolTest
+    [at @'Std140 Nothing, at @'Std430 Nothing, at @'Scalar Nothing]
+
+--------------------------------------------------------------------------------
+-- NestedPrim
+--------------------------------------------------------------------------------
+
+data NestedPrim = NestedPrim
+  { npHead :: Float
+  , npSimple :: Simple
+  , npMixed :: MixedAlign
+  , npBool :: BoolTest
+  }
+  deriving (Generic, Show, Eq)
+
+genNestedPrim :: Gen NestedPrim
+genNestedPrim = NestedPrim <$> genFloat <*> genSimple <*> genMixedAlign <*> genBoolTest
+
+instance AlignedStorable Std140 NestedPrim
+instance AlignedStorable Std430 NestedPrim
+instance AlignedStorable Scalar NestedPrim
+
+-- GLSL: struct NestedPrim (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std140 NestedPrim) where
+  sizeOf _ = 80
+  alignment _ = 16
+  peek ptr =
+    Oracle
+      <$> ( NestedPrim
+              <$> peekByteOff ptr 0
+              <*> peekOracleAt @'Std140 ptr 16
+              <*> peekOracleAt @'Std140 ptr 32
+              <*> peekOracleAt @'Std140 ptr 64
+          )
+  poke ptr (Oracle NestedPrim{..}) = do
+    pokeByteOff ptr 0 npHead
+    pokeOracleAt @'Std140 ptr 16 npSimple
+    pokeOracleAt @'Std140 ptr 32 npMixed
+    pokeOracleAt @'Std140 ptr 64 npBool
+
+-- GLSL: struct NestedPrim (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std430 NestedPrim) where
+  sizeOf _ = 48
+  alignment _ = 8
+  peek ptr =
+    Oracle
+      <$> ( NestedPrim
+              <$> peekByteOff ptr 0
+              <*> peekOracleAt @'Std430 ptr 4
+              <*> peekOracleAt @'Std430 ptr 16
+              <*> peekOracleAt @'Std430 ptr 40
+          )
+  poke ptr (Oracle NestedPrim{..}) = do
+    pokeByteOff ptr 0 npHead
+    pokeOracleAt @'Std430 ptr 4 npSimple
+    pokeOracleAt @'Std430 ptr 16 npMixed
+    pokeOracleAt @'Std430 ptr 40 npBool
+
+-- GLSL: struct NestedPrim (glsl/Conformance.glsl)
+instance Storable (Oracle 'Scalar NestedPrim) where
+  sizeOf _ = 48
+  alignment _ = 8
+  peek ptr =
+    Oracle
+      <$> ( NestedPrim
+              <$> peekByteOff ptr 0
+              <*> peekOracleAt @'Scalar ptr 4
+              <*> peekOracleAt @'Scalar ptr 16
+              <*> peekOracleAt @'Scalar ptr 36
+          )
+  poke ptr (Oracle NestedPrim{..}) = do
+    pokeByteOff ptr 0 npHead
+    pokeOracleAt @'Scalar ptr 4 npSimple
+    pokeOracleAt @'Scalar ptr 16 npMixed
+    pokeOracleAt @'Scalar ptr 36 npBool
+
+-- | The NestedPrim tests.
+nestedPrimSuite :: TestTree
+nestedPrimSuite =
+  sutTests
+    "NestedPrim"
+    genNestedPrim
+    [at @'Std140 (Just 80), at @'Std430 (Just 48), at @'Scalar (Just 44)]
+
+--------------------------------------------------------------------------------
+-- ArrayStruct
+--------------------------------------------------------------------------------
+
+data ArrayStruct = ArrayStruct
+  { asA :: Float
+  , asB :: SSV.Vector 3 Word16
+  , asC :: SSV.Vector 2 Double
+  , asD :: Float
+  , asE :: Double
+  }
+  deriving (Generic, Show, Eq)
+
+genArrayStruct :: Gen ArrayStruct
+genArrayStruct =
+  ArrayStruct
+    <$> genFloat
+    <*> SSV.replicateM genInt
+    <*> SSV.replicateM genFloat
+    <*> genFloat
+    <*> genFloat
+
+instance AlignedStorable Std140 ArrayStruct
+instance AlignedStorable Std430 ArrayStruct
+instance AlignedStorable Scalar ArrayStruct
+
+-- GLSL: struct ArrayStruct (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std140 ArrayStruct) where
+  sizeOf _ = 112
+  alignment _ = 16
+  peek ptr =
+    Oracle
+      <$> ( ArrayStruct
+              <$> peekByteOff ptr 0
+              <*> peekArrayAt 16 peekByteOff ptr 16
+              <*> peekArrayAt 16 peekByteOff ptr 64
+              <*> peekByteOff ptr 96
+              <*> peekByteOff ptr 104
+          )
+  poke ptr (Oracle ArrayStruct{..}) = do
+    pokeByteOff ptr 0 asA
+    pokeArrayAt 16 pokeByteOff ptr 16 asB
+    pokeArrayAt 16 pokeByteOff ptr 64 asC
+    pokeByteOff ptr 96 asD
+    pokeByteOff ptr 104 asE
+
+-- GLSL: struct ArrayStruct (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std430 ArrayStruct) where
+  sizeOf _ = 48
+  alignment _ = 8
+  peek ptr =
+    Oracle
+      <$> ( ArrayStruct
+              <$> peekByteOff ptr 0
+              <*> peekArrayAt 2 peekByteOff ptr 4
+              <*> peekArrayAt 8 peekByteOff ptr 16
+              <*> peekByteOff ptr 32
+              <*> peekByteOff ptr 40
+          )
+  poke ptr (Oracle ArrayStruct{..}) = do
+    pokeByteOff ptr 0 asA
+    pokeArrayAt 2 pokeByteOff ptr 4 asB
+    pokeArrayAt 8 pokeByteOff ptr 16 asC
+    pokeByteOff ptr 32 asD
+    pokeByteOff ptr 40 asE
+
+-- GLSL: struct ArrayStruct (glsl/Conformance.glsl)
+instance Storable (Oracle 'Scalar ArrayStruct) where
+  sizeOf _ = 48
+  alignment _ = 8
+  peek ptr =
+    Oracle
+      <$> ( ArrayStruct
+              <$> peekByteOff ptr 0
+              <*> peekArrayAt 2 peekByteOff ptr 4
+              <*> peekArrayAt 8 peekByteOff ptr 16
+              <*> peekByteOff ptr 32
+              <*> peekByteOff ptr 40
+          )
+  poke ptr (Oracle ArrayStruct{..}) = do
+    pokeByteOff ptr 0 asA
+    pokeArrayAt 2 pokeByteOff ptr 4 asB
+    pokeArrayAt 8 pokeByteOff ptr 16 asC
+    pokeByteOff ptr 32 asD
+    pokeByteOff ptr 40 asE
+
+-- | The ArrayStruct tests.
+arrayStructSuite :: TestTree
+arrayStructSuite =
+  sutTests
+    "ArrayStruct"
+    genArrayStruct
+    [at @'Std140 (Just 112), at @'Std430 (Just 48), at @'Scalar (Just 48)]
+
+--------------------------------------------------------------------------------
+-- DeepNest
+--------------------------------------------------------------------------------
+
+data DeepNest = DeepNest
+  { dnA :: Float
+  , dnB :: SV.Vector 5 NestedPrim
+  , dnC :: Word8
+  , dnD :: Word64
+  , dnE :: SV.Vector 5 (SV.Vector 2 (SV.Vector 4 NestedPrim))
+  , dnF :: Bool
+  }
+  deriving (Generic, Show, Eq)
+
+genDeepNest :: Gen DeepNest
+genDeepNest =
+  DeepNest
+    <$> genFloat
+    <*> SV.replicateM genNestedPrim
+    <*> genInt
+    <*> genInt
+    <*> SV.replicateM (SV.replicateM (SV.replicateM genNestedPrim))
+    <*> Gen.bool
+
+instance AlignedStorable Std140 DeepNest
+instance AlignedStorable Std430 DeepNest
+instance AlignedStorable Scalar DeepNest
+
+-- GLSL: struct DeepNest (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std140 DeepNest) where
+  sizeOf _ = 3648
+  alignment _ = 16
+  peek ptr =
+    Oracle
+      <$> ( DeepNest
+              <$> peekByteOff ptr 0
+              <*> peekSizedVector (Proxy @(Oracle 'Std140 NestedPrim)) ptr 16
+              <*> peekByteOff ptr 416
+              <*> peekByteOff ptr 424
+              <*> peekSized3DVector (Proxy @(Oracle 'Std140 NestedPrim)) ptr 432
+              <*> peekByteOff ptr 3632
+          )
+  poke ptr (Oracle DeepNest{..}) = do
+    pokeByteOff ptr 0 dnA
+    pokeSizedVector ptr 16 (SV.map (Oracle @'Std140) dnB)
+    pokeByteOff ptr 416 dnC
+    pokeByteOff ptr 424 dnD
+    pokeSized3DVector (Proxy @(Oracle 'Std140 NestedPrim)) ptr 432 dnE
+    pokeByteOff ptr 3632 dnF
+
+-- GLSL: struct DeepNest (glsl/Conformance.glsl)
+instance Storable (Oracle 'Std430 DeepNest) where
+  sizeOf _ = 2192
+  alignment _ = 8
+  peek ptr =
+    Oracle
+      <$> ( DeepNest
+              <$> peekByteOff ptr 0
+              <*> peekSizedVector (Proxy @(Oracle 'Std430 NestedPrim)) ptr 8
+              <*> peekByteOff ptr 248
+              <*> peekByteOff ptr 256
+              <*> peekSized3DVector (Proxy @(Oracle 'Std430 NestedPrim)) ptr 264
+              <*> peekByteOff ptr 2184
+          )
+  poke ptr (Oracle DeepNest{..}) = do
+    pokeByteOff ptr 0 dnA
+    pokeSizedVector ptr 8 (SV.map (Oracle @'Std430) dnB)
+    pokeByteOff ptr 248 dnC
+    pokeByteOff ptr 256 dnD
+    pokeSized3DVector (Proxy @(Oracle 'Std430 NestedPrim)) ptr 264 dnE
+    pokeByteOff ptr 2184 dnF
+
+-- GLSL: struct DeepNest (glsl/Conformance.glsl)
+instance Storable (Oracle 'Scalar DeepNest) where
+  sizeOf _ = 2176
+  alignment _ = 8
+  peek ptr =
+    Oracle
+      <$> ( DeepNest
+              <$> peekByteOff ptr 0
+              <*> peekSizedVector (Proxy @(Oracle 'Scalar NestedPrim)) ptr 8
+              <*> peekByteOff ptr 244
+              <*> peekByteOff ptr 248
+              <*> peekSized3DVector (Proxy @(Oracle 'Scalar NestedPrim)) ptr 256
+              <*> peekByteOff ptr 2172
+          )
+  poke ptr (Oracle DeepNest{..}) = do
+    pokeByteOff ptr 0 dnA
+    pokeSizedVector ptr 8 (SV.map (Oracle @'Scalar) dnB)
+    pokeByteOff ptr 244 dnC
+    pokeByteOff ptr 248 dnD
+    pokeSized3DVector (Proxy @(Oracle 'Scalar NestedPrim)) ptr 256 dnE
+    pokeByteOff ptr 2172 dnF
+
+-- | The DeepNest tests.
+deepNestSuite :: TestTree
+deepNestSuite =
+  sutTestsWith
+    (withShrinks 10)
+    defaultTripOpts
+    "DeepNest"
+    genDeepNest
+    [at @'Std140 (Just 3636), at @'Std430 (Just 2188), at @'Scalar (Just 2176)]
