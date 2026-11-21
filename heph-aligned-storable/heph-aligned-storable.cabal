@@ -31,6 +31,7 @@ library
   exposed-modules:
       Foreign.GPU.Marshal.Aligned
       Foreign.GPU.Storable.Aligned
+      Foreign.GPU.Storable.Aligned.Internal
   other-modules:
       Paths_heph_aligned_storable
   autogen-modules:
