@@ -1,5 +1,5 @@
 name: heph-sparse-set
-version: 0.1.0.0
+version: 0.1.0.1
 github: "jtnuttall/heph"
 license: BSD-3-Clause
 author: "Jeremy Nuttall"
@@ -13,7 +13,7 @@ extra-doc-files:
 
 synopsis: Really fast mutable sparse sets
 category: Data Structures
-tested-with: GHC == 9.8.4 || == 9.6.5 || == 8.10.7
+tested-with: GHC == 9.14.1 || == 9.12.4 || == 9.10.3 || == 9.8.4
 
 build-type: Simple
 
@@ -40,8 +40,8 @@ description: Please see the README on GitHub at <https://github.com/jtnuttall/he
 homepage: https://github.com/jtnuttall/heph/tree/main/heph-sparse-set#readme
 
 dependencies:
-  - base >= 4.7 && < 5
-  - deepseq >= 1.4 && < 1.6
+  - base >= 4.19 && < 5
+  - deepseq >= 1.4 && < 1.7
   - primitive >= 0.7 && < 0.10
   - vector >= 0.12.3.0 && < 0.14
 
@@ -70,8 +70,8 @@ tests:
       - -with-rtsopts=-N
     dependencies:
       - heph-sparse-set
-      - containers >= 0.6.2 && < 0.8
-      - hedgehog >= 1.0.4 && < 1.6
+      - containers >= 0.6.2 && < 0.9
+      - hedgehog >= 1.0.4 && < 1.8
       - nothunks >= 0.1.3.0 && < 0.4
       - tasty >= 1.4.1 && < 1.6
       - tasty-discover >= 4.2.1 && < 6
@@ -93,5 +93,5 @@ benchmarks:
       - containers
       - deepseq
       - mtl >= 1.2 && < 2.4
-      - random >= 0.3.3 && < 1.3
+      - random >= 0.3.3 && < 1.4
       - criterion >= 1.5.9 && < 1.7

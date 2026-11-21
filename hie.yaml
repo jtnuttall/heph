@@ -1,13 +1,13 @@
 cradle:
-  stack:
+  cabal:
     - path: "heph-aligned-storable/src"
-      component: "heph-aligned-storable:lib"
+      component: "heph-aligned-storable:lib:heph-aligned-storable"
 
     - path: "heph-aligned-storable/test"
       component: "heph-aligned-storable:test:heph-aligned-storable-test"
 
     - path: "heph-sparse-set/src"
-      component: "heph-sparse-set:lib"
+      component: "heph-sparse-set:lib:heph-sparse-set"
 
     - path: "heph-sparse-set/test"
       component: "heph-sparse-set:test:heph-sparse-set-test"

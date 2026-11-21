@@ -1,2 +1,3 @@
 packages:
+  ./heph-aligned-storable
   ./heph-sparse-set
