@@ -118,32 +118,32 @@ test_inspection =
           [ $(inspectTest $ hasNoGenerics 'packedAlignedSizeOf140Stress)
           , $(inspectTest $ hasNoTypeClasses 'packedAlignedSizeOf140Stress)
           , $( inspectTest $
-                'packedAlignedSizeOf140Stress
-                  `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'packedAlignedSizeOf140Stress
+                   `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedSizeOf140Stress)
           , $(inspectTest $ hasNoTypeClasses 'alignedSizeOf140Stress)
           , $( inspectTest $
-                'alignedSizeOf140Stress
-                  `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedSizeOf140Stress
+                   `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedAlignment140Stress)
           , $(inspectTest $ hasNoTypeClasses 'alignedAlignment140Stress)
           , $( inspectTest $
-                'alignedAlignment140Stress
-                  `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedAlignment140Stress
+                   `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedPoke140Stress)
           , $(inspectTest $ hasNoTypeClasses 'alignedPoke140Stress)
           , $( inspectTest $
-                'alignedPoke140Stress
-                  `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedPoke140Stress
+                   `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedPeek140Stress)
           , $(inspectTest $ hasNoTypeClasses 'alignedPeek140Stress)
           , $( inspectTest $
-                'alignedPeek140Stress
-                  `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedPeek140Stress
+                   `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           ]
       , testGroup
@@ -151,32 +151,32 @@ test_inspection =
           [ $(inspectTest $ hasNoGenerics 'packedAlignedSizeOf430Stress)
           , $(inspectTest $ hasNoTypeClasses 'packedAlignedSizeOf430Stress)
           , $( inspectTest $
-                'packedAlignedSizeOf140Stress
-                  `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'packedAlignedSizeOf140Stress
+                   `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedSizeOf430Stress)
           , $(inspectTest $ hasNoTypeClasses 'alignedSizeOf430Stress)
           , $( inspectTest $
-                'alignedSizeOf430Stress
-                  `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedSizeOf430Stress
+                   `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedAlignment430Stress)
           , $(inspectTest $ hasNoTypeClasses 'alignedAlignment430Stress)
           , $( inspectTest $
-                'alignedAlignment430Stress
-                  `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedAlignment430Stress
+                   `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedPoke430Stress)
           , $(inspectTest $ hasNoTypeClasses 'alignedPoke430Stress)
           , $( inspectTest $
-                'alignedPoke430Stress
-                  `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedPoke430Stress
+                   `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedPeek430Stress)
           , $(inspectTest $ hasNoTypeClasses 'alignedPeek430Stress)
           , $( inspectTest $
-                'alignedPeek430Stress
-                  `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedPeek430Stress
+                   `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           ]
       , testGroup
@@ -184,27 +184,27 @@ test_inspection =
           [ $(inspectTest $ hasNoGenerics 'packedAlignedSizeOfScalarStress)
           , $(inspectTest $ hasNoTypeClasses 'packedAlignedSizeOfScalarStress)
           , $( inspectTest $
-                'packedAlignedSizeOfScalarStress `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'packedAlignedSizeOfScalarStress `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedSizeOfScalarStress)
           , $(inspectTest $ hasNoTypeClasses 'alignedSizeOfScalarStress)
           , $( inspectTest $
-                'alignedSizeOfScalarStress `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedSizeOfScalarStress `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedAlignmentScalarStress)
           , $(inspectTest $ hasNoTypeClasses 'alignedAlignmentScalarStress)
           , $( inspectTest $
-                'alignedAlignmentScalarStress `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedAlignmentScalarStress `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedPokeScalarStress)
           , $(inspectTest $ hasNoTypeClasses 'alignedPokeScalarStress)
           , $( inspectTest $
-                'alignedPokeScalarStress `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedPokeScalarStress `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedPeekScalarStress)
           , $(inspectTest $ hasNoTypeClasses 'alignedPeekScalarStress)
           , $( inspectTest $
-                'alignedPeekScalarStress `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedPeekScalarStress `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           ]
       ]
@@ -216,30 +216,28 @@ test_inspection =
           , $(inspectTest $ mkObligation 'packedAlignedSizeOf140Nested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'packedAlignedSizeOf140Nested)
           , $( inspectTest $
-                'packedAlignedSizeOf140Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'packedAlignedSizeOf140Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedSizeOf140Nested)
           , $(inspectTest $ mkObligation 'alignedSizeOf140Nested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'alignedSizeOf140Nested)
           , $( inspectTest $
-                'alignedSizeOf140Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedSizeOf140Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedAlignment140Nested)
           , $(inspectTest $ mkObligation 'alignedAlignment140Nested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'alignedAlignment140Nested)
           , $( inspectTest $
-                'alignedAlignment140Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedAlignment140Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedPoke140Nested)
           , $(inspectTest $ mkObligation 'alignedPoke140Nested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'alignedPoke140Nested)
-          , $( inspectTest $ 'alignedPoke140Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
-             )
+          , $(inspectTest $ 'alignedPoke140Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek])
           , $(inspectTest $ hasNoGenerics 'alignedPeek140Nested)
           , $(inspectTest $ mkObligation 'alignedPeek140Nested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'alignedPeek140Nested)
-          , $( inspectTest $ 'alignedPeek140Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
-             )
+          , $(inspectTest $ 'alignedPeek140Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek])
           ]
       , testGroup
           "std430"
@@ -247,30 +245,28 @@ test_inspection =
           , $(inspectTest $ mkObligation 'packedAlignedSizeOf430Nested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'packedAlignedSizeOf430Nested)
           , $( inspectTest $
-                'packedAlignedSizeOf430Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'packedAlignedSizeOf430Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedSizeOf430Nested)
           , $(inspectTest $ mkObligation 'alignedSizeOf430Nested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'alignedSizeOf430Nested)
           , $( inspectTest $
-                'alignedSizeOf430Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedSizeOf430Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedAlignment430Nested)
           , $(inspectTest $ mkObligation 'alignedAlignment430Nested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'alignedAlignment430Nested)
           , $( inspectTest $
-                'alignedAlignment430Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedAlignment430Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedPoke430Nested)
           , $(inspectTest $ mkObligation 'alignedPoke430Nested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'alignedPoke430Nested)
-          , $( inspectTest $ 'alignedPoke430Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
-             )
+          , $(inspectTest $ 'alignedPoke430Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek])
           , $(inspectTest $ hasNoGenerics 'alignedPeek430Nested)
           , $(inspectTest $ mkObligation 'alignedPeek430Nested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'alignedPeek430Nested)
-          , $( inspectTest $ 'alignedPeek430Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
-             )
+          , $(inspectTest $ 'alignedPeek430Nested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek])
           ]
       , testGroup
           "scalar"
@@ -278,31 +274,31 @@ test_inspection =
           , $(inspectTest $ mkObligation 'packedAlignedSizeOfScalarNested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'packedAlignedSizeOfScalarNested)
           , $( inspectTest $
-                'packedAlignedSizeOfScalarNested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'packedAlignedSizeOfScalarNested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedSizeOfScalarNested)
           , $(inspectTest $ mkObligation 'alignedSizeOfScalarNested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'alignedSizeOfScalarNested)
           , $( inspectTest $
-                'alignedSizeOfScalarNested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedSizeOfScalarNested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedAlignmentScalarNested)
           , $(inspectTest $ mkObligation 'alignedAlignmentScalarNested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'alignedAlignmentScalarNested)
           , $( inspectTest $
-                'alignedAlignmentScalarNested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedAlignmentScalarNested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedPokeScalarNested)
           , $(inspectTest $ mkObligation 'alignedPokeScalarNested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'alignedPokeScalarNested)
           , $( inspectTest $
-                'alignedPokeScalarNested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedPokeScalarNested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           , $(inspectTest $ hasNoGenerics 'alignedPeekScalarNested)
           , $(inspectTest $ mkObligation 'alignedPeekScalarNested NoAllocation)
           , $(inspectTest $ hasNoTypeClasses 'alignedPeekScalarNested)
           , $( inspectTest $
-                'alignedPeekScalarNested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
+                 'alignedPeekScalarNested `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek]
              )
           ]
       ]

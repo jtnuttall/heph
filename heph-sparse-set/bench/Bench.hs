@@ -66,10 +66,10 @@ makeInsertBenchGroup groupName desc insert =
   bgroup
     groupName
     [ bench (show n) $
-      perRunEnv
-        (SS.new @TestComponent)
-        \ ~set -> do
-          traverse_ (insert set) (if desc then [n - 1, n - 2 .. 0] else [0 .. n - 1])
+        perRunEnv
+          (SS.new @TestComponent)
+          \ ~set -> do
+            traverse_ (insert set) (if desc then [n - 1, n - 2 .. 0] else [0 .. n - 1])
     | n <- benchmarkSizes
     ]
 
@@ -79,15 +79,15 @@ makeUpdateBenchGroup groupName =
   bgroup
     groupName
     [ bench (show n ++ "_updates") $
-      perRunEnv
-        ( do
-            set <- SS.new @TestComponent
-            for_ [0 .. n - 1] \i -> SS.insert set i i
-            pure set
-        )
-        \ ~set -> do
-          for_ [0 .. n - 1] \i ->
-            SS.insert set i (i + 1)
+        perRunEnv
+          ( do
+              set <- SS.new @TestComponent
+              for_ [0 .. n - 1] \i -> SS.insert set i i
+              pure set
+          )
+          \ ~set -> do
+            for_ [0 .. n - 1] \i ->
+              SS.insert set i (i + 1)
     | n <- benchmarkSizes
     ]
 
@@ -97,20 +97,20 @@ makeGetBenchGroup groupName getExisting =
   bgroup
     groupName
     [ env
-      ( do
-          -- Setup is run once per benchmark case (e.g., for n=100)
-          set <- SS.new @TestComponent
-          forM_ [0 .. n - 1] $ \i -> SS.insert set i i
-          let idsToAccess =
-                if getExisting
-                  then [0 .. n - 1] -- Existing IDs
-                  else [n .. (2 * n) - 1] -- Non-existing IDs
-          pure (set, idsToAccess)
-      )
-      \ ~(set, idsToAccess) ->
-        -- set and idsToAccess are from env
-        bench (show n) $ nfIO do
-          traverse_ (SS.lookup set) idsToAccess
+        ( do
+            -- Setup is run once per benchmark case (e.g., for n=100)
+            set <- SS.new @TestComponent
+            forM_ [0 .. n - 1] $ \i -> SS.insert set i i
+            let idsToAccess =
+                  if getExisting
+                    then [0 .. n - 1] -- Existing IDs
+                    else [n .. (2 * n) - 1] -- Non-existing IDs
+            pure (set, idsToAccess)
+        )
+        \ ~(set, idsToAccess) ->
+          -- set and idsToAccess are from env
+          bench (show n) $ nfIO do
+            traverse_ (SS.lookup set) idsToAccess
     | n <- benchmarkSizes
     ]
 
@@ -120,18 +120,18 @@ makeContainsBenchGroup groupName checkExisting =
   bgroup
     groupName
     [ env
-      ( do
-          set <- SS.new @TestComponent
-          forM_ [0 .. n - 1] $ \i -> SS.insert set i i
-          let idsToAccess =
-                if checkExisting
-                  then [0 .. n - 1]
-                  else [n .. (2 * n) - 1]
-          pure (set, idsToAccess)
-      )
-      $ \ ~(set, idsToAccess) ->
-        bench (show n) $ nfIO do
-          traverse_ (SS.contains set) idsToAccess
+        ( do
+            set <- SS.new @TestComponent
+            forM_ [0 .. n - 1] $ \i -> SS.insert set i i
+            let idsToAccess =
+                  if checkExisting
+                    then [0 .. n - 1]
+                    else [n .. (2 * n) - 1]
+            pure (set, idsToAccess)
+        )
+        $ \ ~(set, idsToAccess) ->
+          bench (show n) $ nfIO do
+            traverse_ (SS.contains set) idsToAccess
     | n <- benchmarkSizes
     ]
 
@@ -142,14 +142,14 @@ makeRemoveBenchGroup groupName removeAction =
   bgroup
     groupName
     [ bench (show n ++ "_removes") $
-      perRunEnv
-        ( do
-            set <- SS.new @TestComponent
-            for_ [0 .. n - 1] $ \i -> SS.insert set i i
-            pure set
-        )
-        \ ~set ->
-          traverse_ (removeAction n set) [0 .. n - 1]
+        perRunEnv
+          ( do
+              set <- SS.new @TestComponent
+              for_ [0 .. n - 1] $ \i -> SS.insert set i i
+              pure set
+          )
+          \ ~set ->
+            traverse_ (removeAction n set) [0 .. n - 1]
     | n <- benchmarkSizes
     ]
 
@@ -158,16 +158,16 @@ makeIterationBenchGroup groupName =
   bgroup
     groupName
     [ env
-      ( do
-          -- Setup is run once per benchmark case
-          set <- SS.new @TestComponent
-          forM_ [0 .. n - 1] $ \i -> SS.insert set i i
-          ref <- newIORef 0
-          pure (set, ref)
-      )
-      \ ~(set, ref) ->
-        bench (show n) $ nfIO do
-          SS.mapM_ (\k -> modifyIORef' ref (+ k)) set
+        ( do
+            -- Setup is run once per benchmark case
+            set <- SS.new @TestComponent
+            forM_ [0 .. n - 1] $ \i -> SS.insert set i i
+            ref <- newIORef 0
+            pure (set, ref)
+        )
+        \ ~(set, ref) ->
+          bench (show n) $ nfIO do
+            SS.mapM_ (\k -> modifyIORef' ref (+ k)) set
     | n <- benchmarkSizes
     ]
 
@@ -177,22 +177,22 @@ makeIntersectionBenchGroup groupName =
   bgroup
     groupName
     [ env
-      ( do
-          -- Create two sets with a 50% overlap.
-          setA <- SS.new @TestComponent
-          forM_ [0 .. n - 1] $ \i -> SS.insert setA i i
+        ( do
+            -- Create two sets with a 50% overlap.
+            setA <- SS.new @TestComponent
+            forM_ [0 .. n - 1] $ \i -> SS.insert setA i i
 
-          setB <- SS.new @TestComponent
-          let offset = n `div` 2
-          forM_ [offset .. n + offset - 1] $ \i -> SS.insert setB i i
+            setB <- SS.new @TestComponent
+            let offset = n `div` 2
+            forM_ [offset .. n + offset - 1] $ \i -> SS.insert setB i i
 
-          ref <- newIORef @Int 0
+            ref <- newIORef @Int 0
 
-          pure (setA, setB, ref)
-      )
-      \ ~(setA, setB, ref) ->
-        bench (show n) $ nfIO do
-          SS.ifoldIntersectionM (\_ k _ _ -> modifyIORef' ref (+ k)) () setA setB
+            pure (setA, setB, ref)
+        )
+        \ ~(setA, setB, ref) ->
+          bench (show n) $ nfIO do
+            SS.ifoldIntersectionM (\_ k _ _ -> modifyIORef' ref (+ k)) () setA setB
     | n <- benchmarkSizes
     ]
 
@@ -223,16 +223,16 @@ makeMixedBenchGroup groupName =
   bgroup
     groupName
     [ env
-      (pure $ generateMixedOps n n (mkStdGen randomSeed))
-      \ ~ops ->
-        -- maxEntity = n, fixed seed
-        bench (show n ++ "_ops") $ nfIO do
-          set <- SS.new
-          forM_ ops $ \case
-            MIns e c -> SS.insert set e c
-            MRem e -> void $ SS.delete set e
-            MGet e -> void $ SS.lookup set e
-            MCont e -> void $ SS.contains set e
+        (pure $ generateMixedOps n n (mkStdGen randomSeed))
+        \ ~ops ->
+          -- maxEntity = n, fixed seed
+          bench (show n ++ "_ops") $ nfIO do
+            set <- SS.new
+            forM_ ops $ \case
+              MIns e c -> SS.insert set e c
+              MRem e -> void $ SS.delete set e
+              MGet e -> void $ SS.lookup set e
+              MCont e -> void $ SS.contains set e
     | n <- benchmarkSizes
     ]
 
@@ -273,14 +273,14 @@ makeMapInsertBenchGroup groupName desc valueGenerator =
   bgroup
     groupName
     [ bench (show n) $
-      nf
-        ( \size ->
-            foldl'
-              (\m i -> let (k, v) = valueGenerator i size in M.insert k v m)
-              M.empty
-              (if desc then [n - 1, n - 2 .. 0] else [0 .. n - 1])
-        )
-        n
+        nf
+          ( \size ->
+              foldl'
+                (\m i -> let (k, v) = valueGenerator i size in M.insert k v m)
+                M.empty
+                (if desc then [n - 1, n - 2 .. 0] else [0 .. n - 1])
+          )
+          n
     | n <- benchmarkSizes
     ]
 
@@ -289,9 +289,9 @@ makeMapUpdateBenchGroup groupName =
   bgroup
     groupName
     [ env (pure (generateMapWithSequentialKeys n)) $ \ ~initialMap ->
-      bench (show n ++ "_updates") $
-        -- For Map, an "update" is just an insert on an existing key
-        nf (\m -> foldl' (\currentMap i -> M.insert i (i + 1) currentMap) m [0 .. n - 1]) initialMap
+        bench (show n ++ "_updates") $
+          -- For Map, an "update" is just an insert on an existing key
+          nf (\m -> foldl' (\currentMap i -> M.insert i (i + 1) currentMap) m [0 .. n - 1]) initialMap
     | n <- benchmarkSizes
     ]
 
@@ -300,16 +300,16 @@ makeMapGetBenchGroup groupName getExisting =
   bgroup
     groupName
     [ env
-      ( do
-          let initialMap = generateMapWithSequentialKeys n
-          let idsToAccess =
-                if getExisting
-                  then [0 .. n - 1] -- Existing IDs
-                  else [n .. (2 * n) - 1] -- Non-existing IDs
-          pure (initialMap, idsToAccess)
-      )
-      $ \ ~(m, idsToAccess) ->
-        bench (show n) $ nf (map (`M.lookup` m)) idsToAccess
+        ( do
+            let initialMap = generateMapWithSequentialKeys n
+            let idsToAccess =
+                  if getExisting
+                    then [0 .. n - 1] -- Existing IDs
+                    else [n .. (2 * n) - 1] -- Non-existing IDs
+            pure (initialMap, idsToAccess)
+        )
+        $ \ ~(m, idsToAccess) ->
+          bench (show n) $ nf (map (`M.lookup` m)) idsToAccess
     | n <- benchmarkSizes
     ]
 
@@ -318,16 +318,16 @@ makeMapContainsBenchGroup groupName checkExisting =
   bgroup
     groupName
     [ env
-      ( do
-          let initialMap = generateMapWithSequentialKeys n
-          let idsToAccess =
-                if checkExisting
-                  then [0 .. n - 1]
-                  else [n .. (2 * n) - 1]
-          pure (initialMap, idsToAccess)
-      )
-      $ \ ~(m, idsToAccess) ->
-        bench (show n) $ nf (map (`M.member` m)) idsToAccess
+        ( do
+            let initialMap = generateMapWithSequentialKeys n
+            let idsToAccess =
+                  if checkExisting
+                    then [0 .. n - 1]
+                    else [n .. (2 * n) - 1]
+            pure (initialMap, idsToAccess)
+        )
+        $ \ ~(m, idsToAccess) ->
+          bench (show n) $ nf (map (`M.member` m)) idsToAccess
     | n <- benchmarkSizes
     ]
 
@@ -336,14 +336,14 @@ makeMapIterationBenchGroup groupName =
   bgroup
     groupName
     [ env
-      ( do
-          let initialMap = generateMapWithSequentialKeys n
-          ref <- newIORef 0
-          pure (initialMap, ref)
-      )
-      $ \ ~(initialMap, ref) ->
-        bench (show n) $ nfIO do
-          traverse_ (\k -> modifyIORef' ref (+ k)) initialMap
+        ( do
+            let initialMap = generateMapWithSequentialKeys n
+            ref <- newIORef 0
+            pure (initialMap, ref)
+        )
+        $ \ ~(initialMap, ref) ->
+          bench (show n) $ nfIO do
+            traverse_ (\k -> modifyIORef' ref (+ k)) initialMap
     | n <- benchmarkSizes
     ]
 
@@ -352,18 +352,18 @@ makeMapIntersectionBenchGroup groupName =
   bgroup
     groupName
     [ env
-      ( do
-          -- Create two maps with the same 50% overlap.
-          let mapA = generateMapWithSequentialKeys n
-              offset = n `div` 2
-              mapB = foldl' (\acc i -> M.insert i i acc) M.empty [offset .. n + offset - 1]
-          ref <- newIORef @Int 0
-          pure (mapA, mapB, ref)
-      )
-      \ ~(mapA, mapB, ref) ->
-        bench (show n) $ nfIO do
-          let intersectionMap = M.intersectionWithKey (\eid _ _ -> eid) mapA mapB
-          traverse_ (\k -> modifyIORef' ref (+ k)) intersectionMap
+        ( do
+            -- Create two maps with the same 50% overlap.
+            let mapA = generateMapWithSequentialKeys n
+                offset = n `div` 2
+                mapB = foldl' (\acc i -> M.insert i i acc) M.empty [offset .. n + offset - 1]
+            ref <- newIORef @Int 0
+            pure (mapA, mapB, ref)
+        )
+        \ ~(mapA, mapB, ref) ->
+          bench (show n) $ nfIO do
+            let intersectionMap = M.intersectionWithKey (\eid _ _ -> eid) mapA mapB
+            traverse_ (\k -> modifyIORef' ref (+ k)) intersectionMap
     | n <- benchmarkSizes
     ]
 
@@ -373,10 +373,10 @@ makeMapRemoveBenchGroup groupName entityToRemoveGenerator =
   bgroup
     groupName
     [ env (pure (generateMapWithSequentialKeys n)) $ \ ~initialMap ->
-      bench (show n ++ "_removes") $
-        nf
-          (\m -> foldl' (\currentMap i -> M.delete (entityToRemoveGenerator m n i) currentMap) m [0 .. n - 1])
-          initialMap
+        bench (show n ++ "_removes") $
+          nf
+            (\m -> foldl' (\currentMap i -> M.delete (entityToRemoveGenerator m n i) currentMap) m [0 .. n - 1])
+            initialMap
     | n <- benchmarkSizes
     ]
 
@@ -385,7 +385,7 @@ makeMapMixedBenchGroup groupName =
   bgroup
     groupName
     [ env (pure $ generateMixedOps n n (mkStdGen randomSeed)) $ \ops ->
-      bench (show n ++ "_ops") $ nf (runMapOps M.empty) ops
+        bench (show n ++ "_ops") $ nf (runMapOps M.empty) ops
     | n <- benchmarkSizes
     ]
  where
