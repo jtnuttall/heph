@@ -37,6 +37,8 @@ ghc-options:
 
 library:
   source-dirs: src
+  dependencies:
+    - template-haskell >= 2.21 && < 2.25
   ghc-options:
     - -Widentities
     - -Wincomplete-record-updates

@@ -57,19 +57,18 @@ module Foreign.GPU.Storable.Aligned.Internal (
   -- * Helpers used by generated instances
   defaultAlignedPeek,
   defaultAlignedPoke,
-  packedAlignedSizeOfMat,
-  alignedPeekV2,
-  alignedPokeV2,
-  alignedPeekV3,
-  alignedPokeV3,
-  alignedPeekV4,
-  alignedPokeV4,
-  alignedPeekM2,
-  alignedPokeM2,
-  alignedPeekM3,
-  alignedPokeM3,
-  alignedPeekM4,
-  alignedPokeM4,
+  castAlignedPtr,
+  alignedPeekByteOff,
+  alignedPokeByteOff,
+  rowStride,
+  peekStrided2,
+  pokeStrided2,
+  peekStrided3,
+  pokeStrided3,
+  peekStrided4,
+  pokeStrided4,
+  peekCoerce,
+  pokeCoerce,
 )
 where
 
@@ -91,7 +90,6 @@ import Foreign (Ptr, castPtr, copyBytes, plusPtr)
 import Foreign.Storable
 import GHC.Generics
 import GHC.TypeLits
-import Linear (V2 (..), V3 (..), V4 (..))
 
 --------------------------------------------------------------------------------
 -- Layout Rules
@@ -586,28 +584,20 @@ fusedimapMSized_ f v =
 {-# INLINE fusedimapMSized_ #-}
 
 --------------------------------------------------------------------------------
--- Internal helpers used across macros
+-- Internal helpers used by generated instances
 --------------------------------------------------------------------------------
 
+-- | 'alignedPeek' through the type's 'Storable' instance. Only correct when the
+-- 'Storable' bytes are exactly the GPU bytes.
 defaultAlignedPeek :: (Storable a) => AlignedPtr layout a -> IO a
 defaultAlignedPeek (AlignedPtr ptr) = peek ptr
 {-# INLINE defaultAlignedPeek #-}
 
+-- | 'alignedPoke' through the type's 'Storable' instance. Only correct when the
+-- 'Storable' bytes are exactly the GPU bytes.
 defaultAlignedPoke :: (Storable a) => AlignedPtr layout a -> a -> IO ()
 defaultAlignedPoke (AlignedPtr ptr) = poke ptr
 {-# INLINE defaultAlignedPoke #-}
-
-packedAlignedSizeOfMat
-  :: forall layout a f g
-   . (AlignedStorable layout (g a))
-  => Proxy layout
-  -> Proxy (f (g a))
-  -> Int
-packedAlignedSizeOfMat l _ =
-  let rowSize = packedAlignedSizeOf l (Proxy @(g a))
-      rowAlign = alignedAlignment l (Proxy @(g a))
-   in layoutStride (Proxy @layout) rowSize rowAlign
-{-# INLINE packedAlignedSizeOfMat #-}
 
 -- | Unsafe, for internal use only
 castAlignedPtr :: forall layout a b. AlignedPtr layout a -> AlignedPtr layout b
@@ -625,157 +615,132 @@ alignedPokeByteOff
 alignedPokeByteOff (AlignedPtr ptr) off = alignedPoke (AlignedPtr @layout (ptr `plusPtr` off))
 {-# INLINE alignedPokeByteOff #-}
 
-alignedPeekV2
-  :: forall layout a
-   . (AlignedStorable layout a, Storable a)
-  => AlignedPtr layout (V2 a)
-  -> IO (V2 a)
-alignedPeekV2 (AlignedPtr ptr) =
-  let !stride = alignedAlignment (Proxy @layout) (Proxy @a)
-   in V2 <$> peekByteOff ptr 0 <*> peekByteOff ptr stride
-{-# INLINE alignedPeekV2 #-}
+-- | The distance in bytes between consecutive rows of a matrix (or columns, for
+-- a library that stores columns) whose row type is @row@: the row's packed size
+-- rounded up by 'layoutStride'.
+rowStride :: forall layout row. (AlignedStorable layout row) => Proxy layout -> Proxy row -> Int
+rowStride l r = layoutStride l (packedAlignedSizeOf l r) (alignedAlignment l r)
+{-# INLINE rowStride #-}
 
-alignedPokeV2
-  :: forall layout a
-   . (AlignedStorable layout a, Storable a)
-  => AlignedPtr layout (V2 a)
-  -> V2 a
+-- | Read a value made of two components of type @e@, the second @stride@ bytes
+-- after the first, and assemble it with the given constructor.
+peekStrided2
+  :: forall layout e v
+   . (AlignedStorable layout e)
+  => (e -> e -> v)
+  -> Int
+  -> AlignedPtr layout v
+  -> IO v
+peekStrided2 mk !stride aptr =
+  let p = castAlignedPtr @layout @v @e aptr
+   in mk
+        <$> alignedPeekByteOff p 0
+        <*> alignedPeekByteOff p stride
+{-# INLINE peekStrided2 #-}
+
+-- | Write a value made of two components of type @e@, the second @stride@
+-- bytes after the first. The eliminator hands the components to a continuation,
+-- e.g. @\\(V2 x y) k -> k x y@.
+pokeStrided2
+  :: forall layout e v
+   . (AlignedStorable layout e)
+  => (v -> (e -> e -> IO ()) -> IO ())
+  -> Int
+  -> AlignedPtr layout v
+  -> v
   -> IO ()
-alignedPokeV2 (AlignedPtr ptr) (V2 x y) = do
-  let !stride = alignedAlignment (Proxy @layout) (Proxy @a)
-  pokeByteOff ptr 0 x
-  pokeByteOff ptr stride y
-{-# INLINE alignedPokeV2 #-}
+pokeStrided2 elim !stride aptr v =
+  let p = castAlignedPtr @layout @v @e aptr
+   in elim v \x y -> do
+        alignedPokeByteOff p 0 x
+        alignedPokeByteOff p stride y
+{-# INLINE pokeStrided2 #-}
 
-alignedPeekM2
-  :: forall layout a v
-   . (AlignedStorable layout (v a))
-  => AlignedPtr layout (V2 (v a))
-  -> IO (V2 (v a))
-alignedPeekM2 aptr =
-  let ptr = castAlignedPtr aptr
-      !rowSize = packedAlignedSizeOf (Proxy @layout) (Proxy @(v a))
-      !rowAlign = alignedAlignment (Proxy @layout) (Proxy @(v a))
-      !stride = layoutStride (Proxy @layout) rowSize rowAlign
-   in V2
-        <$> alignedPeekByteOff ptr 0
-        <*> alignedPeekByteOff ptr stride
-{-# INLINE alignedPeekM2 #-}
+-- | Three-component version of 'peekStrided2'.
+peekStrided3
+  :: forall layout e v
+   . (AlignedStorable layout e)
+  => (e -> e -> e -> v)
+  -> Int
+  -> AlignedPtr layout v
+  -> IO v
+peekStrided3 mk !stride aptr =
+  let p = castAlignedPtr @layout @v @e aptr
+   in mk
+        <$> alignedPeekByteOff p 0
+        <*> alignedPeekByteOff p stride
+        <*> alignedPeekByteOff p (stride * 2)
+{-# INLINE peekStrided3 #-}
 
-alignedPokeM2
-  :: forall layout a v
-   . (AlignedStorable layout (v a))
-  => AlignedPtr layout (V2 (v a))
-  -> V2 (v a)
+-- | Three-component version of 'pokeStrided2'.
+pokeStrided3
+  :: forall layout e v
+   . (AlignedStorable layout e)
+  => (v -> (e -> e -> e -> IO ()) -> IO ())
+  -> Int
+  -> AlignedPtr layout v
+  -> v
   -> IO ()
-alignedPokeM2 aptr (V2 x y) = do
-  let ptr = castAlignedPtr aptr
-      !rowSize = packedAlignedSizeOf (Proxy @layout) (Proxy @(v a))
-      !rowAlign = alignedAlignment (Proxy @layout) (Proxy @(v a))
-      !stride = layoutStride (Proxy @layout) rowSize rowAlign
-  alignedPokeByteOff ptr 0 x
-  alignedPokeByteOff ptr stride y
-{-# INLINE alignedPokeM2 #-}
+pokeStrided3 elim !stride aptr v =
+  let p = castAlignedPtr @layout @v @e aptr
+   in elim v \x y z -> do
+        alignedPokeByteOff p 0 x
+        alignedPokeByteOff p stride y
+        alignedPokeByteOff p (stride * 2) z
+{-# INLINE pokeStrided3 #-}
 
-alignedPeekV3
-  :: forall layout a. (AlignedStorable layout a, Storable a) => AlignedPtr layout (V3 a) -> IO (V3 a)
-alignedPeekV3 (AlignedPtr ptr) =
-  let a = alignedAlignment (Proxy @layout) (Proxy @a)
-   in V3 <$> peekByteOff ptr 0 <*> peekByteOff ptr a <*> peekByteOff ptr (a * 2)
-{-# INLINE alignedPeekV3 #-}
+-- | Four-component version of 'peekStrided2'.
+peekStrided4
+  :: forall layout e v
+   . (AlignedStorable layout e)
+  => (e -> e -> e -> e -> v)
+  -> Int
+  -> AlignedPtr layout v
+  -> IO v
+peekStrided4 mk !stride aptr =
+  let p = castAlignedPtr @layout @v @e aptr
+   in mk
+        <$> alignedPeekByteOff p 0
+        <*> alignedPeekByteOff p stride
+        <*> alignedPeekByteOff p (stride * 2)
+        <*> alignedPeekByteOff p (stride * 3)
+{-# INLINE peekStrided4 #-}
 
-alignedPokeV3
-  :: forall layout a. (AlignedStorable layout a, Storable a) => AlignedPtr layout (V3 a) -> V3 a -> IO ()
-alignedPokeV3 (AlignedPtr ptr) (V3 x y z) = do
-  let a = alignedAlignment (Proxy @layout) (Proxy @a)
-  pokeByteOff ptr 0 x
-  pokeByteOff ptr a y
-  pokeByteOff ptr (a * 2) z
-{-# INLINE alignedPokeV3 #-}
-
-alignedPeekM3
-  :: forall layout a v
-   . (AlignedStorable layout (v a))
-  => AlignedPtr layout (V3 (v a))
-  -> IO (V3 (v a))
-alignedPeekM3 aptr =
-  let ptr = castAlignedPtr aptr
-      !rowSize = packedAlignedSizeOf (Proxy @layout) (Proxy @(v a))
-      !rowAlign = alignedAlignment (Proxy @layout) (Proxy @(v a))
-      !stride = layoutStride (Proxy @layout) rowSize rowAlign
-   in V3
-        <$> alignedPeekByteOff ptr 0
-        <*> alignedPeekByteOff ptr stride
-        <*> alignedPeekByteOff ptr (stride * 2)
-{-# INLINE alignedPeekM3 #-}
-
-alignedPokeM3
-  :: forall layout a v
-   . (AlignedStorable layout (v a))
-  => AlignedPtr layout (V3 (v a))
-  -> V3 (v a)
+-- | Four-component version of 'pokeStrided2'.
+pokeStrided4
+  :: forall layout e v
+   . (AlignedStorable layout e)
+  => (v -> (e -> e -> e -> e -> IO ()) -> IO ())
+  -> Int
+  -> AlignedPtr layout v
+  -> v
   -> IO ()
-alignedPokeM3 aptr (V3 x y z) = do
-  let ptr = castAlignedPtr aptr
-      !rowSize = packedAlignedSizeOf (Proxy @layout) (Proxy @(v a))
-      !rowAlign = alignedAlignment (Proxy @layout) (Proxy @(v a))
-      !stride = layoutStride (Proxy @layout) rowSize rowAlign
-  alignedPokeByteOff ptr 0 x
-  alignedPokeByteOff ptr stride y
-  alignedPokeByteOff ptr (stride * 2) z
-{-# INLINE alignedPokeM3 #-}
+pokeStrided4 elim !stride aptr v =
+  let p = castAlignedPtr @layout @v @e aptr
+   in elim v \x y z w -> do
+        alignedPokeByteOff p 0 x
+        alignedPokeByteOff p stride y
+        alignedPokeByteOff p (stride * 2) z
+        alignedPokeByteOff p (stride * 3) w
+{-# INLINE pokeStrided4 #-}
 
-alignedPokeV4
-  :: forall layout a. (AlignedStorable layout a, Storable a) => AlignedPtr layout (V4 a) -> V4 a -> IO ()
-alignedPokeV4 (AlignedPtr ptr) (V4 x y z w) = do
-  let a = alignedAlignment (Proxy @layout) (Proxy @a)
-  pokeByteOff ptr 0 x
-  pokeByteOff ptr a y
-  pokeByteOff ptr (a * 2) z
-  pokeByteOff ptr (a * 3) w
-{-# INLINE alignedPokeV4 #-}
+-- | 'alignedPeek' for a newtype @b@ over @a@, using @a@'s instance.
+peekCoerce
+  :: forall layout a b
+   . (AlignedStorable layout a, Coercible a b)
+  => Proxy a
+  -> AlignedPtr layout b
+  -> IO b
+peekCoerce _ p = coerce (alignedPeek (castAlignedPtr @layout @b @a p) :: IO a)
+{-# INLINE peekCoerce #-}
 
-alignedPeekV4
-  :: forall layout a. (AlignedStorable layout a, Storable a) => AlignedPtr layout (V4 a) -> IO (V4 a)
-alignedPeekV4 (AlignedPtr ptr) =
-  let a = alignedAlignment (Proxy @layout) (Proxy @a)
-   in V4
-        <$> peekByteOff ptr 0
-        <*> peekByteOff ptr a
-        <*> peekByteOff ptr (a * 2)
-        <*> peekByteOff ptr (a * 3)
-{-# INLINE alignedPeekV4 #-}
-
-alignedPeekM4
-  :: forall layout a v
-   . (AlignedStorable layout (v a))
-  => AlignedPtr layout (V4 (v a))
-  -> IO (V4 (v a))
-alignedPeekM4 aptr =
-  let ptr = castAlignedPtr aptr
-      !rowSize = packedAlignedSizeOf (Proxy @layout) (Proxy @(v a))
-      !rowAlign = alignedAlignment (Proxy @layout) (Proxy @(v a))
-      !stride = layoutStride (Proxy @layout) rowSize rowAlign
-   in V4
-        <$> alignedPeekByteOff ptr 0
-        <*> alignedPeekByteOff ptr stride
-        <*> alignedPeekByteOff ptr (stride * 2)
-        <*> alignedPeekByteOff ptr (stride * 3)
-{-# INLINE alignedPeekM4 #-}
-
-alignedPokeM4
-  :: forall layout a v
-   . (AlignedStorable layout (v a))
-  => AlignedPtr layout (V4 (v a))
-  -> V4 (v a)
+-- | 'alignedPoke' for a newtype @b@ over @a@, using @a@'s instance.
+pokeCoerce
+  :: forall layout a b
+   . (AlignedStorable layout a, Coercible a b)
+  => Proxy a
+  -> AlignedPtr layout b
+  -> b
   -> IO ()
-alignedPokeM4 aptr (V4 x y z w) = do
-  let ptr = castAlignedPtr aptr
-      !rowSize = packedAlignedSizeOf (Proxy @layout) (Proxy @(v a))
-      !rowAlign = alignedAlignment (Proxy @layout) (Proxy @(v a))
-      !stride = layoutStride (Proxy @layout) rowSize rowAlign
-  alignedPokeByteOff ptr 0 x
-  alignedPokeByteOff ptr stride y
-  alignedPokeByteOff ptr (stride * 2) z
-  alignedPokeByteOff ptr (stride * 3) w
-{-# INLINE alignedPokeM4 #-}
+pokeCoerce _ p b = alignedPoke (castAlignedPtr @layout @b @a p) (coerce b :: a)
+{-# INLINE pokeCoerce #-}
