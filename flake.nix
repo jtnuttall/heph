@@ -31,6 +31,9 @@
         workflow = [
           ast-grep
           bat
+          glslang
+          shaderc
+          spirv-tools
           coreutils
           dasel
           diffutils
