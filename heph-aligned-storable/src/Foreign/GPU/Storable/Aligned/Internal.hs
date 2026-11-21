@@ -602,6 +602,7 @@ defaultAlignedPoke (AlignedPtr ptr) = poke ptr
 -- | Unsafe, for internal use only
 castAlignedPtr :: forall layout a b. AlignedPtr layout a -> AlignedPtr layout b
 castAlignedPtr (AlignedPtr ptr) = AlignedPtr (castPtr ptr)
+{-# INLINE castAlignedPtr #-}
 
 -- | Unsafe, for internal use only
 alignedPeekByteOff

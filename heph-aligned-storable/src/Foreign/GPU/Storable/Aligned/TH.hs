@@ -15,7 +15,7 @@
 -- module of its own.
 --
 -- Each generator takes one 'MemoryLayout' and produces one instance. Combine
--- them with list comprehensions over 'allLayouts', 'arities' and the scalar
+-- them with list comprehensions over 'allLayouts', 'dims' and the scalar
 -- tables, and run the result with 'deriveAll'.
 --
 -- = Splice-site requirements
@@ -43,7 +43,10 @@
 --   components are read and written one at a time, so the type's
 --   'Foreign.Storable.Storable' instance is never used.
 -- * 'deriveMatrix' for a GLSL matrix, described by the vectors it stores
---   contiguously.
+--   contiguously. A matrix stored as flat scalars whose per-vector stride
+--   differs from its vector size (e.g. a 9-float @mat3@ under @std140@) has no
+--   generator here: describe it to 'deriveMatrix' through a vector type, or
+--   write its instance by hand.
 -- * 'deriveNewtype' for a newtype over a type that already has an instance.
 -- * 'deriveFixed' for a type whose 'Foreign.Storable.Storable' bytes are
 --   exactly its GPU bytes, with a constant size and alignment per layout.
@@ -73,19 +76,20 @@
 -- >         Composite
 -- >           { compositeType = conT (ty n) `appT` e
 -- >           , compositeElement = e
--- >           , compositeArity = n
+-- >           , compositeDim = n
 -- >           , compositeConstruct = conE (con n)
 -- >           , compositeEliminate = conEliminate (con n) n
 -- >           }
--- >    in [deriveVector l (vec n e) | l <- allLayouts, e <- primitiveTypes, n <- arities]
+-- >    in [deriveVector l (vec n e) | l <- allLayouts, e <- primitiveTypes, n <- dims]
 -- >         ++ [ deriveMatrix l (vec r (conT (ty c) `appT` e))
--- >            | l <- allLayouts, e <- floatingPrimitiveTypes, r <- arities, c <- arities
+-- >            | l <- allLayouts, e <- floatingPrimitiveTypes, r <- dims, c <- dims
 -- >            ]
 module Foreign.GPU.Storable.Aligned.TH (
   -- * Specifications
-  Arity (..),
-  arityInt,
-  arities,
+  MemoryLayout (..),
+  Dim (..),
+  dimInt,
+  dims,
   Composite (..),
   Fixed (..),
 
@@ -110,39 +114,43 @@ module Foreign.GPU.Storable.Aligned.TH (
 import Data.Int
 import Data.Proxy
 import Data.Word
-import Language.Haskell.TH hiding (Arity)
+import Language.Haskell.TH
 import Numeric.Half (Half)
 
 import Foreign.GPU.Storable.Aligned.Internal
 
 -- | The number of components of a vector, or of vectors in a matrix.
-data Arity = Two | Three | Four
+data Dim = Two | Three | Four
   deriving (Eq, Ord, Show, Enum, Bounded)
 
--- | The 'Arity' as a number.
-arityInt :: Arity -> Int
-arityInt = \case
+-- | The 'Dim' as a number.
+dimInt :: Dim -> Int
+dimInt = \case
   Two -> 2
   Three -> 3
   Four -> 4
 
--- | All arities, @[Two, Three, Four]@.
-arities :: [Arity]
-arities = [minBound .. maxBound]
+-- | All dimensions, @[Two, Three, Four]@.
+dims :: [Dim]
+dims = [minBound .. maxBound]
 
--- | A value made of 'compositeArity' equally strided components of type
+-- | A value made of 'compositeDim' equally strided components of type
 -- 'compositeElement'.
 --
 -- For a vector the components are scalars. For a matrix they are the vectors
 -- stored contiguously in memory: the rows of linear's @V3 (V4 Float)@, or the
 -- columns of a column-major library's @mat3x4@.
+--
+-- The generated code annotates 'compositeConstruct' and 'compositeEliminate'
+-- with the types given below, so a mismatch with 'compositeType',
+-- 'compositeElement' or 'compositeDim' is a type error at the splice.
 data Composite = Composite
   { compositeType :: Q Type
   -- ^ The type to bind, e.g. @[t| V3 Float |]@.
   , compositeElement :: Q Type
   -- ^ The component type, e.g. @[t| Float |]@, or @[t| V4 Float |]@ for a
   -- matrix of @V4 Float@ rows.
-  , compositeArity :: Arity
+  , compositeDim :: Dim
   -- ^ The number of components.
   , compositeConstruct :: Q Exp
   -- ^ Builds the value from its components in memory order:
@@ -192,12 +200,12 @@ deriveFixed layout t (Fixed s a) =
           {-# INLINE alignedPoke #-}
         |]
 
--- | An instance for a GLSL vector of 'compositeArity' scalar components.
+-- | An instance for a GLSL vector of 'compositeDim' scalar components.
 --
--- * Size: the arity times the component's 'alignedSizeOf'.
+-- * Size: 'compositeDim' times the component's 'alignedSizeOf'.
 -- * Alignment: under 'Std140' and 'Std430', the component's alignment times
---   2, 4 or 4 for two, three or four components; under 'Scalar', the
---   component's alignment.
+--   2 for two components, 4 for three or four; under 'Scalar', the component's
+--   alignment.
 -- * Components are read and written one at a time, each the component's
 --   alignment after the previous one, in every layout.
 --
@@ -213,18 +221,22 @@ deriveFixed layout t (Fixed s a) =
 -- >   alignedSizeOf _ _ = 3 * alignedSizeOf (Proxy :: Proxy 'Std140) (Proxy :: Proxy Float)
 -- >   alignedAlignment _ _ = 4 * alignedAlignment (Proxy :: Proxy 'Std140) (Proxy :: Proxy Float)
 -- >   alignedPeek =
--- >     peekStrided3 V3 (alignedAlignment (Proxy :: Proxy 'Std140) (Proxy :: Proxy Float))
+-- >     peekStrided3
+-- >       (V3 :: Float -> Float -> Float -> V3 Float)
+-- >       (alignedAlignment (Proxy :: Proxy 'Std140) (Proxy :: Proxy Float))
 -- >   alignedPoke =
 -- >     pokeStrided3
--- >       (\(V3 x1 x2 x3) k -> k x1 x2 x3)
+-- >       ( (\(V3 x1 x2 x3) k -> k x1 x2 x3)
+-- >           :: V3 Float -> (Float -> Float -> Float -> IO ()) -> IO ()
+-- >       )
 -- >       (alignedAlignment (Proxy :: Proxy 'Std140) (Proxy :: Proxy Float))
 deriveVector :: MemoryLayout -> Composite -> Q [Dec]
 deriveVector layout c =
   let l = layoutType layout
       e = compositeElement c
-      arity = compositeArity c
-      n = arityInt arity
-      stdMultiplier = case arity of
+      dim = compositeDim c
+      n = dimInt dim
+      stdMultiplier = case dim of
         Two -> 2
         Three -> 4
         Four -> 4
@@ -234,6 +246,7 @@ deriveVector layout c =
         Scalar -> 1 :: Int
       size = [|$(intE n) * alignedSizeOf (Proxy :: Proxy $l) (Proxy :: Proxy $e)|]
       stride = [|alignedAlignment (Proxy :: Proxy $l) (Proxy :: Proxy $e)|]
+      (mkT, elimT) = accessorTypes c
    in [d|
         instance AlignedStorable $l $(compositeType c) where
           packedAlignedSizeOf _ _ = $size
@@ -242,19 +255,19 @@ deriveVector layout c =
           {-# INLINE alignedSizeOf #-}
           alignedAlignment _ _ = $(intE alignMultiplier) * $stride
           {-# INLINE alignedAlignment #-}
-          alignedPeek = $(peekStridedE arity) $(compositeConstruct c) $stride
+          alignedPeek = $(peekStridedE dim) ($(compositeConstruct c) :: $mkT) $stride
           {-# INLINE alignedPeek #-}
-          alignedPoke = $(pokeStridedE arity) $(compositeEliminate c) $stride
+          alignedPoke = $(pokeStridedE dim) ($(compositeEliminate c) :: $elimT) $stride
           {-# INLINE alignedPoke #-}
         |]
 
--- | An instance for a GLSL matrix stored as 'compositeArity' contiguous vectors
+-- | An instance for a GLSL matrix stored as 'compositeDim' contiguous vectors
 -- of type 'compositeElement'. The element must already have an instance (or
 -- get one from the same splice).
 --
 -- * Stride between vectors: 'rowStride', the vector's packed size rounded up by
 --   'layoutStride' (to 16 bytes under 'Std140').
--- * Size: the arity times that stride; no further rounding.
+-- * Size: 'compositeDim' times that stride; no further rounding.
 -- * Alignment: the vector's alignment, rounded up by 'alignBlock'.
 --
 -- The same body is used in every layout.
@@ -272,28 +285,33 @@ deriveVector layout c =
 -- >   alignedSizeOf = packedAlignedSizeOf
 -- >   alignedAlignment l _ = alignBlock l (alignedAlignment l (Proxy :: Proxy (V3 Double)))
 -- >   alignedPeek =
--- >     peekStrided2 V2 (rowStride (Proxy :: Proxy 'Std430) (Proxy :: Proxy (V3 Double)))
+-- >     peekStrided2
+-- >       (V2 :: V3 Double -> V3 Double -> V2 (V3 Double))
+-- >       (rowStride (Proxy :: Proxy 'Std430) (Proxy :: Proxy (V3 Double)))
 -- >   alignedPoke =
 -- >     pokeStrided2
--- >       (\(V2 x1 x2) k -> k x1 x2)
+-- >       ( (\(V2 x1 x2) k -> k x1 x2)
+-- >           :: V2 (V3 Double) -> (V3 Double -> V3 Double -> IO ()) -> IO ()
+-- >       )
 -- >       (rowStride (Proxy :: Proxy 'Std430) (Proxy :: Proxy (V3 Double)))
 deriveMatrix :: MemoryLayout -> Composite -> Q [Dec]
 deriveMatrix layout c =
   let l = layoutType layout
       r = compositeElement c
-      arity = compositeArity c
+      dim = compositeDim c
       stride = [|rowStride (Proxy :: Proxy $l) (Proxy :: Proxy $r)|]
+      (mkT, elimT) = accessorTypes c
    in [d|
         instance AlignedStorable $l $(compositeType c) where
-          packedAlignedSizeOf _ _ = $(intE (arityInt arity)) * $stride
+          packedAlignedSizeOf _ _ = $(intE (dimInt dim)) * $stride
           {-# INLINE packedAlignedSizeOf #-}
           alignedSizeOf = packedAlignedSizeOf
           {-# INLINE alignedSizeOf #-}
           alignedAlignment l' _ = alignBlock l' (alignedAlignment l' (Proxy :: Proxy $r))
           {-# INLINE alignedAlignment #-}
-          alignedPeek = $(peekStridedE arity) $(compositeConstruct c) $stride
+          alignedPeek = $(peekStridedE dim) ($(compositeConstruct c) :: $mkT) $stride
           {-# INLINE alignedPeek #-}
-          alignedPoke = $(pokeStridedE arity) $(compositeEliminate c) $stride
+          alignedPoke = $(pokeStridedE dim) ($(compositeEliminate c) :: $elimT) $stride
           {-# INLINE alignedPoke #-}
         |]
 
@@ -333,9 +351,9 @@ deriveNewtype layout t u =
 -- | An eliminator for a constructor with the given number of fields, for
 -- 'compositeEliminate': @conEliminate 'V3 Three@ is
 -- @\\(V3 x1 x2 x3) k -> k x1 x2 x3@.
-conEliminate :: Name -> Arity -> Q Exp
-conEliminate con arity = do
-  xs <- traverse (\i -> newName ("x" ++ show i)) [1 .. arityInt arity]
+conEliminate :: Name -> Dim -> Q Exp
+conEliminate con dim = do
+  xs <- traverse (\i -> newName ("x" ++ show i)) [1 .. dimInt dim]
   k <- newName "k"
   lamE [conP con (map varP xs), varP k] (foldl appE (varE k) (map varE xs))
 
@@ -392,13 +410,20 @@ floatingPrimitiveTypes = [[t|Half|], [t|Float|], [t|Double|]]
 intE :: Int -> Q Exp
 intE = litE . integerL . fromIntegral
 
-peekStridedE :: Arity -> Q Exp
+accessorTypes :: Composite -> (Q Type, Q Type)
+accessorTypes c =
+  let t = compositeType c
+      components = replicate (dimInt (compositeDim c)) (compositeElement c)
+      arrows r = foldr (\a b -> [t|$a -> $b|]) r components
+   in (arrows t, [t|$t -> $(arrows [t|IO ()|]) -> IO ()|])
+
+peekStridedE :: Dim -> Q Exp
 peekStridedE = \case
   Two -> varE 'peekStrided2
   Three -> varE 'peekStrided3
   Four -> varE 'peekStrided4
 
-pokeStridedE :: Arity -> Q Exp
+pokeStridedE :: Dim -> Q Exp
 pokeStridedE = \case
   Two -> varE 'pokeStrided2
   Three -> varE 'pokeStrided3

@@ -13,7 +13,7 @@
 -- Stability   : experimental
 --
 -- Derive @Storable@ instances that respect GPU memory layout rules (@std140@,
--- @std430@, @scalar@). Works with any product type that has a 'Generic' instance.
+-- @std430@, @scalar@). Works with any product type that has a t'GHC.Generics.Generic' instance.
 --
 -- @
 -- data Uniforms = Uniforms
@@ -82,14 +82,14 @@ deriveAll $
         Composite
           { compositeType = conT (ty n) `appT` e
           , compositeElement = e
-          , compositeArity = n
+          , compositeDim = n
           , compositeConstruct = conE (con n)
           , compositeEliminate = conEliminate (con n) n
           }
-   in [deriveVector l (vec n e) | l <- allLayouts, e <- primitiveTypes, n <- arities]
+   in [deriveVector l (vec n e) | l <- allLayouts, e <- primitiveTypes, n <- dims]
         ++ [ deriveMatrix l (vec r (conT (ty c) `appT` e))
            | l <- allLayouts
            , e <- floatingPrimitiveTypes
-           , r <- arities
-           , c <- arities
+           , r <- dims
+           , c <- dims
            ]
