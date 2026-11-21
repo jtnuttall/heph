@@ -140,7 +140,6 @@ instance (SmallIntVecs lib, DoubleVecs lib) => Storable (Oracle 'Scalar (Complex
     pokeByteOff ptr 56 cvsD
     pokeByteOff ptr 64 cvsE
 
--- | The ComplexVectorStruct tests.
 complexVectorStructSuite :: forall lib. (SmallIntVecs lib, DoubleVecs lib) => Proxy lib -> TestTree
 complexVectorStructSuite _ =
   sutTests
@@ -301,7 +300,6 @@ instance
     pokeByteOff ptr 3068 inj
     pokeVecAt Scalar ptr 3072 ink
 
--- | The Insanity tests.
 insanitySuite
   :: forall lib. (FloatVecs lib, SmallIntVecs lib, DoubleVecs lib, BoolVecs lib) => Proxy lib -> TestTree
 insanitySuite _ =
@@ -396,7 +394,6 @@ instance (Int32Vecs lib) => Storable (Oracle 'Scalar (IntVecStruct lib)) where
     pokeVecAt Scalar ptr 36 ivD
     pokeByteOff ptr 48 ivE
 
--- | The IntVecStruct tests.
 intVecStructSuite :: forall lib. (Int32Vecs lib) => Proxy lib -> TestTree
 intVecStructSuite _ =
   sutTests

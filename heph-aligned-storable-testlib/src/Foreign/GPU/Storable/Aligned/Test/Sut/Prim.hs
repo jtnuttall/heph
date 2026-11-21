@@ -120,7 +120,6 @@ instance Storable (Oracle 'Scalar Simple) where
     pokeByteOff ptr 0 simpleA
     pokeByteOff ptr 4 simpleB
 
--- | The Simple tests.
 simpleSuite :: TestTree
 simpleSuite = sutTests "Simple" genSimple [at @'Std140 (Just 8), at @'Std430 (Just 8), at @'Scalar (Just 8)]
 
@@ -172,7 +171,6 @@ instance Storable (Oracle 'Scalar LayoutBug) where
     pokeByteOff ptr 4 fieldB
     pokeByteOff ptr 8 fieldC
 
--- | The LayoutBug tests.
 layoutBugSuite :: TestTree
 layoutBugSuite =
   sutTests
@@ -224,7 +222,6 @@ instance Storable (Oracle 'Scalar LargePrimitives) where
     pokeByteOff ptr 0 d
     pokeByteOff ptr 8 l
 
--- | The LargePrimitives tests.
 largePrimitivesSuite :: TestTree
 largePrimitivesSuite =
   sutTests
@@ -283,7 +280,6 @@ instance Storable (Oracle 'Scalar MixedAlign) where
     pokeByteOff ptr 8 b
     pokeByteOff ptr 16 c
 
--- | The MixedAlign tests.
 mixedAlignSuite :: TestTree
 mixedAlignSuite =
   sutTests
@@ -335,7 +331,6 @@ instance Storable (Oracle 'Scalar BoolTest) where
     pokeByteOff ptr 0 isEnabled
     pokeByteOff ptr 4 value
 
--- | The BoolTest tests.
 boolTestSuite :: TestTree
 boolTestSuite =
   sutTests
@@ -416,7 +411,6 @@ instance Storable (Oracle 'Scalar NestedPrim) where
     pokeOracleAt @'Scalar ptr 16 npMixed
     pokeOracleAt @'Scalar ptr 36 npBool
 
--- | The NestedPrim tests.
 nestedPrimSuite :: TestTree
 nestedPrimSuite =
   sutTests
@@ -510,7 +504,6 @@ instance Storable (Oracle 'Scalar ArrayStruct) where
     pokeByteOff ptr 32 asD
     pokeByteOff ptr 40 asE
 
--- | The ArrayStruct tests.
 arrayStructSuite :: TestTree
 arrayStructSuite =
   sutTests
@@ -612,7 +605,6 @@ instance Storable (Oracle 'Scalar DeepNest) where
     pokeSized3DVector (Proxy @(Oracle 'Scalar NestedPrim)) ptr 256 dnE
     pokeByteOff ptr 2172 dnF
 
--- | The DeepNest tests.
 deepNestSuite :: TestTree
 deepNestSuite =
   sutTestsWith

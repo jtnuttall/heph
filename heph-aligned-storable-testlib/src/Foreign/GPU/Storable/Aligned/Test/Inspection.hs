@@ -3,8 +3,10 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MagicHash #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TemplateHaskellQuotes #-}
+{-# LANGUAGE UnboxedTuples #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 -- |
@@ -17,17 +19,19 @@
 -- Checks that GHC optimizes the generic 'AlignedStorable' machinery away: for a
 -- concrete type, every method under every layout mentions no generic
 -- representation types, no type class dictionaries and none of the
--- 'GAlignedStorable' methods, and optionally does not allocate.
+-- 'GAlignedStorable' methods, and optionally the poke and the sizes do not
+-- allocate.
 --
 -- The checks run at compile time, in the module that splices them. That module
 -- must be compiled with optimization and the inspection plugin, and must enable
--- @DataKinds@ and @TemplateHaskell@. Deep types such as @'Stress' (Insanity L)@
--- need more simplifier ticks than the default:
+-- @DataKinds@, @TemplateHaskell@ and @UnboxedTuples@. Deep types such as
+-- @t'Stress' (Insanity L)@ need many more simplifier ticks than the default:
 --
--- > {-# OPTIONS_GHC -O -fsimpl-tick-factor=200 -fplugin=Test.Tasty.Inspection.Plugin #-}
+-- > {-# LANGUAGE UnboxedTuples #-}
+-- > {-# OPTIONS_GHC -O -fsimpl-tick-factor=4000 -fplugin=Test.Tasty.Inspection.Plugin #-}
 -- >
--- > $(inspectAlignedStorable "nested" [t|Nested L|] False)
--- > $(inspectAlignedStorable "stress" [t|Stress (Insanity L)|] False)
+-- > $(inspectAlignedStorable "nested" [t|Nested L|] True)
+-- > $(inspectAlignedStorable "stress" [t|Stress (Insanity L)|] True)
 -- >
 -- > test_inspection :: [TestTree]
 -- > test_inspection = [nestedInspection, stressInspection]
@@ -42,7 +46,9 @@ where
 
 import Control.Monad (forM)
 import Data.Proxy (Proxy)
+import GHC.Exts (Int (I#), Int#, RealWorld, State#)
 import GHC.Generics (Generic)
+import GHC.IO (IO (IO))
 import Language.Haskell.TH
 import Language.Haskell.TH.Syntax (mkNameG_v)
 import Test.Tasty (TestTree, testGroup)
@@ -75,16 +81,32 @@ instance (MemoryLayoutRules l, AlignedStorable l a) => AlignedStorable l (Stress
 -- five 'AlignedStorable' methods under each layout, a binding
 -- @\<label\>_\<method\>_\<Layout\>@ monomorphic in @ty@, and
 -- @\<label\>Inspection :: 'TestTree'@ with, for each binding: 'hasNoGenerics',
--- 'hasNoTypeClasses', 'doesNotUseAnyOf' the 'GAlignedStorable' methods, and,
--- when @noAllocation@ is set, 'NoAllocation' (15 bindings, 45 or 60 checks).
+-- 'hasNoTypeClasses' and 'doesNotUseAnyOf' the 'GAlignedStorable' methods.
+-- When @noAllocation@ is set, the bindings for 'alignedPoke' and the three
+-- sizes also get 'NoAllocation' (15 bindings; 45 checks, or 57 with
+-- 'NoAllocation').
 --
--- The checks see the code GHC produces in the splicing module. When the
--- instance for @ty@ is concrete and compiled in another module (or GHC
--- specialized it there), each binding is just an alias of that module's method
--- and every check passes trivially; polymorphic instances, used at a type the
--- defining module does not know, are specialized in the splicing module and
--- checked for real. 'NoAllocation' fails on such code: inspection-testing counts
--- the result of an 'IO' method and the boxed 'Int' of a size as allocations.
+-- Each binding unwraps the method's result, so that GHC inlines the method's
+-- body into the splicing module instead of aliasing an instance method
+-- compiled elsewhere, and so that inspection-testing does not count the boxed
+-- result as an allocation:
+--
+-- > nested_alignedSizeOf_Std140 :: Proxy 'Std140 -> Proxy (Nested L) -> Int#
+-- > nested_alignedSizeOf_Std140 p q = case alignedSizeOf p q of I# n -> n
+-- >
+-- > nested_alignedPoke_Std140 :: AlignedPtr 'Std140 (Nested L) -> Nested L -> State# RealWorld -> State# RealWorld
+-- > nested_alignedPoke_Std140 p x s = case alignedPoke p x of IO f -> case f s of (# s', () #) -> s'
+-- >
+-- > nested_alignedPeek_Std140 :: AlignedPtr 'Std140 (Nested L) -> State# RealWorld -> (# State# RealWorld, Nested L #)
+-- > nested_alignedPeek_Std140 p s = case alignedPeek p of IO f -> f s
+--
+-- A peek always allocates the value it returns, so it gets no 'NoAllocation'
+-- check.
+--
+-- The checks are real only while no imported module exports a specialization
+-- rule for the instance at @ty@. If one appears, the bindings silently become
+-- aliases of the specialized methods again and the checks pass trivially; the
+-- wrappers mitigate this for the poke and the sizes by forcing inlining.
 inspectAlignedStorable :: String -> Q Type -> Bool -> Q [Dec]
 inspectAlignedStorable label qty noAllocation = do
   ty <- qty
@@ -98,24 +120,59 @@ inspectAlignedStorable label qty noAllocation = do
       , (promotedT 'Std430, "Std430", "std430")
       , (promotedT 'Scalar, "Scalar", "scalar")
       ]
+    sizeMethod method =
+      ( method
+      , \l t -> [t|Proxy $l -> Proxy $t -> Int#|]
+      , \binder -> do
+          p <- newName "p"
+          q <- newName "q"
+          funD
+            binder
+            [clause [varP p, varP q] (normalB [|case $(varE method) $(varE p) $(varE q) of I# n -> n|]) []]
+      , noAllocation
+      )
     methods =
-      [ ('packedAlignedSizeOf, sizeType)
-      , ('alignedSizeOf, sizeType)
-      , ('alignedAlignment, sizeType)
-      , ('alignedPoke, \l t -> [t|AlignedPtr $l $t -> $t -> IO ()|])
-      , ('alignedPeek, \l t -> [t|AlignedPtr $l $t -> IO $t|])
+      [ sizeMethod 'packedAlignedSizeOf
+      , sizeMethod 'alignedSizeOf
+      , sizeMethod 'alignedAlignment
+      ,
+        ( 'alignedPoke
+        , \l t -> [t|AlignedPtr $l $t -> $t -> State# RealWorld -> State# RealWorld|]
+        , \binder -> do
+            p <- newName "p"
+            x <- newName "x"
+            s <- newName "s"
+            funD
+              binder
+              [ clause
+                  [varP p, varP x, varP s]
+                  (normalB [|case alignedPoke $(varE p) $(varE x) of IO f -> case f $(varE s) of (# s', () #) -> s'|])
+                  []
+              ]
+        , noAllocation
+        )
+      ,
+        ( 'alignedPeek
+        , \l t -> [t|AlignedPtr $l $t -> State# RealWorld -> (# State# RealWorld, $t #)|]
+        , \binder -> do
+            p <- newName "p"
+            s <- newName "s"
+            funD
+              binder
+              [clause [varP p, varP s] (normalB [|case alignedPeek $(varE p) of IO f -> f $(varE s)|]) []]
+        , False
+        )
       ]
-    sizeType l t = [t|Proxy $l -> Proxy $t -> Int|]
   groups <- forM layouts \(l, suffix, groupName) -> do
-    bindings <- forM methods \(method, mkType) -> do
+    bindings <- forM methods \(method, mkType, mkDef, checkAllocation) -> do
       let binder = mkName (label <> "_" <> nameBase method <> "_" <> suffix)
       sig <- sigD binder (mkType l (pure ty))
-      def <- valD (varP binder) (normalB (varE method)) []
-      pure (global (nameBase binder), [sig, def])
-    checks <- forM (map fst bindings) \n ->
+      def <- mkDef binder
+      pure ((global (nameBase binder), checkAllocation), [sig, def])
+    checks <- forM (map fst bindings) \(n, checkAllocation) ->
       sequence $
         [inspectTest (hasNoGenerics n)]
-          <> [inspectTest (mkObligation n NoAllocation) | noAllocation]
+          <> [inspectTest (mkObligation n NoAllocation) | checkAllocation]
           <> [ inspectTest (hasNoTypeClasses n)
              , inspectTest (n `doesNotUseAnyOf` ['galignedSize, 'galignedPoke, 'galignedPeek])
              ]

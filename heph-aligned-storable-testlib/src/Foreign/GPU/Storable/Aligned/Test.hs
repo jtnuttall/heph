@@ -11,8 +11,9 @@
 -- test suites of heph-aligned-storable and its instance packages.
 --
 -- Each struct under test has a GLSL twin in @glsl/Conformance.glsl@, and an
--- oracle ('Oracle') per layout whose offsets, sizes and alignments are copied
--- from glslang's output for that twin. The tests check the derived
+-- oracle (t'Oracle') per layout whose offsets and sizes are copied from
+-- glslang's output for that twin, and whose alignment follows from the layout
+-- rules. The tests check the derived
 -- 'Foreign.GPU.Storable.Aligned.AlignedStorable' instance against the oracle.
 --
 -- A package that provides instances for a vector library runs the shared

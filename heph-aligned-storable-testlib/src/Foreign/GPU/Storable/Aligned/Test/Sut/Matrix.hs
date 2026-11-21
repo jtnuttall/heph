@@ -19,7 +19,7 @@
 -- Maintainer  : jeremy@jeremy-nuttall.com
 -- Stability   : experimental
 --
--- Structs under test with GLSL matrices. 'Uniforms' and 'DUniforms' need only
+-- Structs under test with GLSL matrices. t'Uniforms' and t'DUniforms' need only
 -- @mat4@/@dmat4@; the others need the full 'FloatMats', 'DoubleMats' and
 -- 'HalfMats' groups.
 module Foreign.GPU.Storable.Aligned.Test.Sut.Matrix (
@@ -114,7 +114,6 @@ instance (HalfMats lib, DoubleMats lib) => Storable (Oracle 'Scalar (TestNonSqua
     pokeMatAt Scalar ptr 0 matA
     pokeMatAt Scalar ptr 16 matB
 
--- | The TestNonSquare tests.
 testNonSquareSuite :: forall lib. (HalfMats lib, DoubleMats lib) => Proxy lib -> TestTree
 testNonSquareSuite _ =
   sutTests
@@ -204,7 +203,6 @@ instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Scalar (D2 lib)) wh
     pokeMatAt Scalar ptr 16 d2D
     pokeByteOff ptr 32 d2E
 
--- | The D2 tests.
 d2Suite :: forall lib. (FloatVecs lib, FloatMats lib) => Proxy lib -> TestTree
 d2Suite _ = sutTests "D2" (genD2 @lib) [at @'Std140 (Just 66), at @'Std430 (Just 42), at @'Scalar (Just 34)]
 
@@ -448,7 +446,6 @@ instance
     pokeMatAt Scalar ptr 416 ksU
     pokeByteOff ptr 432 ksV
 
--- | The KitchenSink tests.
 kitchenSinkSuite
   :: forall lib. (DoubleVecs lib, FloatMats lib, HalfMats lib, DoubleMats lib) => Proxy lib -> TestTree
 kitchenSinkSuite _ =
@@ -480,9 +477,6 @@ data ComplexPadding lib = ComplexPadding
   , complexpaddingF :: Float
   }
   deriving (Generic)
-
--- >>> alignedSizeOf (Data.Proxy.Proxy @Std430) (Data.Proxy.Proxy @ComplexPadding)
--- 176
 
 deriving instance (FloatVecs lib, FloatMats lib) => Show (ComplexPadding lib)
 
@@ -568,7 +562,6 @@ instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Scalar (ComplexPadd
     pokeMatAt Scalar ptr 56 complexpaddingE
     pokeByteOff ptr 120 complexpaddingF
 
--- | The ComplexPadding tests.
 complexPaddingSuite :: forall lib. (FloatVecs lib, FloatMats lib) => Proxy lib -> TestTree
 complexPaddingSuite _ =
   sutTests
@@ -622,7 +615,6 @@ instance (FloatVecs lib, FloatMat4 lib) => Storable (Oracle 'Scalar (Uniforms li
     pokeMatAt Scalar ptr 0 modelView
     pokeVecAt Scalar ptr 64 cameraPos
 
--- | The Uniforms tests.
 uniformsSuite :: forall lib. (FloatVecs lib, FloatMat4 lib) => Proxy lib -> TestTree
 uniformsSuite _ =
   sutTests
@@ -692,7 +684,6 @@ instance (DoubleVecs lib, DoubleMats lib) => Storable (Oracle 'Std140 (DoubleTro
     pokeByteOff ptr 224 dtF2
     pokeMatAt Std140 ptr 256 dtM1
 
--- | The DoubleTrouble tests.
 doubleTroubleSuite :: forall lib. (DoubleVecs lib, DoubleMats lib) => Proxy lib -> TestTree
 doubleTroubleSuite _ = sutTests "DoubleTrouble" (genDoubleTrouble @lib) [at @'Std140 Nothing]
 
@@ -742,7 +733,6 @@ instance (DoubleVecs lib, DoubleMat4 lib) => Storable (Oracle 'Scalar (DUniforms
     pokeMatAt Scalar ptr 0 duM
     pokeVecAt Scalar ptr 128 duV
 
--- | The DUniforms tests.
 dUniformsSuite :: forall lib. (DoubleVecs lib, DoubleMat4 lib) => Proxy lib -> TestTree
 dUniformsSuite _ =
   sutTests

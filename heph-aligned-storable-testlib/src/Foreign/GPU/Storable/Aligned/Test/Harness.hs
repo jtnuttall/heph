@@ -83,10 +83,11 @@ import Foreign.GPU.Storable.Aligned
 --------------------------------------------------------------------------------
 
 -- | A value whose 'Storable' instance is a hand-written oracle for layout @l@:
--- every offset, size and alignment is a literal read off glslang's output for
--- the GLSL twin of @a@ (see @glsl/Conformance.glsl@).
+-- every offset and size is a literal read off glslang's output for the GLSL
+-- twin of @a@ (see @glsl/Conformance.glsl@), and the alignment is a literal that
+-- follows from the layout rules.
 --
--- @Oracle l a@ and @'Strided' l a@ are both newtypes over @a@, so 'ptrTripping'
+-- @Oracle l a@ and @t'Strided' l a@ are both newtypes over @a@, so 'ptrTripping'
 -- can compare them directly.
 newtype Oracle (l :: MemoryLayout) (a :: Type) = Oracle {unOracle :: a}
   deriving stock (Eq, Show)
@@ -146,12 +147,12 @@ genCanaries sz = replicateM sz genCanary
 -- 2. Poison the buffer with a repeating bit pattern (0xCD)
 -- 3. Fill the edges of the buffer with a canary value.
 -- 4. Check that the canaries got written to the right place.
--- 5. Poke `a` into the middle of the buffer
+-- 5. Poke @a@ into the middle of the buffer
 -- 6. Check the canaries -- if we overrun or undrrun the buffer, it's very likely to show here.
--- 7. Peek `b` out of the middle of the buffer
+-- 7. Peek @b@ out of the middle of the buffer
 -- 8. Out of an overabundance of caution, check the canaries again
--- 9. Check that the peeked value of `b` is equal to the poked value of `a`
--- 10. Check that the peeked value of `b` is equal to the poked value of `b`
+-- 9. Check that the peeked value of @b@ is equal to the poked value of @a@
+-- 10. Check that the peeked value of @b@ is equal to the poked value of @b@
 --
 -- This makes it incredibly unlikely (but not impossible) that this module corrupts memory in a way
 -- that isn't caught in test.
@@ -312,12 +313,12 @@ at = LayoutCase (Proxy @l)
 
 -- | A group named after the struct with, per layout, a @"\<layout\> packed size"@
 -- unit test (when the size is given) and a @"\<layout\> round trip"@ property
--- that runs 'ptrTripping' on @'Strided' l a@ against @'Oracle' l a@.
+-- that runs 'ptrTripping' on @t'Strided' l a@ against @t'Oracle' l a@.
 sutTests :: (Eq a, Show a, Typeable a) => String -> Gen a -> [LayoutCase a] -> TestTree
 sutTests = sutTestsWith id defaultTripOpts
 
 -- | 'sutTests' with a modifier for each property (e.g. @'withShrinks' 10@) and
--- 'TripOpts'.
+-- t'TripOpts'.
 sutTestsWith
   :: (Eq a, Show a, Typeable a)
   => (Property -> Property)
@@ -329,7 +330,7 @@ sutTestsWith
 sutTestsWith modify opts name gen = testGroup name . concatMap (layoutCaseTests modify opts gen)
 
 -- | The tests 'sutTestsWith' generates for one layout, for structs whose type
--- depends on the layout (and so need one 'LayoutCase' per type).
+-- depends on the layout (and so need one t'LayoutCase' per type).
 layoutCaseTests
   :: forall a
    . (Eq a, Show a, Typeable a)

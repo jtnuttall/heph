@@ -110,7 +110,6 @@ instance (FloatVecs lib) => Storable (Oracle 'Scalar (PaddingTest lib)) where
     pokeByteOff ptr 0 f
     pokeVecAt Scalar ptr 4 v
 
--- | The PaddingTest tests.
 paddingTestSuite :: forall lib. (FloatVecs lib) => Proxy lib -> TestTree
 paddingTestSuite _ =
   sutTests
@@ -166,7 +165,6 @@ instance (FloatVecs lib) => Storable (Oracle 'Scalar (Std140Test lib)) where
     pokeVecAt Scalar ptr 0 v3
     pokeByteOff ptr 12 f1
 
--- | The Std140Test tests.
 std140TestSuite :: forall lib. (FloatVecs lib) => Proxy lib -> TestTree
 std140TestSuite _ =
   sutTests
@@ -230,7 +228,6 @@ instance (FloatVecs lib) => Storable (Oracle 'Scalar (Vertex lib)) where
     pokeVecAt Scalar ptr 12 normal
     pokeVecAt Scalar ptr 24 uv
 
--- | The Vertex tests.
 vertexSuite :: forall lib. (FloatVecs lib) => Proxy lib -> TestTree
 vertexSuite _ =
   sutTests
@@ -286,7 +283,6 @@ instance (FloatVecs lib) => Storable (Oracle 'Scalar (FinalPaddingTest lib)) whe
     pokeVecAt Scalar ptr 0 fptA
     pokeByteOff ptr 16 fptB
 
--- | The FinalPaddingTest tests.
 finalPaddingTestSuite :: forall lib. (FloatVecs lib) => Proxy lib -> TestTree
 finalPaddingTestSuite _ =
   sutTests
@@ -369,7 +365,6 @@ instance (FloatVecs lib) => Storable (Oracle 'Scalar (Nested lib)) where
     pokeOracleAt @'Scalar ptr 24 nestedMixed
     pokeOracleAt @'Scalar ptr 44 nestedBoolTest
 
--- | The Nested tests.
 nestedSuite :: forall lib. (FloatVecs lib) => Proxy lib -> TestTree
 nestedSuite _ =
   sutTests
@@ -400,7 +395,6 @@ deriving via
   instance
     (Storable (Oracle l (Nested lib))) => Storable (Oracle l (NestedNewtype lib))
 
--- | The NestedNewtype tests.
 nestedNewtypeSuite :: forall lib. (FloatVecs lib) => Proxy lib -> TestTree
 nestedNewtypeSuite _ =
   sutTests
@@ -478,7 +472,6 @@ instance (FloatVecs lib) => Storable (Oracle 'Scalar (VectorStruct lib)) where
     pokeArrayAt 12 (pokeVecAt Scalar) ptr 4 vsB
     pokeByteOff ptr 28 vsC
 
--- | The VectorStruct tests.
 vectorStructSuite :: forall lib. (FloatVecs lib) => Proxy lib -> TestTree
 vectorStructSuite _ =
   sutTests
@@ -532,7 +525,6 @@ instance (FloatVecs lib) => Storable (Oracle 'Scalar (TailVec3 lib)) where
     pokeByteOff ptr 0 tvA
     pokeVecAt Scalar ptr 4 tvB
 
--- | The TailVec3 tests.
 tailVec3Suite :: forall lib. (FloatVecs lib) => Proxy lib -> TestTree
 tailVec3Suite _ =
   sutTests

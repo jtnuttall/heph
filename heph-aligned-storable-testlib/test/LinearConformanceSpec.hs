@@ -5,10 +5,6 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
--- | Alignments verified by running glslang against AlignedSpec.glsl and manually
--- inspecting the SPIR-V.
---
--- You can use https://godbolt.org/z/njnvM8q4o to check for yourself.
 module LinearConformanceSpec where
 
 import Data.Int

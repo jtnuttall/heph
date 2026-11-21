@@ -21,7 +21,10 @@ write one component at a time, so the same oracles check any vector library.
 
 - `primSuites`: structs of scalars, nested structs and arrays of them, and the
   marshal tests. No vector library needed.
-- Inspection tests for `NestedPrim` and `Stress DeepNest`.
+- Inspection tests for `NestedPrim` and `Stress DeepNest`: for each type, 15
+  bindings (five methods × three layouts) checked for leftover generics,
+  dictionaries and `GAlignedStorable` calls, plus `NoAllocation` on the pokes
+  and sizes, 57 checks per type.
 - Until `heph-aligned-storable-linear` exists, the shared suites instantiated
   for `linear`.
 
@@ -71,8 +74,8 @@ A suite whose groups you do not implement does not compile; nothing is skipped
 silently. `sutTests`, `at` and `Oracle` are exported, so a package can add
 structs of its own.
 
-Inspection tests are spliced into a module compiled with the inspection plugin;
-see `Foreign.GPU.Storable.Aligned.Test.Inspection`.
+Inspection tests are spliced into a module compiled with the inspection plugin
+and `UnboxedTuples`; see `Foreign.GPU.Storable.Aligned.Test.Inspection`.
 
 ## Adding a struct
 

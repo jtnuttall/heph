@@ -4,9 +4,10 @@
  *
  * Each struct below that has a Haskell twin of the same name (in
  * Foreign.GPU.Storable.Aligned.Test.Sut.* or .Marshal) has an oracle per layout,
- * the `Storable (Oracle l T)` instances, whose offsets, sizeOf and alignment are
- * the numbers glslang gives here. Members are in Haskell field order; their
- * names may differ.
+ * the `Storable (Oracle l T)` instances, whose member offsets and sizeOf are the
+ * numbers glslang gives here; their alignment follows from the layout rules (it
+ * is not in the SPIR-V). Members are in Haskell field order; their names may
+ * differ.
  *
  * Mapping to the Haskell types:
  *  - float16_t, float, double, bool, intN_t, uintN_t, int, uint are Half, Float,
