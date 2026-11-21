@@ -3,6 +3,12 @@ cradle:
     - path: "heph-aligned-storable/src"
       component: "heph-aligned-storable:lib:heph-aligned-storable"
 
+    - path: "heph-aligned-storable-geomancy/src"
+      component: "heph-aligned-storable-geomancy:lib:heph-aligned-storable-geomancy"
+
+    - path: "heph-aligned-storable-geomancy/test"
+      component: "heph-aligned-storable-geomancy:test:heph-aligned-storable-geomancy-test"
+
     - path: "heph-aligned-storable-testlib/src"
       component: "heph-aligned-storable-testlib:lib:heph-aligned-storable-testlib"
 

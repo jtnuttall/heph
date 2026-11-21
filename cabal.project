@@ -1,4 +1,5 @@
 packages:
   ./heph-aligned-storable
+  ./heph-aligned-storable-geomancy
   ./heph-aligned-storable-testlib
   ./heph-sparse-set

@@ -12,6 +12,8 @@ Each package is designed to be general-purpose and useful on its own.
 - heph-aligned-storable: A library to generically derive Storable instances suitable
   for CPU-GPU transfer. It provides compile-time guarantees for spec-compliant memory
   layouts (std140, std430, scalar).
+- heph-aligned-storable-geomancy: `AlignedStorable` instances for the vectors,
+  matrices, quaternions and transforms of the geomancy math library.
 - heph-aligned-storable-testlib: The conformance test suite for heph-aligned-storable
   and its instance packages, with oracles verified against glslang.
 - heph-sparse-set: A mutable sparse set implementation, ideal for performance-critical
