@@ -6,51 +6,18 @@ Generically derive `Storable` instances for GPU memory layouts (`std140`, `std43
 
 <!-- [![Hackage](https://img.shields.io/hackage/v/heph-aligned-storable.svg)](https://hackage.haskell.org/package/heph-aligned-storable) -->
 
-## Quick Start
+This package has instances for the GLSL scalar types and for arrays. Instances for the
+vector and matrix types of a math library live in a package of their own, so that this
+one depends on none of them:
 
-**IMPORTANT**: Be sure to use `layout(row_major)` if you are using `linear` with this library.
+- [`heph-aligned-storable-linear`](../heph-aligned-storable-linear) for `linear`
+- [`heph-aligned-storable-geomancy`](../heph-aligned-storable-geomancy) for `geomancy`
 
-GLSL:
+Those packages show a full quick start. The `Foreign.GPU.Storable.Aligned.TH` module
+exports the generators they use, so a package can bind another library the same way.
 
-```glsl
-layout(std140, row_major, binding = 0) uniform myuniforms {
-  mat4 modelViewProjection;
-  vec3 cameraPosition;
-  float time;
-};
-```
-
-Haskell:
-
-```haskell
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE TypeApplications #-}
-
-import Foreign.GPU.Storable.Aligned
-import Foreign.GPU.Marshal.Aligned
-import GHC.Generics (Generic)
-import Linear (M44, V3, V4(..))
-
-data Uniforms = Uniforms
-  { modelViewProjection :: M44 Float
-  , cameraPosition      :: V3 Float
-  , time                :: Float
-  } deriving (Generic, Show, Eq)
-
-instance AlignedStorable Std140 Uniforms
-
-main :: IO ()
-main = do
-  let uniforms = Uniforms
-        { modelViewProjection = V4 (V4 1 0 0 0) (V4 0 1 0 0) (V4 0 0 1 0) (V4 0 0 0 1)
-        , cameraPosition = V3 0 0 5
-        , time = 0
-        }
-  withPacked @Std140 uniforms $ \ptr -> do
-    -- ptr is ready for vkCmdPushConstants, memcpy to mapped buffer, etc.
-    pure ()
-```
+The test suite lives in [`heph-aligned-storable-testlib`](../heph-aligned-storable-testlib),
+which also runs it on each of the instance packages.
 
 ## Features
 
@@ -71,25 +38,14 @@ By default, arrays are poked element-by-element. For a single `memcpy`, wrap in 
 
 ```haskell
 data MyStruct (layout :: MemoryLayout) = MyStruct
-  { meta   :: Float
-  , pixels :: AlignedArray layout 64 (V4 Float)  -- memcpy'd as a block
+  { meta    :: Float
+  , weights :: AlignedArray layout 64 Float  -- memcpy'd as a block
   } deriving Generic
 
 instance AlignedStorable Std140 (MyStruct Std140)
 ```
 
 ## Gotchas
-
-### Matrix naming conventions
-
-`linear` uses `Mnm` for n rows × m columns. GLSL uses `matNxM` for N columns of M-vectors.
-
-- `M32 Float` (3 rows, 2 cols) → `mat2x3`
-- `M24 Double` (2 rows, 4 cols) → `dmat4x2`
-
-### `row_major`
-
-GLSL's `layout(row_major)` affects memory layout, not matrix semantics. Matrices are still column-major for arithmetic. This library implements the memory layout correctly. You don't need to transpose before upload.
 
 ### `vec3` and `mat3` are cursed
 

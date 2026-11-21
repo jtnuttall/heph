@@ -1,6 +1,5 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
@@ -14,6 +13,11 @@
 --
 -- Derive @Storable@ instances that respect GPU memory layout rules (@std140@,
 -- @std430@, @scalar@). Works with any product type that has a t'GHC.Generics.Generic' instance.
+--
+-- The vector and matrix types in the example below are linear's. Instances for
+-- them live in @heph-aligned-storable-linear@, and
+-- @heph-aligned-storable-geomancy@ provides them for geomancy;
+-- "Foreign.GPU.Storable.Aligned.TH" binds other libraries.
 --
 -- @
 -- data Uniforms = Uniforms
@@ -59,9 +63,6 @@ module Foreign.GPU.Storable.Aligned (
 )
 where
 
-import Language.Haskell.TH (appT, conE, conT)
-import Linear (V2 (..), V3 (..), V4 (..))
-
 import Foreign.GPU.Storable.Aligned.Internal
 import Foreign.GPU.Storable.Aligned.TH
 
@@ -70,26 +71,3 @@ import Foreign.GPU.Storable.Aligned.TH
 --------------------------------------------------------------------------------
 
 deriveAll [deriveFixed l t (f l) | (t, f) <- primitives, l <- allLayouts]
-
---------------------------------------------------------------------------------
--- Base instances for vectors and matrices
---------------------------------------------------------------------------------
-
-deriveAll $
-  let con = \case Two -> 'V2; Three -> 'V3; Four -> 'V4
-      ty = \case Two -> ''V2; Three -> ''V3; Four -> ''V4
-      vec n e =
-        Composite
-          { compositeType = conT (ty n) `appT` e
-          , compositeElement = e
-          , compositeDim = n
-          , compositeConstruct = conE (con n)
-          , compositeEliminate = conEliminate (con n) n
-          }
-   in [deriveVector l (vec n e) | l <- allLayouts, e <- primitiveTypes, n <- dims]
-        ++ [ deriveMatrix l (vec r (conT (ty c) `appT` e))
-           | l <- allLayouts
-           , e <- floatingPrimitiveTypes
-           , r <- dims
-           , c <- dims
-           ]

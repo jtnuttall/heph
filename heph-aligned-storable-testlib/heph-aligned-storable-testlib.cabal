@@ -52,7 +52,7 @@ library
       base >=4.19 && <5
     , half >=0.3 && <0.5
     , hedgehog >=1.0.4 && <1.8
-    , heph-aligned-storable >=0.1 && <0.3
+    , heph-aligned-storable ==0.2.*
     , lifted-base ==0.2.*
     , monad-control ==1.0.*
     , tasty >=1.4.1 && <1.6
@@ -70,8 +70,6 @@ test-suite heph-aligned-storable-testlib-test
   other-modules:
       CoreConformanceSpec
       CoreInspectionSpec
-      LinearConformanceSpec
-      LinearInspectionSpec
       Paths_heph_aligned_storable_testlib
   autogen-modules:
       Paths_heph_aligned_storable_testlib
@@ -84,10 +82,9 @@ test-suite heph-aligned-storable-testlib-test
       base >=4.19 && <5
     , half >=0.3 && <0.5
     , hedgehog >=1.0.4 && <1.8
-    , heph-aligned-storable >=0.1 && <0.3
+    , heph-aligned-storable ==0.2.*
     , heph-aligned-storable-testlib
     , lifted-base ==0.2.*
-    , linear >=1.20 && <1.24
     , monad-control ==1.0.*
     , tasty >=1.4.1 && <1.6
     , tasty-discover >=4.2.1 && <6

@@ -28,7 +28,7 @@ homepage: https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-geom
 dependencies:
   - base >= 4.19 && < 5
   - geomancy >= 0.4 && < 0.5
-  - heph-aligned-storable >= 0.1 && < 0.3
+  - heph-aligned-storable >= 0.2 && < 0.3
 
 ghc-options:
   - -Wall

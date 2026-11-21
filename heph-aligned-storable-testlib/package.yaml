@@ -28,7 +28,7 @@ homepage: https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-test
 dependencies:
   - base >= 4.19 && < 5
   - half >= 0.3 && < 0.5
-  - heph-aligned-storable >= 0.1 && < 0.3
+  - heph-aligned-storable >= 0.2 && < 0.3
   - hedgehog >= 1.0.4 && < 1.8
   - lifted-base >= 0.2 && < 0.3
   - monad-control >= 1.0 && < 1.1
@@ -67,7 +67,6 @@ tests:
       - -Wno-orphans
     dependencies:
       - heph-aligned-storable-testlib
-      - linear >= 1.20 && < 1.24
       - tasty-discover >= 4.2.1 && < 6
     build-tools:
       - tasty-discover
