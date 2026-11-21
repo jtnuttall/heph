@@ -14,6 +14,8 @@ Each package is designed to be general-purpose and useful on its own.
   layouts (std140, std430, scalar).
 - heph-aligned-storable-geomancy: `AlignedStorable` instances for the vectors,
   matrices, quaternions and transforms of the geomancy math library.
+- heph-aligned-storable-linear: `AlignedStorable` instances for the vectors and
+  matrices of the linear math library.
 - heph-aligned-storable-testlib: The conformance test suite for heph-aligned-storable
   and its instance packages, with oracles verified against glslang.
 - heph-sparse-set: A mutable sparse set implementation, ideal for performance-critical

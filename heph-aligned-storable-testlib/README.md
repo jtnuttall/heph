@@ -25,8 +25,10 @@ write one component at a time, so the same oracles check any vector library.
   bindings (five methods × three layouts) checked for leftover generics,
   dictionaries and `GAlignedStorable` calls, plus `NoAllocation` on the pokes
   and sizes, 57 checks per type.
-- Until `heph-aligned-storable-linear` exists, the shared suites instantiated
-  for `linear`.
+
+The instance packages run the shared suites on their own types:
+[`heph-aligned-storable-linear`](../heph-aligned-storable-linear) and
+[`heph-aligned-storable-geomancy`](../heph-aligned-storable-geomancy).
 
 ## Testing an instance package
 

@@ -4,6 +4,7 @@ packages:
   - heph-sparse-set
   - heph-aligned-storable
   - heph-aligned-storable-geomancy
+  - heph-aligned-storable-linear
   - heph-aligned-storable-testlib
 
 extra-deps:

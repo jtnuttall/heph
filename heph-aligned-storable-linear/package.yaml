@@ -1,0 +1,64 @@
+name: heph-aligned-storable-linear
+version: 0.1.0.0
+github: "jtnuttall/heph"
+license: BSD-3-Clause
+author: "Jeremy Nuttall"
+maintainer: "jeremy@jeremy-nuttall.com"
+copyright: "2025 Jeremy Nuttall"
+tested-with: GHC == 9.14.1 || == 9.12.4 || == 9.10.3 || == 9.8.4
+
+extra-doc-files:
+  - README.md
+  - CHANGELOG.md
+
+# Metadata used when publishing your package
+synopsis: AlignedStorable instances for linear's vectors and matrices
+category: Graphics
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description: Please see the README on GitHub at
+  <https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-linear#readme>
+homepage: https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-linear#readme
+
+dependencies:
+  - base >= 4.19 && < 5
+  - heph-aligned-storable >= 0.2 && < 0.3
+  - linear >= 1.20 && < 1.24
+
+ghc-options:
+  - -Wall
+  - -Wcompat
+
+library:
+  source-dirs: src
+  dependencies:
+    - template-haskell >= 2.21 && < 2.25
+  ghc-options:
+    - -Widentities
+    - -Wincomplete-record-updates
+    - -Wincomplete-uni-patterns
+    - -Wmissing-export-lists
+    - -Wmissing-home-modules
+    - -Wpartial-fields
+    - -Wredundant-constraints
+
+tests:
+  heph-aligned-storable-linear-test:
+    main: Driver.hs
+    source-dirs: test
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+      - -Wno-orphans
+    dependencies:
+      - half >= 0.3 && < 0.5
+      - heph-aligned-storable-linear
+      - heph-aligned-storable-testlib >= 0.1 && < 0.2
+      - tasty >= 1.4.1 && < 1.6
+      - tasty-discover >= 4.2.1 && < 6
+      - tasty-inspection-testing >= 0.1 && < 0.3
+    build-tools:
+      - tasty-discover
