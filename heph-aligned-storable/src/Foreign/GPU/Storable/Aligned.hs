@@ -80,7 +80,6 @@ import Data.Int
 import Data.Kind
 import Data.Maybe (fromJust)
 import Data.Proxy
-import Data.Typeable (Typeable)
 import qualified Data.Vector.Generic as GV
 import qualified Data.Vector.Generic.Sized as SGV
 import qualified Data.Vector.Storable as SV
@@ -119,7 +118,7 @@ data MemoryLayout
     -- For details, please refer to the
     -- [extension specification](https://github.com/KhronosGroup/GLSL/blob/main/extensions/ext/GL_EXT_scalar_block_layout.txt)
     Scalar
-  deriving (Show, Generic, Typeable, Enum, Bounded, Eq, Ord)
+  deriving (Show, Generic, Enum, Bounded, Eq, Ord)
 
 instance Hashable MemoryLayout
 
@@ -209,11 +208,11 @@ instance MemoryLayoutRules Scalar where
 -- | Wrapper whose 'sizeOf' includes stride padding, for use in arrays.
 -- @SV.Vector (Strided Std140 MyType)@ can be 'copyBytes'd to the GPU in one shot.
 newtype Strided (layout :: MemoryLayout) a = Strided {unStrided :: a}
-  deriving (Generic, Typeable, Show, Eq, Ord)
+  deriving (Generic, Show, Eq, Ord)
 
 -- | Wrapper without stride padding. Use for single values (push constants, lone UBOs).
 newtype Packed (layout :: MemoryLayout) a = Packed {unPacked :: a}
-  deriving (Generic, Typeable, Show, Eq, Ord)
+  deriving (Generic, Show, Eq, Ord)
 
 -- | A convenience type for Data.Vector.Storable.Vector (Strided layout a)
 type StridedVector (layout :: MemoryLayout) a = SV.Vector (Strided layout a)
@@ -225,7 +224,7 @@ type StridedVector (layout :: MemoryLayout) a = SV.Vector (Strided layout a)
 -- @
 newtype AlignedArray (layout :: MemoryLayout) (n :: Nat) a = AlignedArray
   {unAlignedArray :: SSV.Vector n (Strided layout a)}
-  deriving (Generic, Typeable, Show, Eq, Ord)
+  deriving (Generic, Show, Eq, Ord)
 
 -- | Construct an 'AlignedArray' from a sized vector.
 mkAlignedArray
@@ -244,7 +243,7 @@ withAlignedArray (AlignedArray v) f = AlignedArray (f v)
 
 -- | A 'Ptr' that is tagged with its 'MemoryLayout'.
 newtype AlignedPtr (layout :: MemoryLayout) a = AlignedPtr {unAlignedPtr :: Ptr a}
-  deriving (Generic, Typeable, Show)
+  deriving (Generic, Show)
 
 type role AlignedPtr nominal nominal
 

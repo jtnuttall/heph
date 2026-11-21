@@ -41,7 +41,6 @@ where
 import Control.Monad hiding (foldM, foldM_, mapM_)
 import Control.Monad.Primitive
 import Data.Primitive
-import Data.Typeable (Typeable)
 import Data.Vector.Generic qualified as VG
 import Data.Vector.Generic.Mutable qualified as MVG
 import Data.Vector.Primitive.Mutable qualified as MVP
@@ -59,7 +58,7 @@ data MutableSparseSet v s a = MutableSparseSet
   , ssIndices :: {-# UNPACK #-} !(MutVar s (GrowVec MVP.MVector s Int))
   , ssSparse :: {-# UNPACK #-} !(MutVar s (MutableSparseArray s))
   }
-  deriving (Generic, Typeable)
+  deriving (Generic)
 
 -- | Create a sparse set with a given dense and sparse capacity
 --

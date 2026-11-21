@@ -206,7 +206,7 @@ data Simple = Simple
   { simpleA :: Float
   , simpleB :: Int32
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genSimple :: Gen Simple
 genSimple = Simple <$> genFloat <*> genInt
@@ -216,7 +216,7 @@ instance AlignedStorable Std430 Simple
 instance AlignedStorable Scalar Simple
 
 newtype SimpleStd140 = SimpleStd140 Simple
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable SimpleStd140 where
   sizeOf _ = 16
@@ -238,7 +238,7 @@ hprop_simple_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype SimpleStd430 = SimpleStd430 Simple
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable SimpleStd430 where
   sizeOf _ = 8
@@ -260,7 +260,7 @@ hprop_simple_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype SimpleScalar = SimpleScalar Simple
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable SimpleScalar where
   sizeOf _ = 8
@@ -290,7 +290,7 @@ data TestNonSquare = TestNonSquare
   { matA :: M32 Half
   , matB :: M43 Double
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genTestNonSquare :: Gen TestNonSquare
 genTestNonSquare = TestNonSquare <$> genMat genFloat <*> genMat genFloat
@@ -300,7 +300,7 @@ instance AlignedStorable Std430 TestNonSquare
 instance AlignedStorable Scalar TestNonSquare
 
 newtype TestNonSquareStd140 = TestNonSquareStd140 TestNonSquare
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable TestNonSquareStd140 where
   sizeOf _ = 192
@@ -320,7 +320,7 @@ hprop_testnonsquare_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype TestNonSquareStd430 = TestNonSquareStd430 TestNonSquare
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable TestNonSquareStd430 where
   sizeOf _ = 160
@@ -340,7 +340,7 @@ hprop_testnonsquare_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype TestNonSquareScalar = TestNonSquareScalar TestNonSquare
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable TestNonSquareScalar where
   sizeOf _ = 112
@@ -368,7 +368,7 @@ data D2 = D2
   , d2D :: M22 Float
   , d2E :: Half
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genD2 :: Gen D2
 genD2 = D2 <$> genFloat <*> genV genFloat <*> genFloat <*> genMat genFloat <*> genFloat
@@ -378,7 +378,7 @@ instance AlignedStorable Std430 D2
 instance AlignedStorable Scalar D2
 
 newtype D2Std140 = D2Std140 D2
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable D2Std140 where
   sizeOf _ = 80
@@ -411,7 +411,7 @@ hprop_d2_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype D2Std430 = D2Std430 D2
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable D2Std430 where
   sizeOf _ = 48
@@ -444,7 +444,7 @@ hprop_d2_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype D2Scalar = D2Scalar D2
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable D2Scalar where
   sizeOf _ = 36
@@ -506,7 +506,7 @@ data KitchenSink = KitchenSink
   , ksU :: M24 Half
   , ksV :: Half
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genKitchenSink :: Gen KitchenSink
 genKitchenSink =
@@ -539,7 +539,7 @@ instance AlignedStorable Std430 KitchenSink
 instance AlignedStorable Scalar KitchenSink
 
 newtype KitchenSinkStd140 = KitchenSinkStd140 KitchenSink
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable KitchenSinkStd140 where
   sizeOf _ = 704
@@ -602,7 +602,7 @@ hprop_kitchensink_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype KitchenSinkStd430 = KitchenSinkStd430 KitchenSink
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable KitchenSinkStd430 where
   sizeOf _ = 576
@@ -666,7 +666,7 @@ hprop_kitchensink_std430_round_trip = property do
 
 -- Oracle for scalar layout
 newtype KitchenSinkScalar = KitchenSinkScalar KitchenSink
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable KitchenSinkScalar where
   sizeOf _ = 440
@@ -737,7 +737,7 @@ data LayoutBug = LayoutBug
   , fieldB :: Float
   , fieldC :: Double
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genLayoutBug :: Gen LayoutBug
 genLayoutBug = LayoutBug <$> genFloat <*> genFloat <*> genFloat
@@ -747,7 +747,7 @@ instance AlignedStorable Std430 LayoutBug
 instance AlignedStorable Scalar LayoutBug
 
 newtype LayoutBugStd140 = LayoutBugStd140 LayoutBug
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable LayoutBugStd140 where
   sizeOf _ = 16
@@ -770,7 +770,7 @@ hprop_layoutbug_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype LayoutBugStd430 = LayoutBugStd430 LayoutBug
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable LayoutBugStd430 where
   sizeOf _ = 16
@@ -793,7 +793,7 @@ hprop_layoutbug_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype LayoutBugScalar = LayoutBugScalar LayoutBug
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable LayoutBugScalar where
   sizeOf _ = 16
@@ -823,7 +823,7 @@ data PaddingTest = PaddingTest
   { f :: Float
   , v :: V4 Float
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genPaddingTest :: Gen PaddingTest
 genPaddingTest = PaddingTest <$> genFloat <*> genV genFloat
@@ -833,7 +833,7 @@ instance AlignedStorable Std430 PaddingTest
 instance AlignedStorable Scalar PaddingTest
 
 newtype PaddingTestStd140 = PaddingTestStd140 PaddingTest
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable PaddingTestStd140 where
   sizeOf _ = 32
@@ -858,7 +858,7 @@ hprop_paddingtest_std140_round_trip = property do
 -- Layout is identical to Std140 for this struct, but we define a separate
 -- oracle to maintain a 1-to-1 mapping between tests and layouts.
 newtype PaddingTestStd430 = PaddingTestStd430 PaddingTest
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable PaddingTestStd430 where
   sizeOf _ = 32
@@ -880,7 +880,7 @@ hprop_paddingtest_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype PaddingTestScalar = PaddingTestScalar PaddingTest
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable PaddingTestScalar where
   sizeOf _ = 20
@@ -909,7 +909,7 @@ data Std140Test = Std140Test
   { v3 :: V3 Float
   , f1 :: Float
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genStd140Test :: Gen Std140Test
 genStd140Test =
@@ -922,7 +922,7 @@ instance AlignedStorable Std430 Std140Test
 instance AlignedStorable Scalar Std140Test
 
 newtype Std140TestStd140 = Std140TestStd140 Std140Test
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable Std140TestStd140 where
   sizeOf _ = 16
@@ -945,7 +945,7 @@ hprop_std140test_std140_round_trip = property do
 
 -- Oracle for Std430 layout. For this type, it is identical to std140.
 newtype Std140TestStd430 = Std140TestStd430 Std140Test
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable Std140TestStd430 where
   sizeOf _ = 16
@@ -967,7 +967,7 @@ hprop_std140test_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype Std140TestScalar = Std140TestScalar Std140Test
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable Std140TestScalar where
   sizeOf _ = 16
@@ -1010,7 +1010,7 @@ data ComplexPadding = ComplexPadding
   , complexpaddingE :: M44 Float
   , complexpaddingF :: Float
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 -- >>> alignedSizeOf (Data.Proxy.Proxy @Std430) (Data.Proxy.Proxy @ComplexPadding)
 -- 176
@@ -1030,7 +1030,7 @@ instance AlignedStorable Std430 ComplexPadding
 instance AlignedStorable Scalar ComplexPadding
 
 newtype ComplexPaddingStd140 = ComplexPaddingStd140 ComplexPadding
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable ComplexPaddingStd140 where
   sizeOf _ = 176
@@ -1065,7 +1065,7 @@ hprop_complexpadding_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype ComplexPaddingStd430 = ComplexPaddingStd430 ComplexPadding
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable ComplexPaddingStd430 where
   sizeOf _ = 176
@@ -1100,7 +1100,7 @@ hprop_complexpadding_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype ComplexPaddingScalar = ComplexPaddingScalar ComplexPadding
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable ComplexPaddingScalar where
   sizeOf _ = 124
@@ -1143,7 +1143,7 @@ data Vertex = Vertex
   , normal :: V3 Float
   , uv :: V2 Float
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genVertex :: Gen Vertex
 genVertex = Vertex <$> genV genFloat <*> genV genFloat <*> genV genFloat
@@ -1153,7 +1153,7 @@ instance AlignedStorable Std430 Vertex
 instance AlignedStorable Scalar Vertex
 
 newtype VertexStd140 = VertexStd140 Vertex
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable VertexStd140 where
   sizeOf _ = 48
@@ -1176,7 +1176,7 @@ hprop_vertex_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype VertexStd430 = VertexStd430 Vertex
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable VertexStd430 where
   sizeOf _ = 48
@@ -1199,7 +1199,7 @@ hprop_vertex_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype VertexScalar = VertexScalar Vertex
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable VertexScalar where
   sizeOf _ = 32
@@ -1229,7 +1229,7 @@ data LargePrimitives = LargePrimitives
   { d :: Double
   , l :: Int64
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genLargePrimitives :: Gen LargePrimitives
 genLargePrimitives = LargePrimitives <$> genFloat <*> genInt
@@ -1239,7 +1239,7 @@ instance AlignedStorable Std430 LargePrimitives
 instance AlignedStorable Scalar LargePrimitives
 
 newtype LargePrimitivesStd140 = LargePrimitivesStd140 LargePrimitives
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable LargePrimitivesStd140 where
   sizeOf _ = 16
@@ -1261,7 +1261,7 @@ hprop_largeprimitives_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype LargePrimitivesStd430 = LargePrimitivesStd430 LargePrimitives
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable LargePrimitivesStd430 where
   sizeOf _ = 16
@@ -1283,7 +1283,7 @@ hprop_largeprimitives_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype LargePrimitivesScalar = LargePrimitivesScalar LargePrimitives
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable LargePrimitivesScalar where
   sizeOf _ = 16
@@ -1308,7 +1308,7 @@ data Uniforms = Uniforms
   { modelView :: V4 (V4 Float)
   , cameraPos :: V4 Float
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genUniforms :: Gen Uniforms
 genUniforms = Uniforms <$> genMat genFloat <*> genV genFloat
@@ -1318,7 +1318,7 @@ instance AlignedStorable Std430 Uniforms
 instance AlignedStorable Scalar Uniforms
 
 newtype UniformsStd140 = UniformsStd140 Uniforms
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable UniformsStd140 where
   sizeOf _ = 80
@@ -1336,7 +1336,7 @@ hprop_uniforms_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype UniformsStd430 = UniformsStd430 Uniforms
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable UniformsStd430 where
   sizeOf _ = 80
@@ -1354,7 +1354,7 @@ hprop_uniforms_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype UniformsScalar = UniformsScalar Uniforms
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable UniformsScalar where
   sizeOf _ = 80
@@ -1380,7 +1380,7 @@ data MixedAlign = MixedAlign
   , b :: Double
   , c :: Int32
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genMixedAlign :: Gen MixedAlign
 genMixedAlign = MixedAlign <$> genInt <*> genFloat <*> genInt
@@ -1390,7 +1390,7 @@ instance AlignedStorable Std430 MixedAlign
 instance AlignedStorable Scalar MixedAlign
 
 newtype MixedAlignStd140 = MixedAlignStd140 MixedAlign
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable MixedAlignStd140 where
   sizeOf _ = 32
@@ -1410,7 +1410,7 @@ hprop_mixedalign_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype MixedAlignStd430 = MixedAlignStd430 MixedAlign
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable MixedAlignStd430 where
   sizeOf _ = 24
@@ -1430,7 +1430,7 @@ hprop_mixedalign_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype MixedAlignScalar = MixedAlignScalar MixedAlign
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable MixedAlignScalar where
   sizeOf _ = 24
@@ -1457,7 +1457,7 @@ data FinalPaddingTest = FinalPaddingTest
   { fptA :: V4 Float
   , fptB :: Int32
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genFinalPaddingTest :: Gen FinalPaddingTest
 genFinalPaddingTest = FinalPaddingTest <$> genV genFloat <*> genInt
@@ -1467,7 +1467,7 @@ instance AlignedStorable Std430 FinalPaddingTest
 instance AlignedStorable Scalar FinalPaddingTest
 
 newtype FinalPaddingTestStd140 = FinalPaddingTestStd140 FinalPaddingTest
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable FinalPaddingTestStd140 where
   sizeOf _ = 32
@@ -1485,7 +1485,7 @@ hprop_finalpaddingtest_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype FinalPaddingTestStd430 = FinalPaddingTestStd430 FinalPaddingTest
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable FinalPaddingTestStd430 where
   sizeOf _ = 32
@@ -1503,7 +1503,7 @@ hprop_finalpaddingtest_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype FinalPaddingTestScalar = FinalPaddingTestScalar FinalPaddingTest
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable FinalPaddingTestScalar where
   sizeOf _ = 20
@@ -1528,7 +1528,7 @@ data BoolTest = BoolTest
   { isEnabled :: Bool
   , value :: Float
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genBoolTest :: Gen BoolTest
 genBoolTest = BoolTest <$> Gen.bool <*> genFloat
@@ -1538,7 +1538,7 @@ instance AlignedStorable Std430 BoolTest
 instance AlignedStorable Scalar BoolTest
 
 newtype BoolTestStd140 = BoolTestStd140 BoolTest
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable BoolTestStd140 where
   sizeOf _ = 16
@@ -1556,7 +1556,7 @@ hprop_booltest_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype BoolTestStd430 = BoolTestStd430 BoolTest
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable BoolTestStd430 where
   sizeOf _ = 8
@@ -1574,7 +1574,7 @@ hprop_booltest_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype BoolTestScalar = BoolTestScalar BoolTest
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable BoolTestScalar where
   sizeOf _ = 8
@@ -1597,7 +1597,7 @@ data Nested = Nested
   , nestedMixed :: MixedAlign
   , nestedBoolTest :: BoolTest
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genNested :: Gen Nested
 genNested =
@@ -1612,7 +1612,7 @@ instance AlignedStorable Std430 Nested
 instance AlignedStorable Scalar Nested
 
 newtype NestedStd140 = NestedStd140 Nested
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable NestedStd140 where
   sizeOf _ = 80
@@ -1639,7 +1639,7 @@ hprop_nested_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype NestedStd430 = NestedStd430 Nested
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable NestedStd430 where
   sizeOf _ = 64
@@ -1666,7 +1666,7 @@ hprop_nested_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype NestedScalar = NestedScalar Nested
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable NestedScalar where
   sizeOf _ = 56
@@ -1693,7 +1693,7 @@ hprop_nested_scalar_round_trip = property do
   ptrTripping sut oracle
 
 newtype NestedNewtype = NestedNewtype Nested
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genNestedNewtype :: Gen NestedNewtype
 genNestedNewtype = NestedNewtype <$> genNested
@@ -1703,7 +1703,7 @@ instance AlignedStorable Std430 NestedNewtype
 instance AlignedStorable Scalar NestedNewtype
 
 newtype NestedNewtypeStd140 = NestedNewtypeStd140 NestedNewtype
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable NestedNewtypeStd140 where
   sizeOf _ = sizeOf @(Strided Std140 Nested) undefined
@@ -1719,7 +1719,7 @@ hprop_nested_newtype_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype NestedNewtypeStd430 = NestedNewtypeStd430 NestedNewtype
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable NestedNewtypeStd430 where
   sizeOf _ = sizeOf @(Strided Std430 Nested) undefined
@@ -1735,7 +1735,7 @@ hprop_nested_newtype_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype NestedNewtypeScalar = NestedNewtypeScalar NestedNewtype
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable NestedNewtypeScalar where
   sizeOf _ = sizeOf @(Strided Scalar Nested) undefined
@@ -1765,7 +1765,7 @@ data DoubleTrouble = DoubleTrouble
   , dtF2 :: Float
   , dtM1 :: M44 Double
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genDoubleTrouble :: Gen DoubleTrouble
 genDoubleTrouble =
@@ -1784,7 +1784,7 @@ instance AlignedStorable Std430 DoubleTrouble
 instance AlignedStorable Scalar DoubleTrouble
 
 newtype DoubleTroubleStd140 = DoubleTroubleStd140 DoubleTrouble
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable DoubleTroubleStd140 where
   sizeOf _ = 384
@@ -1827,7 +1827,7 @@ data VectorStruct = VectorStruct
   , vsB :: SSV.Vector 2 (V3 Float)
   , vsC :: Int32
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genVectorStruct :: Gen VectorStruct
 genVectorStruct =
@@ -1841,7 +1841,7 @@ instance AlignedStorable Std430 VectorStruct
 instance AlignedStorable Scalar VectorStruct
 
 newtype VectorStructStd140 = VectorStructStd140 VectorStruct
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable VectorStructStd140 where
   sizeOf _ = 64
@@ -1866,7 +1866,7 @@ hprop_vectorstruct_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype VectorStructStd430 = VectorStructStd430 VectorStruct
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable VectorStructStd430 where
   sizeOf _ = 64
@@ -1891,7 +1891,7 @@ hprop_vectorstruct_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype VectorStructScalar = VectorStructScalar VectorStruct
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable VectorStructScalar where
   sizeOf _ = 32
@@ -1926,7 +1926,7 @@ data ComplexVectorStruct = ComplexVectorStruct
   , cvsD :: Float
   , cvsE :: Double
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 genComplexVectorStruct :: Gen ComplexVectorStruct
 genComplexVectorStruct =
@@ -1942,7 +1942,7 @@ instance AlignedStorable Std430 ComplexVectorStruct
 instance AlignedStorable Scalar ComplexVectorStruct
 
 newtype ComplexVectorStructStd140 = ComplexVectorStructStd140 ComplexVectorStruct
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable ComplexVectorStructStd140 where
   sizeOf _ = 112
@@ -1971,7 +1971,7 @@ hprop_complexvectorstruct_std140_round_trip = property do
   ptrTripping sut oracle
 
 newtype ComplexVectorStructStd430 = ComplexVectorStructStd430 ComplexVectorStruct
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable ComplexVectorStructStd430 where
   sizeOf _ = 80
@@ -2000,7 +2000,7 @@ hprop_complexvectorstruct_std430_round_trip = property do
   ptrTripping sut oracle
 
 newtype ComplexVectorStructScalar = ComplexVectorStructScalar ComplexVectorStruct
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable ComplexVectorStructScalar where
   sizeOf _ = 72
@@ -2045,7 +2045,7 @@ data Insanity = Insanity
   , inj :: Bool
   , ink :: V3 Double
   }
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance AlignedStorable Std140 Insanity
 instance AlignedStorable Std430 Insanity
@@ -2067,7 +2067,7 @@ genInsanity =
     <*> genV genFloat
 
 newtype InsanityStd140 = InsanityStd140 Insanity
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable InsanityStd140 where
   sizeOf _ = 4512
@@ -2110,7 +2110,7 @@ hprop_insanity_std140_round_trips = withShrinks 10 $ property do
   ptrTripping sut oracle
 
 newtype InsanityStd430 = InsanityStd430 Insanity
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable InsanityStd430 where
   sizeOf _ = 3584
@@ -2153,7 +2153,7 @@ hprop_insanity_std430_round_trips = withShrinks 10 $ property do
   ptrTripping sut oracle
 
 newtype InsanityScalar = InsanityScalar Insanity
-  deriving (Generic, Typeable, Show, Eq)
+  deriving (Generic, Show, Eq)
 
 instance Storable InsanityScalar where
   sizeOf _ = 3096
