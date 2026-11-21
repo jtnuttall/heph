@@ -32,7 +32,7 @@ When an element is removed, the last element from the dense arrays is swapped in
 
 ## Performance Characteristics
 
-The full benchmark suite can be found in the `bench` directory and run with `cabal bench` or `stack bench`.
+The full benchmark suite can be found in the `bench` directory and run with `cabal bench`.
 
 The following results compare `heph-sparse-set` against `Data.IntMap.Strict` for **100,000** elements, using the default GHC garbage collector on a quiet system. The results are highly stable (R² > 0.99) and demonstrate the significant performance advantage of `heph-sparse-set` for its target workloads.
 
