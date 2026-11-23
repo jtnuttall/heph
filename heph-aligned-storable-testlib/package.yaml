@@ -14,13 +14,9 @@ extra-doc-files:
   - README.md
   - CHANGELOG.md
 
-# Metadata used when publishing your package
 synopsis: Conformance tests for heph-aligned-storable and its instance packages
 category: Graphics, Testing
 
-# To avoid duplicated efforts in documentation and dealing with the
-# complications of embedding Haddock markup inside cabal files, it is
-# common to point users to the README.md file.
 description: Please see the README on GitHub at
   <https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-testlib#readme>
 homepage: https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-testlib#readme

@@ -81,7 +81,7 @@ genComplexVectorStruct =
     <*> genFloat
 
 -- GLSL: struct ComplexVectorStruct (glsl/Conformance.glsl)
-instance (SmallIntVecs lib, DoubleVecs lib) => Storable (Oracle 'Std140 (ComplexVectorStruct lib)) where
+instance (SmallIntVecs lib, DoubleVecs lib) => Storable (Oracle Std140 (ComplexVectorStruct lib)) where
   sizeOf _ = 112
   alignment _ = 16
   peek ptr =
@@ -101,7 +101,7 @@ instance (SmallIntVecs lib, DoubleVecs lib) => Storable (Oracle 'Std140 (Complex
     pokeByteOff ptr 104 cvsE
 
 -- GLSL: struct ComplexVectorStruct (glsl/Conformance.glsl)
-instance (SmallIntVecs lib, DoubleVecs lib) => Storable (Oracle 'Std430 (ComplexVectorStruct lib)) where
+instance (SmallIntVecs lib, DoubleVecs lib) => Storable (Oracle Std430 (ComplexVectorStruct lib)) where
   sizeOf _ = 80
   alignment _ = 16
   peek ptr =
@@ -121,7 +121,7 @@ instance (SmallIntVecs lib, DoubleVecs lib) => Storable (Oracle 'Std430 (Complex
     pokeByteOff ptr 72 cvsE
 
 -- GLSL: struct ComplexVectorStruct (glsl/Conformance.glsl)
-instance (SmallIntVecs lib, DoubleVecs lib) => Storable (Oracle 'Scalar (ComplexVectorStruct lib)) where
+instance (SmallIntVecs lib, DoubleVecs lib) => Storable (Oracle Scalar (ComplexVectorStruct lib)) where
   sizeOf _ = 72
   alignment _ = 8
   peek ptr =
@@ -145,7 +145,7 @@ complexVectorStructSuite _ =
   sutTests
     "ComplexVectorStruct"
     (genComplexVectorStruct @lib)
-    [at @'Std140 Nothing, at @'Std430 Nothing, at @'Scalar Nothing]
+    [at @Std140 Nothing, at @Std430 Nothing, at @Scalar Nothing]
 
 --------------------------------------------------------------------------------
 -- Insanity
@@ -192,7 +192,7 @@ genInsanity =
 -- GLSL: struct Insanity (glsl/Conformance.glsl)
 instance
   (FloatVecs lib, SmallIntVecs lib, DoubleVecs lib, BoolVecs lib)
-  => Storable (Oracle 'Std140 (Insanity lib))
+  => Storable (Oracle Std140 (Insanity lib))
   where
   sizeOf _ = 4512
   alignment _ = 32
@@ -201,35 +201,35 @@ instance
     Oracle
       <$> ( Insanity
               <$> peekByteOff ptr 0
-              <*> peekSizedVector (Proxy @(Oracle 'Std140 (ComplexVectorStruct lib))) ptr 16
+              <*> peekSizedVector (Proxy @(Oracle Std140 (ComplexVectorStruct lib))) ptr 16
               <*> peekByteOff ptr 800
               <*> peekByteOff ptr 808
               <*> peekByteOff ptr 816
               <*> peekVecAt Std140 ptr 832
-              <*> peekSizedVector (Proxy @(Oracle 'Std140 (Nested lib))) ptr 848
+              <*> peekSizedVector (Proxy @(Oracle Std140 (Nested lib))) ptr 848
               <*> peekVecAt Std140 ptr 1248
-              <*> peekSized3DVector (Proxy @(Oracle 'Std140 (Nested lib))) ptr 1264
+              <*> peekSized3DVector (Proxy @(Oracle Std140 (Nested lib))) ptr 1264
               <*> peekByteOff ptr 4464
               <*> peekVecAt Std140 ptr 4480
           )
 
   poke ptr (Oracle Insanity{..}) = do
     pokeByteOff ptr 0 ina
-    pokeSizedVector ptr 16 (SV.map (Oracle @'Std140) inb)
+    pokeSizedVector ptr 16 (SV.map (Oracle @Std140) inb)
     pokeByteOff ptr 800 inc
     pokeByteOff ptr 808 ind
     pokeByteOff ptr 816 ine
     pokeVecAt Std140 ptr 832 inf
-    pokeSizedVector ptr 848 (SV.map (Oracle @'Std140) ing)
+    pokeSizedVector ptr 848 (SV.map (Oracle @Std140) ing)
     pokeVecAt Std140 ptr 1248 inh
-    pokeSized3DVector (Proxy @(Oracle 'Std140 (Nested lib))) ptr 1264 ini
+    pokeSized3DVector (Proxy @(Oracle Std140 (Nested lib))) ptr 1264 ini
     pokeByteOff ptr 4464 inj
     pokeVecAt Std140 ptr 4480 ink
 
 -- GLSL: struct Insanity (glsl/Conformance.glsl)
 instance
   (FloatVecs lib, SmallIntVecs lib, DoubleVecs lib, BoolVecs lib)
-  => Storable (Oracle 'Std430 (Insanity lib))
+  => Storable (Oracle Std430 (Insanity lib))
   where
   sizeOf _ = 3584
   alignment _ = 32
@@ -238,35 +238,35 @@ instance
     Oracle
       <$> ( Insanity
               <$> peekByteOff ptr 0
-              <*> peekSizedVector (Proxy @(Oracle 'Std430 (ComplexVectorStruct lib))) ptr 16
+              <*> peekSizedVector (Proxy @(Oracle Std430 (ComplexVectorStruct lib))) ptr 16
               <*> peekByteOff ptr 576
               <*> peekByteOff ptr 584
               <*> peekByteOff ptr 592
               <*> peekVecAt Std430 ptr 608
-              <*> peekSizedVector (Proxy @(Oracle 'Std430 (Nested lib))) ptr 624
+              <*> peekSizedVector (Proxy @(Oracle Std430 (Nested lib))) ptr 624
               <*> peekVecAt Std430 ptr 944
-              <*> peekSized3DVector (Proxy @(Oracle 'Std430 (Nested lib))) ptr 960
+              <*> peekSized3DVector (Proxy @(Oracle Std430 (Nested lib))) ptr 960
               <*> peekByteOff ptr 3520
               <*> peekVecAt Std430 ptr 3552
           )
 
   poke ptr (Oracle Insanity{..}) = do
     pokeByteOff ptr 0 ina
-    pokeSizedVector ptr 16 (SV.map (Oracle @'Std430) inb)
+    pokeSizedVector ptr 16 (SV.map (Oracle @Std430) inb)
     pokeByteOff ptr 576 inc
     pokeByteOff ptr 584 ind
     pokeByteOff ptr 592 ine
     pokeVecAt Std430 ptr 608 inf
-    pokeSizedVector ptr 624 (SV.map (Oracle @'Std430) ing)
+    pokeSizedVector ptr 624 (SV.map (Oracle @Std430) ing)
     pokeVecAt Std430 ptr 944 inh
-    pokeSized3DVector (Proxy @(Oracle 'Std430 (Nested lib))) ptr 960 ini
+    pokeSized3DVector (Proxy @(Oracle Std430 (Nested lib))) ptr 960 ini
     pokeByteOff ptr 3520 inj
     pokeVecAt Std430 ptr 3552 ink
 
 -- GLSL: struct Insanity (glsl/Conformance.glsl)
 instance
   (FloatVecs lib, SmallIntVecs lib, DoubleVecs lib, BoolVecs lib)
-  => Storable (Oracle 'Scalar (Insanity lib))
+  => Storable (Oracle Scalar (Insanity lib))
   where
   sizeOf _ = 3096
   alignment _ = 8
@@ -275,28 +275,28 @@ instance
     Oracle
       <$> ( Insanity
               <$> peekByteOff ptr 0
-              <*> peekSizedVector (Proxy @(Oracle 'Scalar (ComplexVectorStruct lib))) ptr 8
+              <*> peekSizedVector (Proxy @(Oracle Scalar (ComplexVectorStruct lib))) ptr 8
               <*> peekByteOff ptr 512
               <*> peekByteOff ptr 520
               <*> peekByteOff ptr 528
               <*> peekVecAt Scalar ptr 532
-              <*> peekSizedVector (Proxy @(Oracle 'Scalar (Nested lib))) ptr 544
+              <*> peekSizedVector (Proxy @(Oracle Scalar (Nested lib))) ptr 544
               <*> peekVecAt Scalar ptr 820
-              <*> peekSized3DVector (Proxy @(Oracle 'Scalar (Nested lib))) ptr 832
+              <*> peekSized3DVector (Proxy @(Oracle Scalar (Nested lib))) ptr 832
               <*> peekByteOff ptr 3068
               <*> peekVecAt Scalar ptr 3072
           )
 
   poke ptr (Oracle Insanity{..}) = do
     pokeByteOff ptr 0 ina
-    pokeSizedVector ptr 8 (SV.map (Oracle @'Scalar) inb)
+    pokeSizedVector ptr 8 (SV.map (Oracle @Scalar) inb)
     pokeByteOff ptr 512 inc
     pokeByteOff ptr 520 ind
     pokeByteOff ptr 528 ine
     pokeVecAt Scalar ptr 532 inf
-    pokeSizedVector ptr 544 (SV.map (Oracle @'Scalar) ing)
+    pokeSizedVector ptr 544 (SV.map (Oracle @Scalar) ing)
     pokeVecAt Scalar ptr 820 inh
-    pokeSized3DVector (Proxy @(Oracle 'Scalar (Nested lib))) ptr 832 ini
+    pokeSized3DVector (Proxy @(Oracle Scalar (Nested lib))) ptr 832 ini
     pokeByteOff ptr 3068 inj
     pokeVecAt Scalar ptr 3072 ink
 
@@ -308,7 +308,7 @@ insanitySuite _ =
     defaultTripOpts
     "Insanity"
     (genInsanity @lib)
-    [at @'Std140 Nothing, at @'Std430 Nothing, at @'Scalar Nothing]
+    [at @Std140 Nothing, at @Std430 Nothing, at @Scalar Nothing]
 
 --------------------------------------------------------------------------------
 -- IntVecStruct
@@ -335,7 +335,7 @@ genIntVecStruct :: (Int32Vecs lib) => Gen (IntVecStruct lib)
 genIntVecStruct = IntVecStruct <$> genFloat <*> SSV.replicateM genVec <*> genVec <*> genVec <*> genInt
 
 -- GLSL: struct IntVecStruct (glsl/Conformance.glsl)
-instance (Int32Vecs lib) => Storable (Oracle 'Std140 (IntVecStruct lib)) where
+instance (Int32Vecs lib) => Storable (Oracle Std140 (IntVecStruct lib)) where
   sizeOf _ = 80
   alignment _ = 16
   peek ptr =
@@ -355,7 +355,7 @@ instance (Int32Vecs lib) => Storable (Oracle 'Std140 (IntVecStruct lib)) where
     pokeByteOff ptr 76 ivE
 
 -- GLSL: struct IntVecStruct (glsl/Conformance.glsl)
-instance (Int32Vecs lib) => Storable (Oracle 'Std430 (IntVecStruct lib)) where
+instance (Int32Vecs lib) => Storable (Oracle Std430 (IntVecStruct lib)) where
   sizeOf _ = 80
   alignment _ = 16
   peek ptr =
@@ -375,7 +375,7 @@ instance (Int32Vecs lib) => Storable (Oracle 'Std430 (IntVecStruct lib)) where
     pokeByteOff ptr 76 ivE
 
 -- GLSL: struct IntVecStruct (glsl/Conformance.glsl)
-instance (Int32Vecs lib) => Storable (Oracle 'Scalar (IntVecStruct lib)) where
+instance (Int32Vecs lib) => Storable (Oracle Scalar (IntVecStruct lib)) where
   sizeOf _ = 52
   alignment _ = 4
   peek ptr =
@@ -399,4 +399,4 @@ intVecStructSuite _ =
   sutTests
     "IntVecStruct"
     (genIntVecStruct @lib)
-    [at @'Std140 (Just 80), at @'Std430 (Just 80), at @'Scalar (Just 52)]
+    [at @Std140 (Just 80), at @Std430 (Just 80), at @Scalar (Just 52)]

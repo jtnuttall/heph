@@ -84,7 +84,7 @@ genTestNonSquare :: (HalfMats lib, DoubleMats lib) => Gen (TestNonSquare lib)
 genTestNonSquare = TestNonSquare <$> genMat <*> genMat
 
 -- GLSL: struct TestNonSquare (glsl/Conformance.glsl)
-instance (HalfMats lib, DoubleMats lib) => Storable (Oracle 'Std140 (TestNonSquare lib)) where
+instance (HalfMats lib, DoubleMats lib) => Storable (Oracle Std140 (TestNonSquare lib)) where
   sizeOf _ = 192
   alignment _ = 32
   peek ptr =
@@ -95,7 +95,7 @@ instance (HalfMats lib, DoubleMats lib) => Storable (Oracle 'Std140 (TestNonSqua
     pokeMatAt Std140 ptr 64 matB
 
 -- GLSL: struct TestNonSquare (glsl/Conformance.glsl)
-instance (HalfMats lib, DoubleMats lib) => Storable (Oracle 'Std430 (TestNonSquare lib)) where
+instance (HalfMats lib, DoubleMats lib) => Storable (Oracle Std430 (TestNonSquare lib)) where
   sizeOf _ = 160
   alignment _ = 32
   peek ptr =
@@ -106,7 +106,7 @@ instance (HalfMats lib, DoubleMats lib) => Storable (Oracle 'Std430 (TestNonSqua
     pokeMatAt Std430 ptr 32 matB
 
 -- GLSL: struct TestNonSquare (glsl/Conformance.glsl)
-instance (HalfMats lib, DoubleMats lib) => Storable (Oracle 'Scalar (TestNonSquare lib)) where
+instance (HalfMats lib, DoubleMats lib) => Storable (Oracle Scalar (TestNonSquare lib)) where
   sizeOf _ = 112
   alignment _ = 8
   peek ptr = Oracle <$> (TestNonSquare <$> peekMatAt Scalar ptr 0 <*> peekMatAt Scalar ptr 16)
@@ -119,7 +119,7 @@ testNonSquareSuite _ =
   sutTests
     "TestNonSquare"
     (genTestNonSquare @lib)
-    [at @'Std140 Nothing, at @'Std430 Nothing, at @'Scalar Nothing]
+    [at @Std140 Nothing, at @Std430 Nothing, at @Scalar Nothing]
 
 --------------------------------------------------------------------------------
 -- D2
@@ -144,7 +144,7 @@ genD2 :: (FloatVecs lib, FloatMats lib) => Gen (D2 lib)
 genD2 = D2 <$> genFloat <*> genVec <*> genFloat <*> genMat <*> genFloat
 
 -- GLSL: struct D2 (glsl/Conformance.glsl)
-instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Std140 (D2 lib)) where
+instance (FloatVecs lib, FloatMats lib) => Storable (Oracle Std140 (D2 lib)) where
   sizeOf _ = 80
   alignment _ = 16
   peek ptr =
@@ -164,7 +164,7 @@ instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Std140 (D2 lib)) wh
     pokeByteOff ptr 64 d2E
 
 -- GLSL: struct D2 (glsl/Conformance.glsl)
-instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Std430 (D2 lib)) where
+instance (FloatVecs lib, FloatMats lib) => Storable (Oracle Std430 (D2 lib)) where
   sizeOf _ = 48
   alignment _ = 8
   peek ptr =
@@ -184,7 +184,7 @@ instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Std430 (D2 lib)) wh
     pokeByteOff ptr 40 d2E
 
 -- GLSL: struct D2 (glsl/Conformance.glsl)
-instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Scalar (D2 lib)) where
+instance (FloatVecs lib, FloatMats lib) => Storable (Oracle Scalar (D2 lib)) where
   sizeOf _ = 36
   alignment _ = 4
   peek ptr =
@@ -204,7 +204,7 @@ instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Scalar (D2 lib)) wh
     pokeByteOff ptr 32 d2E
 
 d2Suite :: forall lib. (FloatVecs lib, FloatMats lib) => Proxy lib -> TestTree
-d2Suite _ = sutTests "D2" (genD2 @lib) [at @'Std140 (Just 66), at @'Std430 (Just 42), at @'Scalar (Just 34)]
+d2Suite _ = sutTests "D2" (genD2 @lib) [at @Std140 (Just 66), at @Std430 (Just 42), at @Scalar (Just 34)]
 
 --------------------------------------------------------------------------------
 -- Kitchen sink
@@ -278,7 +278,7 @@ genKitchenSink =
 -- GLSL: struct KitchenSink (glsl/Conformance.glsl)
 instance
   (DoubleVecs lib, FloatMats lib, HalfMats lib, DoubleMats lib)
-  => Storable (Oracle 'Std140 (KitchenSink lib))
+  => Storable (Oracle Std140 (KitchenSink lib))
   where
   sizeOf _ = 704
   alignment _ = 32
@@ -335,7 +335,7 @@ instance
 -- GLSL: struct KitchenSink (glsl/Conformance.glsl)
 instance
   (DoubleVecs lib, FloatMats lib, HalfMats lib, DoubleMats lib)
-  => Storable (Oracle 'Std430 (KitchenSink lib))
+  => Storable (Oracle Std430 (KitchenSink lib))
   where
   sizeOf _ = 576
   alignment _ = 32
@@ -392,7 +392,7 @@ instance
 -- GLSL: struct KitchenSink (glsl/Conformance.glsl)
 instance
   (DoubleVecs lib, FloatMats lib, HalfMats lib, DoubleMats lib)
-  => Storable (Oracle 'Scalar (KitchenSink lib))
+  => Storable (Oracle Scalar (KitchenSink lib))
   where
   sizeOf _ = 440
   alignment _ = 8 -- Based on alignment of dvec3
@@ -452,7 +452,7 @@ kitchenSinkSuite _ =
   sutTests
     "KitchenSink"
     (genKitchenSink @lib)
-    [at @'Std140 Nothing, at @'Std430 Nothing, at @'Scalar Nothing]
+    [at @Std140 Nothing, at @Std430 Nothing, at @Scalar Nothing]
 
 --------------------------------------------------------------------------------
 -- ComplexPadding
@@ -497,7 +497,7 @@ genComplexPadding =
     <*> genFloat
 
 -- GLSL: struct ComplexPadding (glsl/Conformance.glsl)
-instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Std140 (ComplexPadding lib)) where
+instance (FloatVecs lib, FloatMats lib) => Storable (Oracle Std140 (ComplexPadding lib)) where
   sizeOf _ = 176
   alignment _ = 16
   peek ptr =
@@ -519,7 +519,7 @@ instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Std140 (ComplexPadd
     pokeByteOff ptr 160 complexpaddingF
 
 -- GLSL: struct ComplexPadding (glsl/Conformance.glsl)
-instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Std430 (ComplexPadding lib)) where
+instance (FloatVecs lib, FloatMats lib) => Storable (Oracle Std430 (ComplexPadding lib)) where
   sizeOf _ = 176
   alignment _ = 16
   peek ptr =
@@ -541,7 +541,7 @@ instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Std430 (ComplexPadd
     pokeByteOff ptr 160 complexpaddingF
 
 -- GLSL: struct ComplexPadding (glsl/Conformance.glsl)
-instance (FloatVecs lib, FloatMats lib) => Storable (Oracle 'Scalar (ComplexPadding lib)) where
+instance (FloatVecs lib, FloatMats lib) => Storable (Oracle Scalar (ComplexPadding lib)) where
   sizeOf _ = 124
   alignment _ = 4
   peek ptr =
@@ -567,7 +567,7 @@ complexPaddingSuite _ =
   sutTests
     "ComplexPadding"
     (genComplexPadding @lib)
-    [at @'Std140 (Just 164), at @'Std430 (Just 164), at @'Scalar (Just 124)]
+    [at @Std140 (Just 164), at @Std430 (Just 164), at @Scalar (Just 124)]
 
 --------------------------------------------------------------------------------
 -- Uniforms
@@ -589,7 +589,7 @@ genUniforms :: (FloatVecs lib, FloatMat4 lib) => Gen (Uniforms lib)
 genUniforms = Uniforms <$> genMat <*> genVec
 
 -- GLSL: struct Uniforms (glsl/Conformance.glsl)
-instance (FloatVecs lib, FloatMat4 lib) => Storable (Oracle 'Std140 (Uniforms lib)) where
+instance (FloatVecs lib, FloatMat4 lib) => Storable (Oracle Std140 (Uniforms lib)) where
   sizeOf _ = 80
   alignment _ = 16
   peek ptr = Oracle <$> (Uniforms <$> peekMatAt Std140 ptr 0 <*> peekVecAt Std140 ptr 64)
@@ -598,7 +598,7 @@ instance (FloatVecs lib, FloatMat4 lib) => Storable (Oracle 'Std140 (Uniforms li
     pokeVecAt Std140 ptr 64 cameraPos
 
 -- GLSL: struct Uniforms (glsl/Conformance.glsl)
-instance (FloatVecs lib, FloatMat4 lib) => Storable (Oracle 'Std430 (Uniforms lib)) where
+instance (FloatVecs lib, FloatMat4 lib) => Storable (Oracle Std430 (Uniforms lib)) where
   sizeOf _ = 80
   alignment _ = 16
   peek ptr = Oracle <$> (Uniforms <$> peekMatAt Std430 ptr 0 <*> peekVecAt Std430 ptr 64)
@@ -607,7 +607,7 @@ instance (FloatVecs lib, FloatMat4 lib) => Storable (Oracle 'Std430 (Uniforms li
     pokeVecAt Std430 ptr 64 cameraPos
 
 -- GLSL: struct Uniforms (glsl/Conformance.glsl)
-instance (FloatVecs lib, FloatMat4 lib) => Storable (Oracle 'Scalar (Uniforms lib)) where
+instance (FloatVecs lib, FloatMat4 lib) => Storable (Oracle Scalar (Uniforms lib)) where
   sizeOf _ = 80
   alignment _ = 4
   peek ptr = Oracle <$> (Uniforms <$> peekMatAt Scalar ptr 0 <*> peekVecAt Scalar ptr 64)
@@ -620,7 +620,7 @@ uniformsSuite _ =
   sutTests
     "Uniforms"
     (genUniforms @lib)
-    [at @'Std140 Nothing, at @'Std430 Nothing, at @'Scalar Nothing]
+    [at @Std140 Nothing, at @Std430 Nothing, at @Scalar Nothing]
 
 --------------------------------------------------------------------------------
 -- DoubleTrouble
@@ -659,7 +659,7 @@ genDoubleTrouble =
     <*> genMat
 
 -- GLSL: struct DoubleTrouble (glsl/Conformance.glsl)
-instance (DoubleVecs lib, DoubleMats lib) => Storable (Oracle 'Std140 (DoubleTrouble lib)) where
+instance (DoubleVecs lib, DoubleMats lib) => Storable (Oracle Std140 (DoubleTrouble lib)) where
   sizeOf _ = 384
   alignment _ = 32
   peek ptr =
@@ -685,7 +685,7 @@ instance (DoubleVecs lib, DoubleMats lib) => Storable (Oracle 'Std140 (DoubleTro
     pokeMatAt Std140 ptr 256 dtM1
 
 doubleTroubleSuite :: forall lib. (DoubleVecs lib, DoubleMats lib) => Proxy lib -> TestTree
-doubleTroubleSuite _ = sutTests "DoubleTrouble" (genDoubleTrouble @lib) [at @'Std140 Nothing]
+doubleTroubleSuite _ = sutTests "DoubleTrouble" (genDoubleTrouble @lib) [at @Std140 Nothing]
 
 --------------------------------------------------------------------------------
 -- DUniforms
@@ -707,7 +707,7 @@ genDUniforms :: (DoubleVecs lib, DoubleMat4 lib) => Gen (DUniforms lib)
 genDUniforms = DUniforms <$> genMat <*> genVec
 
 -- GLSL: struct DUniforms (glsl/Conformance.glsl)
-instance (DoubleVecs lib, DoubleMat4 lib) => Storable (Oracle 'Std140 (DUniforms lib)) where
+instance (DoubleVecs lib, DoubleMat4 lib) => Storable (Oracle Std140 (DUniforms lib)) where
   sizeOf _ = 160
   alignment _ = 32
   peek ptr = Oracle <$> (DUniforms <$> peekMatAt Std140 ptr 0 <*> peekVecAt Std140 ptr 128)
@@ -716,7 +716,7 @@ instance (DoubleVecs lib, DoubleMat4 lib) => Storable (Oracle 'Std140 (DUniforms
     pokeVecAt Std140 ptr 128 duV
 
 -- GLSL: struct DUniforms (glsl/Conformance.glsl)
-instance (DoubleVecs lib, DoubleMat4 lib) => Storable (Oracle 'Std430 (DUniforms lib)) where
+instance (DoubleVecs lib, DoubleMat4 lib) => Storable (Oracle Std430 (DUniforms lib)) where
   sizeOf _ = 160
   alignment _ = 32
   peek ptr = Oracle <$> (DUniforms <$> peekMatAt Std430 ptr 0 <*> peekVecAt Std430 ptr 128)
@@ -725,7 +725,7 @@ instance (DoubleVecs lib, DoubleMat4 lib) => Storable (Oracle 'Std430 (DUniforms
     pokeVecAt Std430 ptr 128 duV
 
 -- GLSL: struct DUniforms (glsl/Conformance.glsl)
-instance (DoubleVecs lib, DoubleMat4 lib) => Storable (Oracle 'Scalar (DUniforms lib)) where
+instance (DoubleVecs lib, DoubleMat4 lib) => Storable (Oracle Scalar (DUniforms lib)) where
   sizeOf _ = 160
   alignment _ = 8
   peek ptr = Oracle <$> (DUniforms <$> peekMatAt Scalar ptr 0 <*> peekVecAt Scalar ptr 128)
@@ -738,4 +738,4 @@ dUniformsSuite _ =
   sutTests
     "DUniforms"
     (genDUniforms @lib)
-    [at @'Std140 (Just 160), at @'Std430 (Just 160), at @'Scalar (Just 160)]
+    [at @Std140 (Just 160), at @Std430 (Just 160), at @Scalar (Just 160)]

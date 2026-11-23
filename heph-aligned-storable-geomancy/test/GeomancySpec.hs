@@ -7,10 +7,8 @@
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 
--- | Structs under test for the geomancy types that no shared suite covers:
--- 'Transform', 'DTransform', 'Quaternion', 'DQuaternion', 'Point', the
--- @Packed@ 3-vectors, the 64-bit integer vectors, and a @mat4@ at a 4-byte
--- offset under @scalar@. Their GLSL twins are in @glsl/Geomancy.glsl@.
+-- |
+-- Structs under test for geomancy that don't exist in the shared conformance suite.
 module GeomancySpec where
 
 import Data.Int
@@ -20,9 +18,6 @@ import GHC.Generics (Generic)
 import Hedgehog (Gen)
 import Test.Tasty
 
-import Foreign.GPU.Storable.Aligned
-import Foreign.GPU.Storable.Aligned.Geomancy ()
-import Foreign.GPU.Storable.Aligned.Test
 import qualified Geomancy.DQuaternion as DQuaternion
 import qualified Geomancy.DTransform as DTransform
 import qualified Geomancy.DVec3 as DVec3
@@ -35,6 +30,10 @@ import qualified Geomancy.Transform as Transform
 import qualified Geomancy.U64Vec4 as U64Vec4
 import qualified Geomancy.UVec3 as UVec3
 import qualified Geomancy.Vec3 as Vec3
+
+import Foreign.GPU.Storable.Aligned
+import Foreign.GPU.Storable.Aligned.Geomancy ()
+import Foreign.GPU.Storable.Aligned.Test
 import GeomancyConformanceSpec ()
 
 instance GlslVec Quaternion.Quaternion where
@@ -72,7 +71,7 @@ instance AlignedStorable Std430 TransformTail
 instance AlignedStorable Scalar TransformTail
 
 -- GLSL: struct TransformTail (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Std140 TransformTail) where
+instance Storable (Oracle Std140 TransformTail) where
   sizeOf _ = 80
   alignment _ = 16
   peek ptr =
@@ -83,7 +82,7 @@ instance Storable (Oracle 'Std140 TransformTail) where
     pokeByteOff ptr 64 ttF
 
 -- GLSL: struct TransformTail (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Std430 TransformTail) where
+instance Storable (Oracle Std430 TransformTail) where
   sizeOf _ = 80
   alignment _ = 16
   peek ptr =
@@ -94,7 +93,7 @@ instance Storable (Oracle 'Std430 TransformTail) where
     pokeByteOff ptr 64 ttF
 
 -- GLSL: struct TransformTail (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Scalar TransformTail) where
+instance Storable (Oracle Scalar TransformTail) where
   sizeOf _ = 68
   alignment _ = 4
   peek ptr =
@@ -109,7 +108,7 @@ transformTailSuite =
   sutTests
     "TransformTail"
     genTransformTail
-    [at @'Std140 (Just 68), at @'Std430 (Just 68), at @'Scalar (Just 68)]
+    [at @Std140 (Just 68), at @Std430 (Just 68), at @Scalar (Just 68)]
 
 --------------------------------------------------------------------------------
 -- OffsetMat4
@@ -129,7 +128,7 @@ instance AlignedStorable Std430 OffsetMat4
 instance AlignedStorable Scalar OffsetMat4
 
 -- GLSL: struct OffsetMat4 (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Std140 OffsetMat4) where
+instance Storable (Oracle Std140 OffsetMat4) where
   sizeOf _ = 80
   alignment _ = 16
   peek ptr = Oracle <$> (OffsetMat4 <$> peekByteOff ptr 0 <*> peekMatAt Std140 ptr 16)
@@ -138,7 +137,7 @@ instance Storable (Oracle 'Std140 OffsetMat4) where
     pokeMatAt Std140 ptr 16 omM
 
 -- GLSL: struct OffsetMat4 (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Std430 OffsetMat4) where
+instance Storable (Oracle Std430 OffsetMat4) where
   sizeOf _ = 80
   alignment _ = 16
   peek ptr = Oracle <$> (OffsetMat4 <$> peekByteOff ptr 0 <*> peekMatAt Std430 ptr 16)
@@ -147,7 +146,7 @@ instance Storable (Oracle 'Std430 OffsetMat4) where
     pokeMatAt Std430 ptr 16 omM
 
 -- GLSL: struct OffsetMat4 (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Scalar OffsetMat4) where
+instance Storable (Oracle Scalar OffsetMat4) where
   sizeOf _ = 68
   alignment _ = 4
   peek ptr = Oracle <$> (OffsetMat4 <$> peekByteOff ptr 0 <*> peekMatAt Scalar ptr 4)
@@ -160,7 +159,7 @@ offsetMat4Suite =
   sutTests
     "OffsetMat4"
     genOffsetMat4
-    [at @'Std140 (Just 80), at @'Std430 (Just 80), at @'Scalar (Just 68)]
+    [at @Std140 (Just 80), at @Std430 (Just 80), at @Scalar (Just 68)]
 
 --------------------------------------------------------------------------------
 -- QuatStruct
@@ -180,7 +179,7 @@ instance AlignedStorable Std430 QuatStruct
 instance AlignedStorable Scalar QuatStruct
 
 -- GLSL: struct QuatStruct (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Std140 QuatStruct) where
+instance Storable (Oracle Std140 QuatStruct) where
   sizeOf _ = 32
   alignment _ = 16
   peek ptr = Oracle <$> (QuatStruct <$> peekByteOff ptr 0 <*> peekVecAt Std140 ptr 16)
@@ -189,7 +188,7 @@ instance Storable (Oracle 'Std140 QuatStruct) where
     pokeVecAt Std140 ptr 16 qsQ
 
 -- GLSL: struct QuatStruct (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Std430 QuatStruct) where
+instance Storable (Oracle Std430 QuatStruct) where
   sizeOf _ = 32
   alignment _ = 16
   peek ptr = Oracle <$> (QuatStruct <$> peekByteOff ptr 0 <*> peekVecAt Std430 ptr 16)
@@ -198,7 +197,7 @@ instance Storable (Oracle 'Std430 QuatStruct) where
     pokeVecAt Std430 ptr 16 qsQ
 
 -- GLSL: struct QuatStruct (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Scalar QuatStruct) where
+instance Storable (Oracle Scalar QuatStruct) where
   sizeOf _ = 20
   alignment _ = 4
   peek ptr = Oracle <$> (QuatStruct <$> peekByteOff ptr 0 <*> peekVecAt Scalar ptr 4)
@@ -211,7 +210,7 @@ quatStructSuite =
   sutTests
     "QuatStruct"
     genQuatStruct
-    [at @'Std140 (Just 32), at @'Std430 (Just 32), at @'Scalar (Just 20)]
+    [at @Std140 (Just 32), at @Std430 (Just 32), at @Scalar (Just 20)]
 
 --------------------------------------------------------------------------------
 -- Vec3Mix
@@ -233,7 +232,7 @@ instance AlignedStorable Std430 Vec3Mix
 instance AlignedStorable Scalar Vec3Mix
 
 -- GLSL: struct Vec3Mix (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Std140 Vec3Mix) where
+instance Storable (Oracle Std140 Vec3Mix) where
   sizeOf _ = 48
   alignment _ = 16
   peek ptr =
@@ -251,7 +250,7 @@ instance Storable (Oracle 'Std140 Vec3Mix) where
     pokeVecAt Std140 ptr 32 (Vec3.unPacked vmQ)
 
 -- GLSL: struct Vec3Mix (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Std430 Vec3Mix) where
+instance Storable (Oracle Std430 Vec3Mix) where
   sizeOf _ = 48
   alignment _ = 16
   peek ptr =
@@ -269,7 +268,7 @@ instance Storable (Oracle 'Std430 Vec3Mix) where
     pokeVecAt Std430 ptr 32 (Vec3.unPacked vmQ)
 
 -- GLSL: struct Vec3Mix (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Scalar Vec3Mix) where
+instance Storable (Oracle Scalar Vec3Mix) where
   sizeOf _ = 32
   alignment _ = 4
   peek ptr =
@@ -291,7 +290,7 @@ vec3MixSuite =
   sutTests
     "Vec3Mix"
     genVec3Mix
-    [at @'Std140 (Just 44), at @'Std430 (Just 44), at @'Scalar (Just 32)]
+    [at @Std140 (Just 44), at @Std430 (Just 44), at @Scalar (Just 32)]
 
 --------------------------------------------------------------------------------
 -- DoubleMix
@@ -322,7 +321,7 @@ instance AlignedStorable Std430 DoubleMix
 instance AlignedStorable Scalar DoubleMix
 
 -- GLSL: struct DoubleMix (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Std140 DoubleMix) where
+instance Storable (Oracle Std140 DoubleMix) where
   sizeOf _ = 256
   alignment _ = 32
   peek ptr =
@@ -344,7 +343,7 @@ instance Storable (Oracle 'Std140 DoubleMix) where
     pokeVecAt Std140 ptr 224 (DVec3.unPacked dmR)
 
 -- GLSL: struct DoubleMix (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Std430 DoubleMix) where
+instance Storable (Oracle Std430 DoubleMix) where
   sizeOf _ = 256
   alignment _ = 32
   peek ptr =
@@ -366,7 +365,7 @@ instance Storable (Oracle 'Std430 DoubleMix) where
     pokeVecAt Std430 ptr 224 (DVec3.unPacked dmR)
 
 -- GLSL: struct DoubleMix (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Scalar DoubleMix) where
+instance Storable (Oracle Scalar DoubleMix) where
   sizeOf _ = 224
   alignment _ = 8
   peek ptr =
@@ -392,7 +391,7 @@ doubleMixSuite =
   sutTests
     "DoubleMix"
     genDoubleMix
-    [at @'Std140 (Just 248), at @'Std430 (Just 248), at @'Scalar (Just 224)]
+    [at @Std140 (Just 248), at @Std430 (Just 248), at @Scalar (Just 224)]
 
 --------------------------------------------------------------------------------
 -- IntMix
@@ -427,7 +426,7 @@ instance AlignedStorable Std430 IntMix
 instance AlignedStorable Scalar IntMix
 
 -- GLSL: struct IntMix (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Std140 IntMix) where
+instance Storable (Oracle Std140 IntMix) where
   sizeOf _ = 128
   alignment _ = 32
   peek ptr =
@@ -453,7 +452,7 @@ instance Storable (Oracle 'Std140 IntMix) where
     pokeVecAt Std140 ptr 96 imS
 
 -- GLSL: struct IntMix (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Std430 IntMix) where
+instance Storable (Oracle Std430 IntMix) where
   sizeOf _ = 128
   alignment _ = 32
   peek ptr =
@@ -479,7 +478,7 @@ instance Storable (Oracle 'Std430 IntMix) where
     pokeVecAt Std430 ptr 96 imS
 
 -- GLSL: struct IntMix (glsl/Geomancy.glsl)
-instance Storable (Oracle 'Scalar IntMix) where
+instance Storable (Oracle Scalar IntMix) where
   sizeOf _ = 104
   alignment _ = 8
   peek ptr =
@@ -509,7 +508,7 @@ intMixSuite =
   sutTests
     "IntMix"
     genIntMix
-    [at @'Std140 (Just 128), at @'Std430 (Just 128), at @'Scalar (Just 104)]
+    [at @Std140 (Just 128), at @Std430 (Just 128), at @Scalar (Just 104)]
 
 test_geomancy :: TestTree
 test_geomancy =

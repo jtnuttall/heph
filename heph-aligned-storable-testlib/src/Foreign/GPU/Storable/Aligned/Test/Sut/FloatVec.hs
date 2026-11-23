@@ -84,7 +84,7 @@ genPaddingTest :: (FloatVecs lib) => Gen (PaddingTest lib)
 genPaddingTest = PaddingTest <$> genFloat <*> genVec
 
 -- GLSL: struct PaddingTest (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std140 (PaddingTest lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std140 (PaddingTest lib)) where
   sizeOf _ = 32
   alignment _ = 16
   peek ptr = Oracle <$> (PaddingTest <$> peekByteOff ptr 0 <*> peekVecAt Std140 ptr 16)
@@ -93,7 +93,7 @@ instance (FloatVecs lib) => Storable (Oracle 'Std140 (PaddingTest lib)) where
     pokeVecAt Std140 ptr 16 v
 
 -- GLSL: struct PaddingTest (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std430 (PaddingTest lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std430 (PaddingTest lib)) where
   sizeOf _ = 32
   alignment _ = 16
   peek ptr = Oracle <$> (PaddingTest <$> peekByteOff ptr 0 <*> peekVecAt Std430 ptr 16)
@@ -102,7 +102,7 @@ instance (FloatVecs lib) => Storable (Oracle 'Std430 (PaddingTest lib)) where
     pokeVecAt Std430 ptr 16 v
 
 -- GLSL: struct PaddingTest (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Scalar (PaddingTest lib)) where
+instance (FloatVecs lib) => Storable (Oracle Scalar (PaddingTest lib)) where
   sizeOf _ = 20
   alignment _ = 4
   peek ptr = Oracle <$> (PaddingTest <$> peekByteOff ptr 0 <*> peekVecAt Scalar ptr 4)
@@ -115,7 +115,7 @@ paddingTestSuite _ =
   sutTests
     "PaddingTest"
     (genPaddingTest @lib)
-    [at @'Std140 (Just 32), at @'Std430 (Just 32), at @'Scalar (Just 20)]
+    [at @Std140 (Just 32), at @Std430 (Just 32), at @Scalar (Just 20)]
 
 --------------------------------------------------------------------------------
 -- Std140Test
@@ -139,7 +139,7 @@ genStd140Test :: (FloatVecs lib) => Gen (Std140Test lib)
 genStd140Test = Std140Test <$> genVec <*> genFloat
 
 -- GLSL: struct Std140Test (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std140 (Std140Test lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std140 (Std140Test lib)) where
   sizeOf _ = 16
   alignment _ = 16
   peek ptr = Oracle <$> (Std140Test <$> peekVecAt Std140 ptr 0 <*> peekByteOff ptr 12)
@@ -148,7 +148,7 @@ instance (FloatVecs lib) => Storable (Oracle 'Std140 (Std140Test lib)) where
     pokeByteOff ptr 12 f1
 
 -- GLSL: struct Std140Test (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std430 (Std140Test lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std430 (Std140Test lib)) where
   sizeOf _ = 16
   alignment _ = 16
   peek ptr = Oracle <$> (Std140Test <$> peekVecAt Std430 ptr 0 <*> peekByteOff ptr 12)
@@ -157,7 +157,7 @@ instance (FloatVecs lib) => Storable (Oracle 'Std430 (Std140Test lib)) where
     pokeByteOff ptr 12 f1
 
 -- GLSL: struct Std140Test (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Scalar (Std140Test lib)) where
+instance (FloatVecs lib) => Storable (Oracle Scalar (Std140Test lib)) where
   sizeOf _ = 16
   alignment _ = 4
   peek ptr = Oracle <$> (Std140Test <$> peekVecAt Scalar ptr 0 <*> peekByteOff ptr 12)
@@ -170,7 +170,7 @@ std140TestSuite _ =
   sutTests
     "Std140Test"
     (genStd140Test @lib)
-    [at @'Std140 (Just 16), at @'Std430 (Just 16), at @'Scalar (Just 16)]
+    [at @Std140 (Just 16), at @Std430 (Just 16), at @Scalar (Just 16)]
 
 --------------------------------------------------------------------------------
 -- Vertex
@@ -193,7 +193,7 @@ genVertex :: (FloatVecs lib) => Gen (Vertex lib)
 genVertex = Vertex <$> genVec <*> genVec <*> genVec
 
 -- GLSL: struct Vertex (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std140 (Vertex lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std140 (Vertex lib)) where
   sizeOf _ = 48
   alignment _ = 16
   peek ptr =
@@ -205,7 +205,7 @@ instance (FloatVecs lib) => Storable (Oracle 'Std140 (Vertex lib)) where
     pokeVecAt Std140 ptr 32 uv
 
 -- GLSL: struct Vertex (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std430 (Vertex lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std430 (Vertex lib)) where
   sizeOf _ = 48
   alignment _ = 16
   peek ptr =
@@ -217,7 +217,7 @@ instance (FloatVecs lib) => Storable (Oracle 'Std430 (Vertex lib)) where
     pokeVecAt Std430 ptr 32 uv
 
 -- GLSL: struct Vertex (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Scalar (Vertex lib)) where
+instance (FloatVecs lib) => Storable (Oracle Scalar (Vertex lib)) where
   sizeOf _ = 32
   alignment _ = 4
   peek ptr =
@@ -233,7 +233,7 @@ vertexSuite _ =
   sutTests
     "Vertex"
     (genVertex @lib)
-    [at @'Std140 (Just 40), at @'Std430 (Just 40), at @'Scalar (Just 32)]
+    [at @Std140 (Just 40), at @Std430 (Just 40), at @Scalar (Just 32)]
 
 --------------------------------------------------------------------------------
 -- FinalPaddingTest
@@ -257,7 +257,7 @@ genFinalPaddingTest :: (FloatVecs lib) => Gen (FinalPaddingTest lib)
 genFinalPaddingTest = FinalPaddingTest <$> genVec <*> genInt
 
 -- GLSL: struct FinalPaddingTest (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std140 (FinalPaddingTest lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std140 (FinalPaddingTest lib)) where
   sizeOf _ = 32
   alignment _ = 16
   peek ptr = Oracle <$> (FinalPaddingTest <$> peekVecAt Std140 ptr 0 <*> peekByteOff ptr 16)
@@ -266,7 +266,7 @@ instance (FloatVecs lib) => Storable (Oracle 'Std140 (FinalPaddingTest lib)) whe
     pokeByteOff ptr 16 fptB
 
 -- GLSL: struct FinalPaddingTest (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std430 (FinalPaddingTest lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std430 (FinalPaddingTest lib)) where
   sizeOf _ = 32
   alignment _ = 16
   peek ptr = Oracle <$> (FinalPaddingTest <$> peekVecAt Std430 ptr 0 <*> peekByteOff ptr 16)
@@ -275,7 +275,7 @@ instance (FloatVecs lib) => Storable (Oracle 'Std430 (FinalPaddingTest lib)) whe
     pokeByteOff ptr 16 fptB
 
 -- GLSL: struct FinalPaddingTest (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Scalar (FinalPaddingTest lib)) where
+instance (FloatVecs lib) => Storable (Oracle Scalar (FinalPaddingTest lib)) where
   sizeOf _ = 20
   alignment _ = 4
   peek ptr = Oracle <$> (FinalPaddingTest <$> peekVecAt Scalar ptr 0 <*> peekByteOff ptr 16)
@@ -288,7 +288,7 @@ finalPaddingTestSuite _ =
   sutTests
     "FinalPaddingTest"
     (genFinalPaddingTest @lib)
-    [at @'Std140 Nothing, at @'Std430 Nothing, at @'Scalar Nothing]
+    [at @Std140 Nothing, at @Std430 Nothing, at @Scalar Nothing]
 
 --------------------------------------------------------------------------------
 -- Nested
@@ -312,65 +312,65 @@ genNested :: (FloatVecs lib) => Gen (Nested lib)
 genNested = Nested <$> genVec <*> genSimple <*> genMixedAlign <*> genBoolTest
 
 -- GLSL: struct Nested (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std140 (Nested lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std140 (Nested lib)) where
   sizeOf _ = 80
   alignment _ = 16
   peek ptr =
     Oracle
       <$> ( Nested
               <$> peekVecAt Std140 ptr 0
-              <*> peekOracleAt @'Std140 ptr 16
-              <*> peekOracleAt @'Std140 ptr 32
-              <*> peekOracleAt @'Std140 ptr 64
+              <*> peekOracleAt @Std140 ptr 16
+              <*> peekOracleAt @Std140 ptr 32
+              <*> peekOracleAt @Std140 ptr 64
           )
   poke ptr (Oracle Nested{..}) = do
     pokeVecAt Std140 ptr 0 nestedV3
-    pokeOracleAt @'Std140 ptr 16 nestedSimple
-    pokeOracleAt @'Std140 ptr 32 nestedMixed
-    pokeOracleAt @'Std140 ptr 64 nestedBoolTest
+    pokeOracleAt @Std140 ptr 16 nestedSimple
+    pokeOracleAt @Std140 ptr 32 nestedMixed
+    pokeOracleAt @Std140 ptr 64 nestedBoolTest
 
 -- GLSL: struct Nested (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std430 (Nested lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std430 (Nested lib)) where
   sizeOf _ = 64
   alignment _ = 16
   peek ptr =
     Oracle
       <$> ( Nested
               <$> peekVecAt Std430 ptr 0
-              <*> peekOracleAt @'Std430 ptr 12
-              <*> peekOracleAt @'Std430 ptr 24
-              <*> peekOracleAt @'Std430 ptr 48
+              <*> peekOracleAt @Std430 ptr 12
+              <*> peekOracleAt @Std430 ptr 24
+              <*> peekOracleAt @Std430 ptr 48
           )
   poke ptr (Oracle Nested{..}) = do
     pokeVecAt Std430 ptr 0 nestedV3
-    pokeOracleAt @'Std430 ptr 12 nestedSimple
-    pokeOracleAt @'Std430 ptr 24 nestedMixed
-    pokeOracleAt @'Std430 ptr 48 nestedBoolTest
+    pokeOracleAt @Std430 ptr 12 nestedSimple
+    pokeOracleAt @Std430 ptr 24 nestedMixed
+    pokeOracleAt @Std430 ptr 48 nestedBoolTest
 
 -- GLSL: struct Nested (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Scalar (Nested lib)) where
+instance (FloatVecs lib) => Storable (Oracle Scalar (Nested lib)) where
   sizeOf _ = 56
   alignment _ = 8
   peek ptr =
     Oracle
       <$> ( Nested
               <$> peekVecAt Scalar ptr 0
-              <*> peekOracleAt @'Scalar ptr 12
-              <*> peekOracleAt @'Scalar ptr 24
-              <*> peekOracleAt @'Scalar ptr 44
+              <*> peekOracleAt @Scalar ptr 12
+              <*> peekOracleAt @Scalar ptr 24
+              <*> peekOracleAt @Scalar ptr 44
           )
   poke ptr (Oracle Nested{..}) = do
     pokeVecAt Scalar ptr 0 nestedV3
-    pokeOracleAt @'Scalar ptr 12 nestedSimple
-    pokeOracleAt @'Scalar ptr 24 nestedMixed
-    pokeOracleAt @'Scalar ptr 44 nestedBoolTest
+    pokeOracleAt @Scalar ptr 12 nestedSimple
+    pokeOracleAt @Scalar ptr 24 nestedMixed
+    pokeOracleAt @Scalar ptr 44 nestedBoolTest
 
 nestedSuite :: forall lib. (FloatVecs lib) => Proxy lib -> TestTree
 nestedSuite _ =
   sutTests
     "Nested"
     (genNested @lib)
-    [at @'Std140 Nothing, at @'Std430 Nothing, at @'Scalar Nothing]
+    [at @Std140 Nothing, at @Std430 Nothing, at @Scalar Nothing]
 
 --------------------------------------------------------------------------------
 -- NestedNewtype
@@ -400,7 +400,7 @@ nestedNewtypeSuite _ =
   sutTests
     "NestedNewtype"
     (genNestedNewtype @lib)
-    [at @'Std140 Nothing, at @'Std430 Nothing, at @'Scalar Nothing]
+    [at @Std140 Nothing, at @Std430 Nothing, at @Scalar Nothing]
 
 --------------------------------------------------------------------------------
 -- VectorStruct
@@ -425,7 +425,7 @@ genVectorStruct :: (FloatVecs lib) => Gen (VectorStruct lib)
 genVectorStruct = VectorStruct <$> genFloat <*> SSV.replicateM genVec <*> genInt
 
 -- GLSL: struct VectorStruct (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std140 (VectorStruct lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std140 (VectorStruct lib)) where
   sizeOf _ = 64
   alignment _ = 16
   peek ptr =
@@ -441,7 +441,7 @@ instance (FloatVecs lib) => Storable (Oracle 'Std140 (VectorStruct lib)) where
     pokeByteOff ptr 48 vsC
 
 -- GLSL: struct VectorStruct (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std430 (VectorStruct lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std430 (VectorStruct lib)) where
   sizeOf _ = 64
   alignment _ = 16
   peek ptr =
@@ -457,7 +457,7 @@ instance (FloatVecs lib) => Storable (Oracle 'Std430 (VectorStruct lib)) where
     pokeByteOff ptr 48 vsC
 
 -- GLSL: struct VectorStruct (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Scalar (VectorStruct lib)) where
+instance (FloatVecs lib) => Storable (Oracle Scalar (VectorStruct lib)) where
   sizeOf _ = 32
   alignment _ = 4
   peek ptr =
@@ -477,7 +477,7 @@ vectorStructSuite _ =
   sutTests
     "VectorStruct"
     (genVectorStruct @lib)
-    [at @'Std140 Nothing, at @'Std430 Nothing, at @'Scalar Nothing]
+    [at @Std140 Nothing, at @Std430 Nothing, at @Scalar Nothing]
 
 --------------------------------------------------------------------------------
 -- TailVec3
@@ -499,7 +499,7 @@ genTailVec3 :: (FloatVecs lib) => Gen (TailVec3 lib)
 genTailVec3 = TailVec3 <$> genFloat <*> genVec
 
 -- GLSL: struct TailVec3 (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std140 (TailVec3 lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std140 (TailVec3 lib)) where
   sizeOf _ = 32
   alignment _ = 16
   peek ptr = Oracle <$> (TailVec3 <$> peekByteOff ptr 0 <*> peekVecAt Std140 ptr 16)
@@ -508,7 +508,7 @@ instance (FloatVecs lib) => Storable (Oracle 'Std140 (TailVec3 lib)) where
     pokeVecAt Std140 ptr 16 tvB
 
 -- GLSL: struct TailVec3 (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Std430 (TailVec3 lib)) where
+instance (FloatVecs lib) => Storable (Oracle Std430 (TailVec3 lib)) where
   sizeOf _ = 32
   alignment _ = 16
   peek ptr = Oracle <$> (TailVec3 <$> peekByteOff ptr 0 <*> peekVecAt Std430 ptr 16)
@@ -517,7 +517,7 @@ instance (FloatVecs lib) => Storable (Oracle 'Std430 (TailVec3 lib)) where
     pokeVecAt Std430 ptr 16 tvB
 
 -- GLSL: struct TailVec3 (glsl/Conformance.glsl)
-instance (FloatVecs lib) => Storable (Oracle 'Scalar (TailVec3 lib)) where
+instance (FloatVecs lib) => Storable (Oracle Scalar (TailVec3 lib)) where
   sizeOf _ = 16
   alignment _ = 4
   peek ptr = Oracle <$> (TailVec3 <$> peekByteOff ptr 0 <*> peekVecAt Scalar ptr 4)
@@ -530,4 +530,4 @@ tailVec3Suite _ =
   sutTests
     "TailVec3"
     (genTailVec3 @lib)
-    [at @'Std140 (Just 28), at @'Std430 (Just 28), at @'Scalar (Just 16)]
+    [at @Std140 (Just 28), at @Std430 (Just 28), at @Scalar (Just 16)]

@@ -12,44 +12,18 @@
 -- Maintainer  : jeremy@jeremy-nuttall.com
 -- Stability   : experimental
 --
--- 'Foreign.GPU.Storable.Aligned.AlignedStorable' instances, under 'Std140',
--- 'Std430' and 'Scalar', for the types of
+-- 'Foreign.GPU.Storable.Aligned.AlignedStorable' instances for
 -- [geomancy](https://hackage.haskell.org/package/geomancy). Import this module
--- for its instances:
+-- for the instances:
 --
 -- > import Foreign.GPU.Storable.Aligned
 -- > import Foreign.GPU.Storable.Aligned.Geomancy ()
---
--- The instances and the GLSL types they match:
---
--- * @Vec2@, @Vec3@, @Vec4@: @vec2@, @vec3@, @vec4@.
--- * @DVec2@ to @DVec4@: @dvec2@ to @dvec4@.
--- * @IVec2@ to @IVec4@, @UVec2@ to @UVec4@: @ivec2@ to @ivec4@, @uvec2@ to
---   @uvec4@.
--- * @I64Vec2@ to @I64Vec4@, @U64Vec2@ to @U64Vec4@: @i64vec2@ to @i64vec4@,
---   @u64vec2@ to @u64vec4@ (@GL_EXT_shader_explicit_arithmetic_types_int64@).
--- * @Mat4@, @Transform@: @mat4@. @DMat4@, @DTransform@: @dmat4@. Upload them
---   with GLSL's default (column-major) matrix layout, not @row_major@.
--- * @Quaternion@: @vec4@. @DQuaternion@: @dvec4@. Components in the order of
---   @quaternion@'s arguments, scalar part first: a @Quaternion w x y z@ is
---   @vec4(w, x, y, z)@ in GLSL, so the scalar part is @.x@, not the @.w@ most
---   shader code expects. Likewise @DQuaternion@.
--- * Each 3-vector's @Packed@ newtype (@Geomancy.Vec3.Packed@, ...): the same
---   @vec3@ (or @dvec3@, ...) as the vector it wraps.
--- * @Point v@ for each of the 18 vector types @v@: the same as @v@.
---
--- Vectors are read and written one component at a time, so geomancy's
--- 'Foreign.Storable.Storable' instances are never used for them. Those pad
--- every 3-vector to 16 or 32 bytes, and the ones for @Vec3@ and @DVec3@ also
--- write @1.0@ as a fourth component.
 module Foreign.GPU.Storable.Aligned.Geomancy () where
 
 import Data.Int
 import Data.Word
 import Language.Haskell.TH
 
-import Foreign.GPU.Storable.Aligned ()
-import Foreign.GPU.Storable.Aligned.TH
 import Geomancy.DMat4 (DMat4)
 import Geomancy.DQuaternion (DQuaternion)
 import Geomancy.DTransform (DTransform (..))
@@ -81,6 +55,9 @@ import Geomancy.Vec2 (Vec2, vec2, withVec2)
 import Geomancy.Vec3 (Vec3, vec3, withVec3)
 import qualified Geomancy.Vec3 as Vec3
 import Geomancy.Vec4 (Vec4, vec4, withVec4)
+
+import Foreign.GPU.Storable.Aligned ()
+import Foreign.GPU.Storable.Aligned.TH
 
 deriveAll $
   let family e rows = [(e, n, t, mk, el) | (n, t, mk, el) <- rows]
@@ -136,8 +113,6 @@ deriveAll $
         Scalar -> Fixed s scalarA
         _ -> Fixed s a
    in [deriveVector l (vector v) | l <- allLayouts, v <- vectors]
-        -- Mat4's Storable peek loads 8 bytes at a time; under Scalar a Mat4 may sit at a 4-aligned
-        -- offset, so that load is unaligned (fine on x86-64 and AArch64).
         ++ [deriveFixed l [t|Mat4|] (fixed 64 16 4 l) | l <- allLayouts]
         ++ [deriveFixed l [t|DMat4|] (fixed 128 32 8 l) | l <- allLayouts]
         ++ [deriveFixed l [t|Quaternion|] (fixed 16 16 4 l) | l <- allLayouts]

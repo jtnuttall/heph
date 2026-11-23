@@ -3,20 +3,7 @@
  * GLSL twins of the structs under test in test/GeomancySpec.hs.
  *
  * Each struct below has a Haskell twin of the same name with an oracle per
- * layout, the `Storable (Oracle l T)` instances, whose member offsets and sizeOf
- * are the numbers glslang gives here; their alignment follows from the layout
- * rules (it is not in the SPIR-V). Members are in Haskell field order.
- *
- * Mapping to the Haskell types (geomancy):
- *  - mat4 is Mat4 or Transform, dmat4 is DTransform. The matrices use GLSL's
- *    default (column-major) layout, not row_major: geomancy stores its matrices
- *    in the order GLSL reads them.
- *  - vec4 is Quaternion, dvec4 is DQuaternion.
- *  - vec3, dvec3, ivec3, uvec3 and i64vec3 are Point v or a Packed newtype over
- *    the corresponding geomancy vector; u64vec4 is U64Vec4.
- *  - The blocks at the bottom put every struct T in a runtime array under each
- *    layout L, in the block L_T. The array's ArrayStride is
- *    sizeOf (Strided L T), which the oracle's sizeOf equals.
+ * layout.
  *
  * To check a struct:
  *
@@ -26,8 +13,7 @@
  * then read the OpMemberDecorate ... Offset and OpDecorate ... ArrayStride lines
  * of the struct type that L_T holds.
  *
- * Verified: every member offset and struct ArrayStride in each layout equals the
- * oracle's literals.
+ * Last update date and glslange versions:
  *
  *   struct               glslang  date
  *   TransformTail        16.6.0   2026-11-21

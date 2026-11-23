@@ -56,7 +56,7 @@ import Foreign.GPU.Storable.Aligned
 import Foreign.GPU.Storable.Aligned.Test.Glsl
 
 -- | An 'AlignedStorable' instance for each of the three layouts.
-type Aligned3 a = (AlignedStorable 'Std140 a, AlignedStorable 'Std430 a, AlignedStorable 'Scalar a)
+type Aligned3 a = (AlignedStorable Std140 a, AlignedStorable Std430 a, AlignedStorable Scalar a)
 
 -- | @v@ is a GLSL vector of @n@ components of type @e@.
 type VecOf v e n = (GlslVec v, VecElem v ~ e, VecDim v ~ n, Aligned3 v)

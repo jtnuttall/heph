@@ -177,7 +177,7 @@ data Fixed = Fixed
 -- @deriveFixed Std140 [t| Int8 |] (Fixed 4 4)@ generates (with an @INLINE@
 -- pragma on every method)
 --
--- > instance AlignedStorable 'Std140 Int8 where
+-- > instance AlignedStorable Std140 Int8 where
 -- >   packedAlignedSizeOf _ _ = 4
 -- >   alignedSizeOf _ _ = 4
 -- >   alignedAlignment _ _ = 4
@@ -216,20 +216,20 @@ deriveFixed layout t (Fixed s a) =
 --
 -- the generated instance is (with an @INLINE@ pragma on every method)
 --
--- > instance AlignedStorable 'Std140 (V3 Float) where
--- >   packedAlignedSizeOf _ _ = 3 * alignedSizeOf (Proxy :: Proxy 'Std140) (Proxy :: Proxy Float)
--- >   alignedSizeOf _ _ = 3 * alignedSizeOf (Proxy :: Proxy 'Std140) (Proxy :: Proxy Float)
--- >   alignedAlignment _ _ = 4 * alignedAlignment (Proxy :: Proxy 'Std140) (Proxy :: Proxy Float)
+-- > instance AlignedStorable Std140 (V3 Float) where
+-- >   packedAlignedSizeOf _ _ = 3 * alignedSizeOf (Proxy :: Proxy Std140) (Proxy :: Proxy Float)
+-- >   alignedSizeOf _ _ = 3 * alignedSizeOf (Proxy :: Proxy Std140) (Proxy :: Proxy Float)
+-- >   alignedAlignment _ _ = 4 * alignedAlignment (Proxy :: Proxy Std140) (Proxy :: Proxy Float)
 -- >   alignedPeek =
 -- >     peekStrided3
 -- >       (V3 :: Float -> Float -> Float -> V3 Float)
--- >       (alignedAlignment (Proxy :: Proxy 'Std140) (Proxy :: Proxy Float))
+-- >       (alignedAlignment (Proxy :: Proxy Std140) (Proxy :: Proxy Float))
 -- >   alignedPoke =
 -- >     pokeStrided3
 -- >       ( (\(V3 x1 x2 x3) k -> k x1 x2 x3)
 -- >           :: V3 Float -> (Float -> Float -> Float -> IO ()) -> IO ()
 -- >       )
--- >       (alignedAlignment (Proxy :: Proxy 'Std140) (Proxy :: Proxy Float))
+-- >       (alignedAlignment (Proxy :: Proxy Std140) (Proxy :: Proxy Float))
 deriveVector :: MemoryLayout -> Composite -> Q [Dec]
 deriveVector layout c =
   let l = layoutType layout
@@ -279,21 +279,21 @@ deriveVector layout c =
 --
 -- the generated instance is (with an @INLINE@ pragma on every method)
 --
--- > instance AlignedStorable 'Std430 (V2 (V3 Double)) where
+-- > instance AlignedStorable Std430 (V2 (V3 Double)) where
 -- >   packedAlignedSizeOf _ _ =
--- >     2 * rowStride (Proxy :: Proxy 'Std430) (Proxy :: Proxy (V3 Double))
+-- >     2 * rowStride (Proxy :: Proxy Std430) (Proxy :: Proxy (V3 Double))
 -- >   alignedSizeOf = packedAlignedSizeOf
 -- >   alignedAlignment l _ = alignBlock l (alignedAlignment l (Proxy :: Proxy (V3 Double)))
 -- >   alignedPeek =
 -- >     peekStrided2
 -- >       (V2 :: V3 Double -> V3 Double -> V2 (V3 Double))
--- >       (rowStride (Proxy :: Proxy 'Std430) (Proxy :: Proxy (V3 Double)))
+-- >       (rowStride (Proxy :: Proxy Std430) (Proxy :: Proxy (V3 Double)))
 -- >   alignedPoke =
 -- >     pokeStrided2
 -- >       ( (\(V2 x1 x2) k -> k x1 x2)
 -- >           :: V2 (V3 Double) -> (V3 Double -> V3 Double -> IO ()) -> IO ()
 -- >       )
--- >       (rowStride (Proxy :: Proxy 'Std430) (Proxy :: Proxy (V3 Double)))
+-- >       (rowStride (Proxy :: Proxy Std430) (Proxy :: Proxy (V3 Double)))
 deriveMatrix :: MemoryLayout -> Composite -> Q [Dec]
 deriveMatrix layout c =
   let l = layoutType layout
@@ -325,10 +325,10 @@ deriveMatrix layout c =
 -- @deriveNewtype Std140 [t| Transform |] [t| Mat4 |]@ generates (with an
 -- @INLINE@ pragma on every method)
 --
--- > instance AlignedStorable 'Std140 Transform where
--- >   packedAlignedSizeOf _ _ = packedAlignedSizeOf (Proxy :: Proxy 'Std140) (Proxy :: Proxy Mat4)
--- >   alignedSizeOf _ _ = alignedSizeOf (Proxy :: Proxy 'Std140) (Proxy :: Proxy Mat4)
--- >   alignedAlignment _ _ = alignedAlignment (Proxy :: Proxy 'Std140) (Proxy :: Proxy Mat4)
+-- > instance AlignedStorable Std140 Transform where
+-- >   packedAlignedSizeOf _ _ = packedAlignedSizeOf (Proxy :: Proxy Std140) (Proxy :: Proxy Mat4)
+-- >   alignedSizeOf _ _ = alignedSizeOf (Proxy :: Proxy Std140) (Proxy :: Proxy Mat4)
+-- >   alignedAlignment _ _ = alignedAlignment (Proxy :: Proxy Std140) (Proxy :: Proxy Mat4)
 -- >   alignedPeek = peekCoerce (Proxy :: Proxy Mat4)
 -- >   alignedPoke = pokeCoerce (Proxy :: Proxy Mat4)
 deriveNewtype :: MemoryLayout -> Q Type -> Q Type -> Q [Dec]
@@ -357,12 +357,12 @@ conEliminate con dim = do
   k <- newName "k"
   lamE [conP con (map varP xs), varP k] (foldl appE (varE k) (map varE xs))
 
--- | The promoted 'MemoryLayout', e.g. @'Std140@.
+-- | The promoted 'MemoryLayout', e.g. @Std140@.
 layoutType :: MemoryLayout -> Q Type
 layoutType = \case
-  Std140 -> promotedT 'Std140
-  Std430 -> promotedT 'Std430
-  Scalar -> promotedT 'Scalar
+  Std140 -> promotedT Std140
+  Std430 -> promotedT Std430
+  Scalar -> promotedT Scalar
 
 -- | All layouts, @[Std140, Std430, Scalar]@.
 allLayouts :: [MemoryLayout]

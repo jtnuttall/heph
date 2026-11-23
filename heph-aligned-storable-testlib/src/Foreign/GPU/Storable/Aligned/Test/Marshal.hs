@@ -80,17 +80,17 @@ marshalSuite =
           id
           noByteImage
           genStructWithArrayF
-          (at @'Std140 @(StructWithArrayF 'Std140) (Just 80))
+          (at @Std140 @(StructWithArrayF Std140) (Just 80))
           <> layoutCaseTests
             id
             noByteImage
             genStructWithArrayF
-            (at @'Std430 @(StructWithArrayF 'Std430) (Just 20))
+            (at @Std430 @(StructWithArrayF Std430) (Just 20))
           <> layoutCaseTests
             id
             noByteImage
             genStructWithArrayF
-            (at @'Scalar @(StructWithArrayF 'Scalar) (Just 20))
+            (at @Scalar @(StructWithArrayF Scalar) (Just 20))
     ]
  where
   noByteImage = defaultTripOpts{checkByteImage = False}
@@ -116,7 +116,7 @@ prop_dynamic_vector_copy = property do
   oracleResult <- liftIO $ bracket (mallocBytes totalBytes) free \ptr -> do
     alignedCopyVector (AlignedPtr (castPtr ptr)) vec
     for [0 .. n - 1] \i ->
-      peekOracleAt @'Std140 ptr (i * stride)
+      peekOracleAt @Std140 ptr (i * stride)
 
   packedResult <- liftIO $ bracket (mallocBytes totalBytes) free \ptr -> do
     alignedCopyVector (AlignedPtr (castPtr ptr)) vec
@@ -150,7 +150,7 @@ genStructWithArrayF :: (AlignedStorable layout Float) => Gen (StructWithArrayF l
 genStructWithArrayF = StructWithArrayF <$> genFloat <*> (mkAlignedArray <$> SSV.replicateM genFloat)
 
 -- GLSL: struct StructWithArrayF (glsl/Conformance.glsl)
-instance Storable (Oracle 'Std140 (StructWithArrayF 'Std140)) where
+instance Storable (Oracle Std140 (StructWithArrayF Std140)) where
   sizeOf _ = 80
   alignment _ = 16
   peek ptr =
@@ -161,7 +161,7 @@ instance Storable (Oracle 'Std140 (StructWithArrayF 'Std140)) where
     pokeArrayAt 16 pokeStrided ptr 16 (unAlignedArray swafB)
 
 -- GLSL: struct StructWithArrayF (glsl/Conformance.glsl)
-instance Storable (Oracle 'Std430 (StructWithArrayF 'Std430)) where
+instance Storable (Oracle Std430 (StructWithArrayF Std430)) where
   sizeOf _ = 20
   alignment _ = 4
   peek ptr =
@@ -172,7 +172,7 @@ instance Storable (Oracle 'Std430 (StructWithArrayF 'Std430)) where
     pokeArrayAt 4 pokeStrided ptr 4 (unAlignedArray swafB)
 
 -- GLSL: struct StructWithArrayF (glsl/Conformance.glsl)
-instance Storable (Oracle 'Scalar (StructWithArrayF 'Scalar)) where
+instance Storable (Oracle Scalar (StructWithArrayF Scalar)) where
   sizeOf _ = 20
   alignment _ = 4
   peek ptr =
@@ -199,7 +199,7 @@ prop_dynamic_vector_with_aligned_float_array_copy = property do
   bracket (liftIO $ mallocBytes totalBytes) (liftIO . free) \ptr -> do
     alignedCopyVector (AlignedPtr (castPtr ptr)) vec
     for_ (zip [0 ..] values) \(i, expected) -> do
-      actual <- liftIO $ peekOracleAt @'Std140 ptr (i * structStride)
+      actual <- liftIO $ peekOracleAt @Std140 ptr (i * structStride)
       actual === expected
 
 --------------------------------------------------------------------------------

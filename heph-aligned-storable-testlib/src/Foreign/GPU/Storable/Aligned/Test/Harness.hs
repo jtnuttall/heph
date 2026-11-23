@@ -303,7 +303,7 @@ data LayoutCase a where
     -> Maybe Int
     -> LayoutCase a
 
--- | @at \@'Std140 (Just 40)@: test under 'Std140' and assert a packed size of 40.
+-- | @at \@Std140 (Just 40)@: test under 'Std140' and assert a packed size of 40.
 at
   :: forall l a
    . (KnownMemoryLayout l, Typeable l, AlignedStorable l a, Storable (Oracle l a))

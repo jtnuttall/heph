@@ -91,13 +91,13 @@ instance (MemoryLayoutRules l, AlignedStorable l a) => AlignedStorable l (Stress
 -- compiled elsewhere, and so that inspection-testing does not count the boxed
 -- result as an allocation:
 --
--- > nested_alignedSizeOf_Std140 :: Proxy 'Std140 -> Proxy (Nested L) -> Int#
+-- > nested_alignedSizeOf_Std140 :: Proxy Std140 -> Proxy (Nested L) -> Int#
 -- > nested_alignedSizeOf_Std140 p q = case alignedSizeOf p q of I# n -> n
 -- >
--- > nested_alignedPoke_Std140 :: AlignedPtr 'Std140 (Nested L) -> Nested L -> State# RealWorld -> State# RealWorld
+-- > nested_alignedPoke_Std140 :: AlignedPtr Std140 (Nested L) -> Nested L -> State# RealWorld -> State# RealWorld
 -- > nested_alignedPoke_Std140 p x s = case alignedPoke p x of IO f -> case f s of (# s', () #) -> s'
 -- >
--- > nested_alignedPeek_Std140 :: AlignedPtr 'Std140 (Nested L) -> State# RealWorld -> (# State# RealWorld, Nested L #)
+-- > nested_alignedPeek_Std140 :: AlignedPtr Std140 (Nested L) -> State# RealWorld -> (# State# RealWorld, Nested L #)
 -- > nested_alignedPeek_Std140 p s = case alignedPeek p of IO f -> f s
 --
 -- A peek always allocates the value it returns, so it gets no 'NoAllocation'
@@ -116,9 +116,9 @@ inspectAlignedStorable label qty noAllocation = do
     -- name"), so obligations refer to the generated bindings by global name.
     global = mkNameG_v (loc_package loc) (loc_module loc)
     layouts =
-      [ (promotedT 'Std140, "Std140", "std140")
-      , (promotedT 'Std430, "Std430", "std430")
-      , (promotedT 'Scalar, "Scalar", "scalar")
+      [ (promotedT Std140, "Std140", "std140")
+      , (promotedT Std430, "Std430", "std430")
+      , (promotedT Scalar, "Scalar", "scalar")
       ]
     sizeMethod method =
       ( method

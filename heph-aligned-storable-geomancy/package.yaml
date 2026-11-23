@@ -14,20 +14,16 @@ extra-doc-files:
   - README.md
   - CHANGELOG.md
 
-# Metadata used when publishing your package
 synopsis: AlignedStorable instances for geomancy's vectors and matrices
 category: Graphics
 
-# To avoid duplicated efforts in documentation and dealing with the
-# complications of embedding Haddock markup inside cabal files, it is
-# common to point users to the README.md file.
 description: Please see the README on GitHub at
   <https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-geomancy#readme>
 homepage: https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-geomancy#readme
 
 dependencies:
   - base >= 4.19 && < 5
-  - geomancy >= 0.4 && < 0.5
+  - geomancy ^>= 0.4
   - heph-aligned-storable >= 0.2 && < 0.3
 
 ghc-options:
