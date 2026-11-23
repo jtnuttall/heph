@@ -360,9 +360,9 @@ conEliminate con dim = do
 -- | The promoted 'MemoryLayout', e.g. @Std140@.
 layoutType :: MemoryLayout -> Q Type
 layoutType = \case
-  Std140 -> promotedT Std140
-  Std430 -> promotedT Std430
-  Scalar -> promotedT Scalar
+  Std140 -> promotedT 'Std140
+  Std430 -> promotedT 'Std430
+  Scalar -> promotedT 'Scalar
 
 -- | All layouts, @[Std140, Std430, Scalar]@.
 allLayouts :: [MemoryLayout]

@@ -116,9 +116,9 @@ inspectAlignedStorable label qty noAllocation = do
     -- name"), so obligations refer to the generated bindings by global name.
     global = mkNameG_v (loc_package loc) (loc_module loc)
     layouts =
-      [ (promotedT Std140, "Std140", "std140")
-      , (promotedT Std430, "Std430", "std430")
-      , (promotedT Scalar, "Scalar", "scalar")
+      [ (promotedT 'Std140, "Std140", "std140")
+      , (promotedT 'Std430, "Std430", "std430")
+      , (promotedT 'Scalar, "Scalar", "scalar")
       ]
     sizeMethod method =
       ( method
