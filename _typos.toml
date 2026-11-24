@@ -1,0 +1,11 @@
+# Record fields in the conformance SUTs (fptA, ine, inh, ...) and other
+# identifiers typos splits into false positives.
+[default.extend-identifiers]
+TypeLits = "TypeLits"
+
+[default.extend-words]
+fpt = "fpt"
+ine = "ine"
+inh = "inh"
+# fourmolu.yaml's indent-wheres key
+wheres = "wheres"
