@@ -4,7 +4,7 @@
 Provides GPU layouts via [`heph-aligned-storable`](https://hackage.haskell.org/package/heph-aligned-storable).
 
 These layouts can be used either alongside or in lieu of geomancy's
-own  `gl-block` instances.
+own `gl-block` instances.
 
 `heph-aligned-storable` is designed to be especially useful for
 closed-domain, type-level GPU manipulation and/or eDSL implementations.

@@ -17,7 +17,7 @@ and this project adheres to the
 
 ### Changed
 
-- Require GHC >= 9.8 (dropped 8.10 and 9.6); tested with GHC 9.8–9.14.
+- Require GHC >= 9.10 (dropped 8.10–9.8); tested with GHC 9.10–9.14.
 - Raised dependency upper bounds for current Hackage and GHC 9.14 boot libraries.
 - Instances are generated with Template Haskell instead of CPP; `template-haskell`
   is a new dependency.

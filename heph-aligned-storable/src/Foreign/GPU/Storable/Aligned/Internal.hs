@@ -116,7 +116,7 @@ data MemoryLayout
     -- For details, please refer to the
     -- [extension specification](https://github.com/KhronosGroup/GLSL/blob/main/extensions/ext/GL_EXT_scalar_block_layout.txt)
     Scalar
-  deriving (Show, Generic, Enum, Bounded, Eq, Ord)
+  deriving (Bounded, Enum, Eq, Generic, Ord, Show)
 
 instance Hashable MemoryLayout
 
@@ -206,11 +206,11 @@ instance MemoryLayoutRules Scalar where
 -- | Wrapper whose 'sizeOf' includes stride padding, for use in arrays.
 -- @SV.Vector (Strided Std140 MyType)@ can be 'copyBytes'd to the GPU in one shot.
 newtype Strided (layout :: MemoryLayout) a = Strided {unStrided :: a}
-  deriving (Generic, Show, Eq, Ord)
+  deriving (Eq, Generic, Ord, Show)
 
 -- | Wrapper without stride padding. Use for single values (push constants, lone UBOs).
 newtype Packed (layout :: MemoryLayout) a = Packed {unPacked :: a}
-  deriving (Generic, Show, Eq, Ord)
+  deriving (Eq, Generic, Ord, Show)
 
 -- | A convenience type for Data.Vector.Storable.Vector (Strided layout a)
 type StridedVector (layout :: MemoryLayout) a = SV.Vector (Strided layout a)
@@ -222,7 +222,7 @@ type StridedVector (layout :: MemoryLayout) a = SV.Vector (Strided layout a)
 -- @
 newtype AlignedArray (layout :: MemoryLayout) (n :: Nat) a = AlignedArray
   {unAlignedArray :: SSV.Vector n (Strided layout a)}
-  deriving (Generic, Show, Eq, Ord)
+  deriving (Eq, Generic, Ord, Show)
 
 -- | Construct an 'AlignedArray' from a sized vector.
 mkAlignedArray
@@ -524,9 +524,10 @@ scalarPackedAlignedSizeOfArray _ _ =
   let n = fromIntegral $ natVal (Proxy @n)
       stride = sizeOf @(Strided Scalar a) undefined
       lastElementSize = packedAlignedSizeOf (Proxy @Scalar) (Proxy @a)
-   in if n > 0
-        then ((n - 1) * stride) + lastElementSize
-        else 0
+   in if n > 0 then
+        ((n - 1) * stride) + lastElementSize
+      else
+        0
 {-# INLINE scalarPackedAlignedSizeOfArray #-}
 
 arrayAlignedAlignment

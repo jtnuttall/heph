@@ -318,7 +318,7 @@ genComponent = Gen.int (Range.linear (-1000) 1000)
 data SparseSetOp
   = OpInsert TestEntity TestComponent
   | OpDelete TestEntity
-  deriving (Show, Eq)
+  deriving (Eq, Show)
 
 genSparseSetOp :: Gen SparseSetOp
 genSparseSetOp =

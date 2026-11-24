@@ -8,9 +8,6 @@ module GeomancyConformanceSpec where
 import Data.Int
 import Data.Proxy
 import Data.Word
-import Test.Tasty
-
-import Foreign.GPU.Storable.Aligned.Geomancy ()
 import Foreign.GPU.Storable.Aligned.Test
 import qualified Geomancy.DMat4 as DMat4
 import qualified Geomancy.DVec2 as DVec2
@@ -32,6 +29,9 @@ import qualified Geomancy.UVec4 as UVec4
 import qualified Geomancy.Vec2 as Vec2
 import qualified Geomancy.Vec3 as Vec3
 import qualified Geomancy.Vec4 as Vec4
+import Test.Tasty
+
+import Foreign.GPU.Storable.Aligned.Geomancy ()
 
 data G
 

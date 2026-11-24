@@ -121,7 +121,7 @@ import Foreign.GPU.Storable.Aligned.Internal
 
 -- | The number of components of a vector, or of vectors in a matrix.
 data Dim = Two | Three | Four
-  deriving (Eq, Ord, Show, Enum, Bounded)
+  deriving (Bounded, Enum, Eq, Ord, Show)
 
 -- | The 'Dim' as a number.
 dimInt :: Dim -> Int

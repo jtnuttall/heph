@@ -14,10 +14,9 @@ module GeomancySpec where
 import Data.Int
 import Data.Word
 import Foreign
+import Foreign.GPU.Storable.Aligned
+import Foreign.GPU.Storable.Aligned.Test
 import GHC.Generics (Generic)
-import Hedgehog (Gen)
-import Test.Tasty
-
 import qualified Geomancy.DQuaternion as DQuaternion
 import qualified Geomancy.DTransform as DTransform
 import qualified Geomancy.DVec3 as DVec3
@@ -30,10 +29,10 @@ import qualified Geomancy.Transform as Transform
 import qualified Geomancy.U64Vec4 as U64Vec4
 import qualified Geomancy.UVec3 as UVec3
 import qualified Geomancy.Vec3 as Vec3
+import Hedgehog (Gen)
+import Test.Tasty
 
-import Foreign.GPU.Storable.Aligned
 import Foreign.GPU.Storable.Aligned.Geomancy ()
-import Foreign.GPU.Storable.Aligned.Test
 import GeomancyConformanceSpec ()
 
 instance GlslVec Quaternion.Quaternion where
@@ -61,7 +60,7 @@ data TransformTail = TransformTail
   { ttM :: Transform.Transform
   , ttF :: Float
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genTransformTail :: Gen TransformTail
 genTransformTail = TransformTail . Transform.Transform <$> genMat <*> genFloat
@@ -118,7 +117,7 @@ data OffsetMat4 = OffsetMat4
   { omA :: Float
   , omM :: Mat4.Mat4
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genOffsetMat4 :: Gen OffsetMat4
 genOffsetMat4 = OffsetMat4 <$> genFloat <*> genMat
@@ -169,7 +168,7 @@ data QuatStruct = QuatStruct
   { qsA :: Float
   , qsQ :: Quaternion.Quaternion
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genQuatStruct :: Gen QuatStruct
 genQuatStruct = QuatStruct <$> genFloat <*> genVec
@@ -222,7 +221,7 @@ data Vec3Mix = Vec3Mix
   , vmB :: Float
   , vmQ :: Vec3.Packed
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genVec3Mix :: Gen Vec3Mix
 genVec3Mix = Vec3Mix <$> genFloat <*> (Point <$> genVec) <*> genFloat <*> (Vec3.Packed <$> genVec)
@@ -304,7 +303,7 @@ data DoubleMix = DoubleMix
   , dmB :: Float
   , dmR :: DVec3.Packed
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genDoubleMix :: Gen DoubleMix
 genDoubleMix =
@@ -407,7 +406,7 @@ data IntMix = IntMix
   , imD :: Word32
   , imS :: U64Vec4.U64Vec4
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genIntMix :: Gen IntMix
 genIntMix =

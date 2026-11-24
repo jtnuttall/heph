@@ -10,7 +10,7 @@ and this project adheres to the
 
 ### Changed
 
-- Require GHC >= 9.8 (dropped 8.10 and 9.6); tested with GHC 9.8–9.14.
+- Require GHC >= 9.10 (dropped 8.10–9.8); tested with GHC 9.10–9.14.
 - Raised dependency upper bounds for current Hackage and GHC 9.14 boot libraries.
 
 ## 0.1.0.0 - 2025-06-08

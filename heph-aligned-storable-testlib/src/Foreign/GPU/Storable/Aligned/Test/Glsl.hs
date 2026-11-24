@@ -50,12 +50,12 @@ import qualified Data.Vector.Generic as GV
 import qualified Data.Vector.Generic.Sized as SGV
 import Data.Word
 import Foreign (Ptr, Storable, peekByteOff, pokeByteOff, sizeOf)
+import Foreign.GPU.Storable.Aligned (MemoryLayout (..))
 import GHC.TypeLits
 import Hedgehog (Gen)
 import qualified Hedgehog.Gen as Gen
 import Numeric.Half (Half)
 
-import Foreign.GPU.Storable.Aligned (MemoryLayout (..))
 import Foreign.GPU.Storable.Aligned.Test.Harness
 
 --------------------------------------------------------------------------------

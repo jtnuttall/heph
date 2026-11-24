@@ -18,8 +18,8 @@ module BenchLib (
 import Control.DeepSeq
 import Criterion
 import Criterion.Main
-
 import Data.Primitive.MutVar
+
 import Data.SparseSet.Generic.Mutable qualified as G
 import Data.SparseSet.Unboxed.Mutable qualified as U
 

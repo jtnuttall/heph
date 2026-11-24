@@ -10,12 +10,12 @@ module LinearConformanceSpec where
 import Data.Int
 import Data.Proxy
 import Data.Word
+import Foreign.GPU.Storable.Aligned.Test
 import Linear
 import Numeric.Half
 import Test.Tasty
 
 import Foreign.GPU.Storable.Aligned.Linear ()
-import Foreign.GPU.Storable.Aligned.Test
 
 data L
 
