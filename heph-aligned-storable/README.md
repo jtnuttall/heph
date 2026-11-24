@@ -10,13 +10,13 @@ This package has instances for the GLSL scalar types and for arrays. Instances f
 vector and matrix types of a math library live in a package of their own, so that this
 one depends on none of them:
 
-- [`heph-aligned-storable-linear`](../heph-aligned-storable-linear) for `linear`
-- [`heph-aligned-storable-geomancy`](../heph-aligned-storable-geomancy) for `geomancy`
+- [`heph-aligned-storable-linear`](https://hackage.haskell.org/package/heph-aligned-storable-linear) for `linear`
+- [`heph-aligned-storable-geomancy`](https://hackage.haskell.org/package/heph-aligned-storable-geomancy) for `geomancy`
 
 Those packages show a full quick start. The `Foreign.GPU.Storable.Aligned.TH` module
 exports the generators they use, so a package can bind another library the same way.
 
-The test suite lives in [`heph-aligned-storable-testlib`](../heph-aligned-storable-testlib),
+The test suite lives in [`heph-aligned-storable-testlib`](https://hackage.haskell.org/package/heph-aligned-storable-testlib),
 which also runs it on each of the instance packages.
 
 ## Features

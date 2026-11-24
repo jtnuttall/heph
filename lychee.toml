@@ -17,4 +17,6 @@ exclude = [
   # Nix binary caches don't serve anything at the root.
   "^https://cache\\.(iog\\.io|zw3rk\\.com)/",
   "^https://[^/]+\\.cachix\\.org/",
+  # Not yet released.
+  "^https://hackage\\.haskell\\.org/package/heph-aligned-storable-(geomancy|linear|testlib)$",
 ]

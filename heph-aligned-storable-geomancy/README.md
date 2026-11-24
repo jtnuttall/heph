@@ -80,4 +80,4 @@ See [`heph-aligned-storable-testlib`](https://hackage.haskell.org/package/heph-a
 geomancy types, plus structs of its own for `Transform`, `DTransform`,
 `Quaternion`, `DQuaternion`, `Point`, `Packed`, the 64-bit vectors, and a `mat4`
 at a 4-byte offset under `scalar`. Their GLSL twins are in
-[`glsl/Geomancy.glsl`](glsl/Geomancy.glsl), checked against glslang.
+[`glsl/Geomancy.glsl`](https://github.com/jtnuttall/heph/blob/main/heph-aligned-storable-geomancy/glsl/Geomancy.glsl), checked against glslang.
