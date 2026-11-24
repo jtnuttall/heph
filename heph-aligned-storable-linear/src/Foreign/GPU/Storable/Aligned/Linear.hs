@@ -29,11 +29,10 @@
 --    @r@-vectors): @M32 Float@ is @mat2x3@, @M24 Double@ is @dmat4x2@.
 module Foreign.GPU.Storable.Aligned.Linear () where
 
-import Language.Haskell.TH (appT, conE, conT)
-import Linear (V2 (..), V3 (..), V4 (..))
-
 import Foreign.GPU.Storable.Aligned ()
 import Foreign.GPU.Storable.Aligned.TH
+import Language.Haskell.TH (appT, conE, conT)
+import Linear (V2 (..), V3 (..), V4 (..))
 
 --------------------------------------------------------------------------------
 -- Base instances for vectors and matrices

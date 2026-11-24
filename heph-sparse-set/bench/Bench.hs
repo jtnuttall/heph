@@ -3,17 +3,17 @@
 {-# HLINT ignore "Redundant irrefutable pattern" #-}
 module Main (main) where
 
-import BenchLib
 import Control.DeepSeq
 import Control.Monad (replicateM, void)
 import Control.Monad.Primitive
 import Control.Monad.State.Strict (evalState, state)
 import Data.Foldable
+import Data.IORef (modifyIORef', newIORef)
 import Data.IntMap.Strict qualified as M
 import GHC.Generics (Generic)
 import System.Random (StdGen, Uniform, mkStdGen, randomR)
 
-import Data.IORef (modifyIORef', newIORef)
+import BenchLib
 import Data.SparseSet.Unboxed.Mutable (MutableSparseSet)
 import Data.SparseSet.Unboxed.Mutable qualified as SS
 
@@ -102,9 +102,10 @@ makeGetBenchGroup groupName getExisting =
             set <- SS.new @TestComponent
             forM_ [0 .. n - 1] $ \i -> SS.insert set i i
             let idsToAccess =
-                  if getExisting
-                    then [0 .. n - 1] -- Existing IDs
-                    else [n .. (2 * n) - 1] -- Non-existing IDs
+                  if getExisting then
+                    [0 .. n - 1] -- Existing IDs
+                  else
+                    [n .. (2 * n) - 1] -- Non-existing IDs
             pure (set, idsToAccess)
         )
         \ ~(set, idsToAccess) ->
@@ -124,9 +125,10 @@ makeContainsBenchGroup groupName checkExisting =
             set <- SS.new @TestComponent
             forM_ [0 .. n - 1] $ \i -> SS.insert set i i
             let idsToAccess =
-                  if checkExisting
-                    then [0 .. n - 1]
-                    else [n .. (2 * n) - 1]
+                  if checkExisting then
+                    [0 .. n - 1]
+                  else
+                    [n .. (2 * n) - 1]
             pure (set, idsToAccess)
         )
         $ \ ~(set, idsToAccess) ->
@@ -198,7 +200,7 @@ makeIntersectionBenchGroup groupName =
 
 -- Mixed Workload Benchmarks
 data MixedOp = MIns TestEntity TestComponent | MRem TestEntity | MGet TestEntity | MCont TestEntity
-  deriving (Show, Generic)
+  deriving (Generic, Show)
 
 instance Uniform MixedOp
 
@@ -244,7 +246,7 @@ intMapBenchmarks =
   bgroup
     "Data.IntMap.Strict"
     [ makeMapInsertBenchGroup "Insert_DenseIDs_Sequential_Map_AscendingOrder" False (\idx _ -> (idx, idx))
-    , makeMapInsertBenchGroup "Insert_DenseIDs_Sequential_Map_DesendingOrder" True (\idx _ -> (idx, idx))
+    , makeMapInsertBenchGroup "Insert_DenseIDs_Sequential_Map_DescendingOrder" True (\idx _ -> (idx, idx))
     , makeMapInsertBenchGroup
         "Insert_SparseIDs_Step100_Map_AscendingOrder"
         False
@@ -303,9 +305,10 @@ makeMapGetBenchGroup groupName getExisting =
         ( do
             let initialMap = generateMapWithSequentialKeys n
             let idsToAccess =
-                  if getExisting
-                    then [0 .. n - 1] -- Existing IDs
-                    else [n .. (2 * n) - 1] -- Non-existing IDs
+                  if getExisting then
+                    [0 .. n - 1] -- Existing IDs
+                  else
+                    [n .. (2 * n) - 1] -- Non-existing IDs
             pure (initialMap, idsToAccess)
         )
         $ \ ~(m, idsToAccess) ->
@@ -321,9 +324,10 @@ makeMapContainsBenchGroup groupName checkExisting =
         ( do
             let initialMap = generateMapWithSequentialKeys n
             let idsToAccess =
-                  if checkExisting
-                    then [0 .. n - 1]
-                    else [n .. (2 * n) - 1]
+                  if checkExisting then
+                    [0 .. n - 1]
+                  else
+                    [n .. (2 * n) - 1]
             pure (initialMap, idsToAccess)
         )
         $ \ ~(m, idsToAccess) ->

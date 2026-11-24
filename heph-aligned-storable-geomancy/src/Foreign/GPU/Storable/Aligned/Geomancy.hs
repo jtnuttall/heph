@@ -22,8 +22,8 @@ module Foreign.GPU.Storable.Aligned.Geomancy () where
 
 import Data.Int
 import Data.Word
-import Language.Haskell.TH
-
+import Foreign.GPU.Storable.Aligned ()
+import Foreign.GPU.Storable.Aligned.TH
 import Geomancy.DMat4 (DMat4)
 import Geomancy.DQuaternion (DQuaternion)
 import Geomancy.DTransform (DTransform (..))
@@ -55,9 +55,7 @@ import Geomancy.Vec2 (Vec2, vec2, withVec2)
 import Geomancy.Vec3 (Vec3, vec3, withVec3)
 import qualified Geomancy.Vec3 as Vec3
 import Geomancy.Vec4 (Vec4, vec4, withVec4)
-
-import Foreign.GPU.Storable.Aligned ()
-import Foreign.GPU.Storable.Aligned.TH
+import Language.Haskell.TH
 
 deriveAll $
   let family e rows = [(e, n, t, mk, el) | (n, t, mk, el) <- rows]

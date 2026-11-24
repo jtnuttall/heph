@@ -5,6 +5,13 @@ packages:
   ./heph-aligned-storable-testlib
   ./heph-sparse-set
 
--- Incompatibility in geomancy's dependency graph as of 0.4.0.0
+index-state: 2026-11-19T05:35:35Z
+
+-- Incompatibility in geomancy's dependency graph as of 0.4.0.0 on GHC 9.14
 if impl(ghc >= 9.14)
-  allow-newer: serialise-0.2.6.1:base
+  allow-newer:
+    serialise-0.2.6.1:base,
+    serialise-0.2.6.1:containers,
+    serialise-0.2.6.1:time,
+    cborg-0.2.10.0:base,
+    cborg-0.2.10.0:containers

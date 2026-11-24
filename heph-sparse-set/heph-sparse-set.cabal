@@ -18,7 +18,7 @@ license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
 tested-with:
-    GHC == 9.14.1 || == 9.12.4 || == 9.10.3 || == 9.8.4
+    GHC == 9.14.1 || == 9.12.4 || == 9.10.3
 extra-doc-files:
     README.md
     LICENSE
@@ -59,7 +59,7 @@ library
       RecordWildCards
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.19 && <5
+      base >=4.20 && <5
     , deepseq >=1.4 && <1.7
     , primitive >=0.7 && <0.10
     , vector >=0.12.3.0 && <0.14
@@ -96,7 +96,7 @@ test-suite heph-sparse-set-test
   build-tool-depends:
       tasty-discover:tasty-discover
   build-depends:
-      base >=4.19 && <5
+      base >=4.20 && <5
     , containers >=0.6.2 && <0.9
     , deepseq >=1.4 && <1.7
     , hedgehog >=1.0.4 && <1.8
@@ -137,7 +137,7 @@ benchmark heph-sparse-set-bench
       RecordWildCards
   ghc-options: -Wall -Wcompat -threaded -rtsopts -O2
   build-depends:
-      base >=4.19 && <5
+      base >=4.20 && <5
     , containers
     , criterion >=1.5.9 && <1.7
     , deepseq

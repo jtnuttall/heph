@@ -4,7 +4,7 @@
 Provides GPU layouts via [`heph-aligned-storable`](https://hackage.haskell.org/package/heph-aligned-storable).
 
 These layouts can be used either alongside or in lieu of geomancy's
-own  `gl-block` instances.
+own `gl-block` instances.
 
 `heph-aligned-storable` is designed to be especially useful for
 closed-domain, type-level GPU manipulation and/or eDSL implementations.
@@ -80,4 +80,4 @@ See [`heph-aligned-storable-testlib`](https://hackage.haskell.org/package/heph-a
 geomancy types, plus structs of its own for `Transform`, `DTransform`,
 `Quaternion`, `DQuaternion`, `Point`, `Packed`, the 64-bit vectors, and a `mat4`
 at a 4-byte offset under `scalar`. Their GLSL twins are in
-[`glsl/Geomancy.glsl`](glsl/Geomancy.glsl), checked against glslang.
+[`glsl/Geomancy.glsl`](https://github.com/jtnuttall/heph/blob/main/heph-aligned-storable-geomancy/glsl/Geomancy.glsl), checked against glslang.

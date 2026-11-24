@@ -5,9 +5,9 @@
 
 module GeomancyInspectionSpec where
 
+import Foreign.GPU.Storable.Aligned.Test
 import Test.Tasty
 
-import Foreign.GPU.Storable.Aligned.Test
 import GeomancyConformanceSpec (G)
 
 $(inspectAlignedStorable "nested" [t|Nested G|] True)

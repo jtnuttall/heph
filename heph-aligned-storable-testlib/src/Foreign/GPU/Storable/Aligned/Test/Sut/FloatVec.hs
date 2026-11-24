@@ -52,11 +52,11 @@ where
 import Data.Proxy
 import qualified Data.Vector.Storable.Sized as SSV
 import Foreign
+import Foreign.GPU.Storable.Aligned
 import GHC.Generics
 import Hedgehog
 import Test.Tasty (TestTree)
 
-import Foreign.GPU.Storable.Aligned
 import Foreign.GPU.Storable.Aligned.Test.Glsl
 import Foreign.GPU.Storable.Aligned.Test.Harness
 import Foreign.GPU.Storable.Aligned.Test.Sut.Prim

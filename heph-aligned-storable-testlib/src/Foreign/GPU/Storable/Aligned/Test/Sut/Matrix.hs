@@ -50,16 +50,16 @@ where
 import Data.Int
 import Data.Proxy
 import Foreign
+import Foreign.GPU.Storable.Aligned
 import GHC.Generics
 import Hedgehog
 import qualified Hedgehog.Gen as Gen
+import Numeric.Half (Half)
 import Test.Tasty (TestTree)
 
-import Foreign.GPU.Storable.Aligned
 import Foreign.GPU.Storable.Aligned.Test.Glsl
 import Foreign.GPU.Storable.Aligned.Test.Harness
 import Foreign.GPU.Storable.Aligned.Test.Vocab
-import Numeric.Half (Half)
 
 --------------------------------------------------------------------------------
 -- Nonsquare

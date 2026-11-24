@@ -110,7 +110,7 @@ data GrowVecOp
   | OpWrite Int TestComponent
   | OpSwapRemove Int
   | OpClear
-  deriving (Show, Eq)
+  deriving (Eq, Show)
 
 genOp :: Int -> Gen GrowVecOp
 genOp currentLen =

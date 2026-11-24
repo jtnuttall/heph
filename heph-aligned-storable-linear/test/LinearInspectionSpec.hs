@@ -5,10 +5,10 @@
 
 module LinearInspectionSpec where
 
+import Foreign.GPU.Storable.Aligned.Test
 import Test.Tasty
 
 import Foreign.GPU.Storable.Aligned.Linear ()
-import Foreign.GPU.Storable.Aligned.Test
 import LinearConformanceSpec (L)
 
 $(inspectAlignedStorable "nested" [t|Nested L|] True)

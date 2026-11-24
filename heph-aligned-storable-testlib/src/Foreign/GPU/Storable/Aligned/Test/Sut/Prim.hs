@@ -53,13 +53,13 @@ import Data.Proxy
 import qualified Data.Vector.Sized as SV
 import qualified Data.Vector.Storable.Sized as SSV
 import Foreign
+import Foreign.GPU.Storable.Aligned
 import GHC.Generics
 import Hedgehog
 import qualified Hedgehog.Gen as Gen
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Hedgehog (testProperty)
 
-import Foreign.GPU.Storable.Aligned
 import Foreign.GPU.Storable.Aligned.Test.Glsl
 import Foreign.GPU.Storable.Aligned.Test.Harness
 
@@ -84,7 +84,7 @@ data Simple = Simple
   { simpleA :: Float
   , simpleB :: Int32
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genSimple :: Gen Simple
 genSimple = Simple <$> genFloat <*> genInt
@@ -132,7 +132,7 @@ data LayoutBug = LayoutBug
   , fieldB :: Float
   , fieldC :: Double
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genLayoutBug :: Gen LayoutBug
 genLayoutBug = LayoutBug <$> genFloat <*> genFloat <*> genFloat
@@ -186,7 +186,7 @@ data LargePrimitives = LargePrimitives
   { d :: Double
   , l :: Int64
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genLargePrimitives :: Gen LargePrimitives
 genLargePrimitives = LargePrimitives <$> genFloat <*> genInt
@@ -238,7 +238,7 @@ data MixedAlign = MixedAlign
   , b :: Double
   , c :: Int32
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genMixedAlign :: Gen MixedAlign
 genMixedAlign = MixedAlign <$> genInt <*> genFloat <*> genInt
@@ -295,7 +295,7 @@ data BoolTest = BoolTest
   { isEnabled :: Bool
   , value :: Float
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genBoolTest :: Gen BoolTest
 genBoolTest = BoolTest <$> Gen.bool <*> genFloat
@@ -348,7 +348,7 @@ data NestedPrim = NestedPrim
   , npMixed :: MixedAlign
   , npBool :: BoolTest
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genNestedPrim :: Gen NestedPrim
 genNestedPrim = NestedPrim <$> genFloat <*> genSimple <*> genMixedAlign <*> genBoolTest
@@ -429,7 +429,7 @@ data ArrayStruct = ArrayStruct
   , asD :: Float
   , asE :: Double
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genArrayStruct :: Gen ArrayStruct
 genArrayStruct =
@@ -523,7 +523,7 @@ data DeepNest = DeepNest
   , dnE :: SV.Vector 5 (SV.Vector 2 (SV.Vector 4 NestedPrim))
   , dnF :: Bool
   }
-  deriving (Generic, Show, Eq)
+  deriving (Eq, Generic, Show)
 
 genDeepNest :: Gen DeepNest
 genDeepNest =

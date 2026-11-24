@@ -50,9 +50,9 @@ import Data.Kind (Type)
 import Data.Typeable (Typeable)
 import Data.Word
 import Foreign (Storable)
+import Foreign.GPU.Storable.Aligned
 import Numeric.Half (Half)
 
-import Foreign.GPU.Storable.Aligned
 import Foreign.GPU.Storable.Aligned.Test.Glsl
 
 -- | An 'AlignedStorable' instance for each of the three layouts.

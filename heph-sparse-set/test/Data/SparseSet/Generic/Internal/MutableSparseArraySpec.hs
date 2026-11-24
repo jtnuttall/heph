@@ -4,13 +4,13 @@ import Control.Monad (foldM)
 import Data.List (nub)
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as Map
+import Data.Traversable
 import Hedgehog
 import Hedgehog.Gen qualified as Gen
 import Hedgehog.Range qualified as Range
 import Test.Tasty.HUnit
 
 import Data.SparseSet.Generic.Mutable.Internal.MutableSparseArray qualified as MSA
-import Data.Traversable
 
 -- HUnit Tests for specific scenarios
 unit_new_is_empty :: Assertion
@@ -63,7 +63,7 @@ data ArrayOp
   = OpInsert Int Int -- key, value
   | OpDelete Int -- key
   | OpClear
-  deriving (Show, Eq)
+  deriving (Eq, Show)
 
 genKey :: Gen Int
 genKey = Gen.int (Range.linear 0 100)

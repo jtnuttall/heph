@@ -1,0 +1,22 @@
+no_progress = true
+format = "compact"
+max_concurrency = 16
+timeout = 20
+max_retries = 2
+
+accept = ["100..=103", "200..=299", "403"]
+
+scheme = ["https", "http"]
+exclude_all_private = true
+
+exclude_path = [
+  "dist-newstyle",
+]
+
+exclude = [
+  # Nix binary caches don't serve anything at the root.
+  "^https://cache\\.(iog\\.io|zw3rk\\.com)/",
+  "^https://[^/]+\\.cachix\\.org/",
+  # Not yet released.
+  "^https://hackage\\.haskell\\.org/package/heph-aligned-storable-(geomancy|linear|testlib)$",
+]

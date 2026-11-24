@@ -1,10 +1,10 @@
 # heph
 
-heph is the umbrella project for Hephaestus, a rendering system built in Haskell. 
-It houses a collection of high-performance, low-level libraries designed for systems 
+heph is the umbrella project for Hephaestus, a rendering system built in Haskell.
+It houses a collection of high-performance, low-level libraries designed for systems
 programming.
 
-This repository is a monorepo containing the core, reusable components of the engine. 
+This repository is a monorepo containing the core, reusable components of the engine.
 Each package is designed to be general-purpose and useful on its own.
 
 ## Packages
@@ -20,4 +20,3 @@ Each package is designed to be general-purpose and useful on its own.
   and its instance packages, with oracles verified against glslang.
 - heph-sparse-set: A mutable sparse set implementation, ideal for performance-critical
   applications like Entity Component System (ECS) architectures.
-

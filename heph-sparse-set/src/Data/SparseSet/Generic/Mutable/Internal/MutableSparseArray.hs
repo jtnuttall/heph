@@ -47,8 +47,8 @@ pattern ABSURD = -1
 -- @since 0.1.0.0
 newtype MutableSparseArray s = MutableSparseArray
   {getSparseArray :: VPM.MVector s Int}
-  deriving newtype (NFData)
   deriving stock (Generic)
+  deriving newtype (NFData)
 
 -- | Create a new, empty array from a given capacity.
 --
@@ -94,12 +94,12 @@ unsafeInsert (MutableSparseArray arr) i v
       let len = VPM.length arr
           growBy = max (i + 1) ((len `quot` 2) * 3)
       mArr <-
-        if i >= len
-          then do
-            r <- VPM.unsafeGrow arr growBy
-            fillArray len growBy r
-            pure r
-          else pure arr
+        if i >= len then do
+          r <- VPM.unsafeGrow arr growBy
+          fillArray len growBy r
+          pure r
+        else
+          pure arr
 
       VPM.unsafeWrite mArr i v
       pure $ MutableSparseArray mArr

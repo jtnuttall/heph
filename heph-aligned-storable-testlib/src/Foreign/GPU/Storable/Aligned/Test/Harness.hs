@@ -66,6 +66,7 @@ import Data.Typeable (Typeable, showsTypeRep, typeRep)
 import qualified Data.Vector.Generic as GV
 import qualified Data.Vector.Generic.Sized as SGV
 import Foreign
+import Foreign.GPU.Storable.Aligned
 import GHC.Stack (HasCallStack)
 import GHC.TypeLits
 import Hedgehog
@@ -75,8 +76,6 @@ import Numeric (showHex)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))
 import Test.Tasty.Hedgehog (testProperty)
-
-import Foreign.GPU.Storable.Aligned
 
 --------------------------------------------------------------------------------
 -- Oracles
@@ -105,7 +104,7 @@ pokeOracleAt ptr off = pokeByteOff ptr off . Oracle @l
 --------------------------------------------------------------------------------
 
 newtype Canary = Canary {unCanary :: Word64}
-  deriving newtype (Storable, Num, Eq)
+  deriving newtype (Eq, Num, Storable)
 
 instance Show Canary where
   showsPrec _ (Canary n) = showHex n

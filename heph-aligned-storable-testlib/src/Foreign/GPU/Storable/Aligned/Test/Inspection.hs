@@ -46,6 +46,7 @@ where
 
 import Control.Monad (forM)
 import Data.Proxy (Proxy)
+import Foreign.GPU.Storable.Aligned
 import GHC.Exts (Int (I#), Int#, RealWorld, State#)
 import GHC.Generics (Generic)
 import GHC.IO (IO (IO))
@@ -53,8 +54,6 @@ import Language.Haskell.TH
 import Language.Haskell.TH.Syntax (mkNameG_v)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.Inspection
-
-import Foreign.GPU.Storable.Aligned
 
 -- | Any type that pokes an array incurs allocations, even if it uses `copyBytes` internally.
 -- I suspect llvm will unroll the loop if it is used, but I can't prove this by inspecting core.

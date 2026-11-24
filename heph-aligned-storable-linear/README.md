@@ -3,7 +3,7 @@
 `AlignedStorable` instances for the vectors and matrices of
 [linear](https://hackage.haskell.org/package/linear), so that structs of linear
 types get GPU layouts (`std140`, `std430`, `scalar`) from
-[`heph-aligned-storable`](../heph-aligned-storable).
+[`heph-aligned-storable`](https://hackage.haskell.org/package/heph-aligned-storable).
 
 ## Quick Start
 
@@ -75,5 +75,5 @@ Driver handling of the round-up rules for these types has historically been inco
 ## Tests
 
 The test suite runs the shared conformance suites and inspection tests of
-[`heph-aligned-storable-testlib`](../heph-aligned-storable-testlib) on the
+[`heph-aligned-storable-testlib`](https://hackage.haskell.org/package/heph-aligned-storable-testlib) on the
 linear types, with `V2` to `V4` and every `Mnm` as the vector and matrix types.

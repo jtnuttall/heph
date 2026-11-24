@@ -38,7 +38,7 @@ import GHC.Generics (Generic)
 import Prelude hiding (length, mapM_, maximum)
 
 data GrowVec v s a = GrowVec {-# UNPACK #-} !Int (v s a)
-  deriving (Show, Generic)
+  deriving (Generic, Show)
 
 instance (NFData (v s a)) => NFData (GrowVec v s a)
 
@@ -49,7 +49,7 @@ withCapacity :: forall a v m. (PrimMonad m, VGM.MVector v a) => Int -> m (GrowVe
 withCapacity c = GrowVec 0 <$> VGM.new (withMinCapacity c)
 {-# INLINE withCapacity #-}
 
--- | Create a new, empty vector with a default capcity
+-- | Create a new, empty vector with a default capacity
 --
 -- @since 0.1.0.0
 new :: forall a v m. (PrimMonad m, VGM.MVector v a) => m (GrowVec v (PrimState m) a)

@@ -325,9 +325,10 @@ ifoldIntersectionM f c a b = do
   la <- length a
   lb <- length b
 
-  if la <= lb
-    then ifoldM (goLookupB b) c a
-    else ifoldM (goLookupA a) c b
+  if la <= lb then
+    ifoldM (goLookupB b) c a
+  else
+    ifoldM (goLookupA a) c b
  where
   goLookupB otherSetB acc (entity, componentA) =
     lookup otherSetB entity >>= \case

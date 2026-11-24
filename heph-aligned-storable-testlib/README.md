@@ -4,7 +4,7 @@ Conformance tests for [`heph-aligned-storable`](https://hackage.haskell.org/pack
 the packages that give it instances for a vector library.
 
 Every record in this library has a reference GLSL `struct` in
-[`glsl/Conformance.glsl`](glsl/Conformance.glsl). Hand-written oracles
+[`glsl/Conformance.glsl`](https://github.com/jtnuttall/heph/blob/main/heph-aligned-storable-testlib/glsl/Conformance.glsl). Hand-written oracles
 derived from the spirv disassembly provided by glslang then
 test the behavior.
 

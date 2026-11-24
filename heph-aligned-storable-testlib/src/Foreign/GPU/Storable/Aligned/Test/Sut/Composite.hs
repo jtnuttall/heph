@@ -39,12 +39,12 @@ import Data.Proxy
 import qualified Data.Vector.Sized as SV
 import qualified Data.Vector.Storable.Sized as SSV
 import Foreign
+import Foreign.GPU.Storable.Aligned
 import GHC.Generics
 import Hedgehog
 import qualified Hedgehog.Gen as Gen
 import Test.Tasty (TestTree)
 
-import Foreign.GPU.Storable.Aligned
 import Foreign.GPU.Storable.Aligned.Test.Glsl
 import Foreign.GPU.Storable.Aligned.Test.Harness
 import Foreign.GPU.Storable.Aligned.Test.Sut.FloatVec
