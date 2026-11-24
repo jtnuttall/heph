@@ -18,7 +18,7 @@ license:        BSD-3-Clause
 license-file:   LICENSE
 build-type:     Simple
 tested-with:
-    GHC == 9.14.1 || == 9.12.4 || == 9.10.3 || == 9.8.4
+    GHC == 9.14.1 || == 9.12.4 || == 9.10.3
 extra-source-files:
     glsl/Geomancy.glsl
 extra-doc-files:
@@ -40,10 +40,10 @@ library
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.19 && <5
+      base >=4.20 && <5
     , geomancy ==0.4.*
     , heph-aligned-storable ==0.2.*
-    , template-haskell >=2.21 && <2.25
+    , template-haskell >=2.22 && <2.25
   default-language: Haskell2010
 
 test-suite heph-aligned-storable-geomancy-test
@@ -62,7 +62,7 @@ test-suite heph-aligned-storable-geomancy-test
   build-tool-depends:
       tasty-discover:tasty-discover
   build-depends:
-      base >=4.19 && <5
+      base >=4.20 && <5
     , geomancy ==0.4.*
     , hedgehog >=1.0.4 && <1.8
     , heph-aligned-storable ==0.2.*

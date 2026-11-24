@@ -13,7 +13,7 @@ extra-doc-files:
 
 synopsis: Really fast mutable sparse sets
 category: Data Structures
-tested-with: GHC == 9.14.1 || == 9.12.4 || == 9.10.3 || == 9.8.4
+tested-with: GHC == 9.14.1 || == 9.12.4 || == 9.10.3
 
 build-type: Simple
 
@@ -40,7 +40,7 @@ description: Please see the README on GitHub at <https://github.com/jtnuttall/he
 homepage: https://github.com/jtnuttall/heph/tree/main/heph-sparse-set#readme
 
 dependencies:
-  - base >= 4.19 && < 5
+  - base >= 4.20 && < 5
   - deepseq >= 1.4 && < 1.7
   - primitive >= 0.7 && < 0.10
   - vector >= 0.12.3.0 && < 0.14

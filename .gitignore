@@ -65,3 +65,7 @@ tags
 ### direnv ###
 .direnv
 .envrc
+
+### nix build outputs (GC-root symlinks into the read-only store) ###
+result
+result-*

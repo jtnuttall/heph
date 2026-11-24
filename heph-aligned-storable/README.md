@@ -2,7 +2,7 @@
 
 Generically derive `Storable` instances for GPU memory layouts (`std140`, `std430`, `scalar`).
 
-[![CI](https://github.com/jtnuttall/heph/actions/workflows/haskell.yml/badge.svg)](https://github.com/jtnuttall/heph/actions/workflows/haskell.yml)
+[![CI](https://github.com/jtnuttall/heph/actions/workflows/ci.yml/badge.svg)](https://github.com/jtnuttall/heph/actions/workflows/ci.yml)
 
 <!-- [![Hackage](https://img.shields.io/hackage/v/heph-aligned-storable.svg)](https://hackage.haskell.org/package/heph-aligned-storable) -->
 

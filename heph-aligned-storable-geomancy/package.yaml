@@ -5,7 +5,7 @@ license: BSD-3-Clause
 author: "Jeremy Nuttall"
 maintainer: "jeremy@jeremy-nuttall.com"
 copyright: "2025 Jeremy Nuttall"
-tested-with: GHC == 9.14.1 || == 9.12.4 || == 9.10.3 || == 9.8.4
+tested-with: GHC == 9.14.1 || == 9.12.4 || == 9.10.3
 
 extra-source-files:
   - glsl/*.glsl
@@ -22,7 +22,7 @@ description: Please see the README on GitHub at
 homepage: https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-geomancy#readme
 
 dependencies:
-  - base >= 4.19 && < 5
+  - base >= 4.20 && < 5
   - geomancy ^>= 0.4
   - heph-aligned-storable >= 0.2 && < 0.3
 
@@ -33,7 +33,7 @@ ghc-options:
 library:
   source-dirs: src
   dependencies:
-    - template-haskell >= 2.21 && < 2.25
+    - template-haskell >= 2.22 && < 2.25
   ghc-options:
     - -Widentities
     - -Wincomplete-record-updates
