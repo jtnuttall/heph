@@ -4,3 +4,7 @@ packages:
   ./heph-aligned-storable-linear
   ./heph-aligned-storable-testlib
   ./heph-sparse-set
+
+-- Incompatibility in geomancy's dependency graph as of 0.4.0.0
+if impl(ghc >= 9.14)
+  allow-newer: serialise-0.2.6.1:base
