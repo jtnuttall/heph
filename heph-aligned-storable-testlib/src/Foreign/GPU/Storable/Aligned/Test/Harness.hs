@@ -1,16 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE ExistentialQuantification #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE GADTSyntax #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
 
 -- |
 -- Description : Round-trip harness for AlignedStorable conformance tests
@@ -63,15 +51,15 @@ import Data.Foldable (traverse_)
 import Data.Kind (Type)
 import Data.Proxy
 import Data.Typeable (Typeable, showsTypeRep, typeRep)
-import qualified Data.Vector.Generic as GV
-import qualified Data.Vector.Generic.Sized as SGV
+import Data.Vector.Generic qualified as GV
+import Data.Vector.Generic.Sized qualified as SGV
 import Foreign
 import Foreign.GPU.Storable.Aligned
 import GHC.Stack (HasCallStack)
 import GHC.TypeLits
 import Hedgehog
-import qualified Hedgehog.Gen as Gen
-import qualified Hedgehog.Range as Range
+import Hedgehog.Gen qualified as Gen
+import Hedgehog.Range qualified as Range
 import Numeric (showHex)
 import Test.Tasty (TestTree, testGroup)
 import Test.Tasty.HUnit (testCase, (@?=))

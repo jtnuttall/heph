@@ -1,34 +1,29 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE TypeFamilies #-}
-
 module GeomancyConformanceSpec where
 
 import Data.Int
 import Data.Proxy
 import Data.Word
 import Foreign.GPU.Storable.Aligned.Test
-import qualified Geomancy.DMat4 as DMat4
-import qualified Geomancy.DVec2 as DVec2
-import qualified Geomancy.DVec3 as DVec3
-import qualified Geomancy.DVec4 as DVec4
-import qualified Geomancy.I64Vec2 as I64Vec2
-import qualified Geomancy.I64Vec3 as I64Vec3
-import qualified Geomancy.I64Vec4 as I64Vec4
-import qualified Geomancy.IVec2 as IVec2
-import qualified Geomancy.IVec3 as IVec3
-import qualified Geomancy.IVec4 as IVec4
-import qualified Geomancy.Mat4 as Mat4
-import qualified Geomancy.U64Vec2 as U64Vec2
-import qualified Geomancy.U64Vec3 as U64Vec3
-import qualified Geomancy.U64Vec4 as U64Vec4
-import qualified Geomancy.UVec2 as UVec2
-import qualified Geomancy.UVec3 as UVec3
-import qualified Geomancy.UVec4 as UVec4
-import qualified Geomancy.Vec2 as Vec2
-import qualified Geomancy.Vec3 as Vec3
-import qualified Geomancy.Vec4 as Vec4
+import Geomancy.DMat4 qualified as DMat4
+import Geomancy.DVec2 qualified as DVec2
+import Geomancy.DVec3 qualified as DVec3
+import Geomancy.DVec4 qualified as DVec4
+import Geomancy.I64Vec2 qualified as I64Vec2
+import Geomancy.I64Vec3 qualified as I64Vec3
+import Geomancy.I64Vec4 qualified as I64Vec4
+import Geomancy.IVec2 qualified as IVec2
+import Geomancy.IVec3 qualified as IVec3
+import Geomancy.IVec4 qualified as IVec4
+import Geomancy.Mat4 qualified as Mat4
+import Geomancy.U64Vec2 qualified as U64Vec2
+import Geomancy.U64Vec3 qualified as U64Vec3
+import Geomancy.U64Vec4 qualified as U64Vec4
+import Geomancy.UVec2 qualified as UVec2
+import Geomancy.UVec3 qualified as UVec3
+import Geomancy.UVec4 qualified as UVec4
+import Geomancy.Vec2 qualified as Vec2
+import Geomancy.Vec3 qualified as Vec3
+import Geomancy.Vec4 qualified as Vec4
 import Test.Tasty
 
 import Foreign.GPU.Storable.Aligned.Geomancy ()

@@ -1,12 +1,3 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE TypeFamilies #-}
-
 -- |
 -- Structs under test for geomancy that don't exist in the shared conformance suite.
 module GeomancySpec where
@@ -17,18 +8,18 @@ import Foreign
 import Foreign.GPU.Storable.Aligned
 import Foreign.GPU.Storable.Aligned.Test
 import GHC.Generics (Generic)
-import qualified Geomancy.DQuaternion as DQuaternion
-import qualified Geomancy.DTransform as DTransform
-import qualified Geomancy.DVec3 as DVec3
-import qualified Geomancy.I64Vec3 as I64Vec3
-import qualified Geomancy.IVec3 as IVec3
-import qualified Geomancy.Mat4 as Mat4
+import Geomancy.DQuaternion qualified as DQuaternion
+import Geomancy.DTransform qualified as DTransform
+import Geomancy.DVec3 qualified as DVec3
+import Geomancy.I64Vec3 qualified as I64Vec3
+import Geomancy.IVec3 qualified as IVec3
+import Geomancy.Mat4 qualified as Mat4
 import Geomancy.Point (Point (..))
-import qualified Geomancy.Quaternion as Quaternion
-import qualified Geomancy.Transform as Transform
-import qualified Geomancy.U64Vec4 as U64Vec4
-import qualified Geomancy.UVec3 as UVec3
-import qualified Geomancy.Vec3 as Vec3
+import Geomancy.Quaternion qualified as Quaternion
+import Geomancy.Transform qualified as Transform
+import Geomancy.U64Vec4 qualified as U64Vec4
+import Geomancy.UVec3 qualified as UVec3
+import Geomancy.Vec3 qualified as Vec3
 import Hedgehog (Gen)
 import Test.Tasty
 

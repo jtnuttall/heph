@@ -1,13 +1,6 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MagicHash #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TemplateHaskellQuotes #-}
 {-# LANGUAGE UnboxedTuples #-}
-{-# LANGUAGE UndecidableInstances #-}
 
 -- |
 -- Description : Inspection tests for AlignedStorable instances

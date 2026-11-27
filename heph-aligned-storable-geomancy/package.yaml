@@ -21,6 +21,11 @@ description: Please see the README on GitHub at
   <https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-geomancy#readme>
 homepage: https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-geomancy#readme
 
+language: GHC2024
+
+default-extensions:
+  - BlockArguments
+
 dependencies:
   - base >= 4.20 && < 5
   - geomancy ^>= 0.4

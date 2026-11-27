@@ -1,14 +1,4 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DerivingVia #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
@@ -50,7 +40,7 @@ module Foreign.GPU.Storable.Aligned.Test.Sut.FloatVec (
 where
 
 import Data.Proxy
-import qualified Data.Vector.Storable.Sized as SSV
+import Data.Vector.Storable.Sized qualified as SSV
 import Foreign
 import Foreign.GPU.Storable.Aligned
 import GHC.Generics

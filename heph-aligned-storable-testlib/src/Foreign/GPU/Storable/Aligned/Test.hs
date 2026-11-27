@@ -1,5 +1,3 @@
-{-# LANGUAGE FlexibleContexts #-}
-
 -- |
 -- Description : Conformance tests for heph-aligned-storable
 -- Copyright   : (c) Jeremy Nuttall, 2025

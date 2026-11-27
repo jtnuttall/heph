@@ -1,14 +1,4 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DerivingVia #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
@@ -53,7 +43,7 @@ import Foreign
 import Foreign.GPU.Storable.Aligned
 import GHC.Generics
 import Hedgehog
-import qualified Hedgehog.Gen as Gen
+import Hedgehog.Gen qualified as Gen
 import Numeric.Half (Half)
 import Test.Tasty (TestTree)
 
