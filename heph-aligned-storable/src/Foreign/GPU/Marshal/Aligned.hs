@@ -1,10 +1,3 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE RoleAnnotations #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE NoMonomorphismRestriction #-}
-
 -- |
 -- Description : Zero-initialized allocation for GPU-aligned types
 -- Copyright   : (c) Jeremy Nuttall, 2025
@@ -29,11 +22,21 @@ module Foreign.GPU.Marshal.Aligned (
   alignedCopyVector,
 ) where
 
-import qualified Data.Vector.Storable as SV
-import UnliftIO (MonadIO, MonadUnliftIO, liftIO)
-import UnliftIO.Foreign
+import Control.Monad.IO.Class (MonadIO (liftIO))
+import Control.Monad.IO.Unlift (MonadUnliftIO (withRunInIO))
+import Data.Vector.Storable qualified as SV
+import Data.Word (Word8)
+import Foreign qualified
+import Foreign.Ptr (Ptr, castPtr)
+import Foreign.Storable (Storable (poke, sizeOf))
+import Prelude (Int, undefined, ($), (*), (.), (>>))
 
-import Foreign.GPU.Storable.Aligned
+import Foreign.GPU.Storable.Aligned.Internal (
+  AlignedPtr (..),
+  AlignedStorable,
+  Packed (..),
+  Strided (..),
+ )
 
 -- | Convenience type for 'Packed' 'AlignedPtr'
 type PackedPtr layout a = AlignedPtr layout (Packed layout a)
@@ -92,7 +95,7 @@ alignedCopyVector (AlignedPtr dest) v = liftIO $ SV.unsafeWith v \src ->
 {-# INLINE alignedCopyVector #-}
 
 --------------------------------------------------------------------------------
--- Utilities
+-- Base implementations
 --------------------------------------------------------------------------------
 
 zeroPtr :: forall a m. (MonadIO m, Storable a) => Ptr a -> m ()
@@ -108,3 +111,19 @@ withZeroed a f = allocaZeroed \ptr -> do
   liftIO $ poke ptr a
   f ptr
 {-# INLINE withZeroed #-}
+
+--------------------------------------------------------------------------------
+-- Foreign in MonadIO/MonadUnliftIO
+--------------------------------------------------------------------------------
+
+alloca :: (MonadUnliftIO m, Storable a) => (Ptr a -> m b) -> m b
+alloca f = withRunInIO (\u -> Foreign.alloca (u . f))
+{-# INLINE alloca #-}
+
+copyBytes :: (MonadIO m) => Ptr a -> Ptr a -> Int -> m ()
+copyBytes dest src sz = liftIO (Foreign.copyBytes dest src sz)
+{-# INLINE copyBytes #-}
+
+fillBytes :: (MonadIO m) => Ptr a -> Word8 -> Int -> m ()
+fillBytes ptr value sz = liftIO (Foreign.fillBytes ptr value sz)
+{-# INLINE fillBytes #-}
