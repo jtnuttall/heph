@@ -48,8 +48,8 @@ import Control.Monad.IO.Class
 import Control.Monad.Trans.Control (MonadBaseControl)
 import Data.Coerce
 import Data.Foldable (traverse_)
-import Data.Kind (Type)
-import Data.Proxy
+import Data.Kind (Constraint, Type)
+import Data.Proxy (Proxy (Proxy))
 import Data.Typeable (Typeable, showsTypeRep, typeRep)
 import Data.Vector.Generic qualified as GV
 import Data.Vector.Generic.Sized qualified as SGV
@@ -180,26 +180,24 @@ newtype TripOpts = TripOpts
 defaultTripOpts :: TripOpts
 defaultTripOpts = TripOpts{checkByteImage = True}
 
+type CanPtrTrip :: Type -> Type -> Constraint
+type CanPtrTrip sut out =
+  ( Coercible sut out
+  , Typeable sut
+  , Typeable out
+  , Eq sut
+  , Eq out
+  , Show sut
+  , Show out
+  , Storable sut
+  , Storable out
+  )
+
 -- | 'ptrTripping' with options.
 ptrTrippingWith
-  :: forall s o m
-   . ( HasCallStack
-     , Coercible s o
-     , MonadBaseControl IO m
-     , MonadIO m
-     , Typeable s
-     , Typeable o
-     , Eq s
-     , Eq o
-     , Show s
-     , Show o
-     , Storable s
-     , Storable o
-     )
-  => TripOpts
-  -> s
-  -> o
-  -> PropertyT m ()
+  :: forall sut out m
+   . (HasCallStack, MonadBaseControl IO m, MonadIO m, CanPtrTrip sut out)
+  => TripOpts -> sut -> out -> PropertyT m ()
 ptrTrippingWith opts sut oracle = do
   let sz = sizeOf sut
       cSz = sizeOf @Canary undefined
@@ -208,40 +206,31 @@ ptrTrippingWith opts sut oracle = do
       lPadOffsets = [0, cSz .. pSz - cSz]
       rPadOffsets = [pSz + sz, pSz + sz + cSz .. tSz - cSz]
       poison = 0xCD
+
   sz === sizeOf oracle
   alignment sut === alignment oracle
 
   lCanaries <- zip lPadOffsets <$> forAll (genCanaries (length lPadOffsets))
   rCanaries <- zip rPadOffsets <$> forAll (genCanaries (length rPadOffsets))
 
-  let populateCanaries ptr = liftIO do
+  let populateCanaries :: forall a m'. (MonadIO m') => Ptr a -> m' ()
+      populateCanaries ptr = liftIO do
         traverse_ (uncurry (pokeByteOff ptr)) lCanaries
         traverse_ (uncurry (pokeByteOff ptr)) rCanaries
 
+      checkCanary :: forall a m'. (MonadIO m', MonadTest m') => Ptr a -> Int -> Canary -> m' ()
       checkCanary ptr offset canary = do
         result <- liftIO $ peekByteOff ptr offset
         Canary result === canary
 
+      checkCanaries :: forall a m'. (MonadTest m', MonadIO m') => Ptr a -> m' ()
       checkCanaries ptr = do
         annotate $ "Left pad: 0-" <> show pSz
         traverse_ (uncurry (checkCanary ptr)) lCanaries
         annotate $ "Right pad: " <> show (pSz + sz) <> "-" <> show tSz
         traverse_ (uncurry (checkCanary ptr)) rCanaries
 
-      checkRoundTrip
-        :: forall a b
-         . ( HasCallStack
-           , Coercible a b
-           , Typeable a
-           , Typeable b
-           , Eq b
-           , Show b
-           , Storable a
-           , Storable b
-           )
-        => a
-        -> b
-        -> PropertyT m ()
+      checkRoundTrip :: forall a b. (HasCallStack, CanPtrTrip a b) => a -> b -> PropertyT m ()
       checkRoundTrip a b = bracket (liftIO $ mallocBytes @a tSz) (liftIO . free) \ptr -> do
         annotate
           $ showsTypeRep (typeRep (Proxy @a))
