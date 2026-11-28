@@ -1,3 +1,5 @@
+{-# LANGUAGE TypeFamilies #-}
+
 module GeomancyConformanceSpec where
 
 import Data.Int

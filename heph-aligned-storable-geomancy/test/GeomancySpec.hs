@@ -1,3 +1,6 @@
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE TypeFamilies #-}
+
 -- |
 -- Structs under test for geomancy that don't exist in the shared conformance suite.
 module GeomancySpec where
