@@ -1,14 +1,4 @@
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE DerivingVia #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
@@ -36,13 +26,13 @@ where
 
 import Data.Int
 import Data.Proxy
-import qualified Data.Vector.Sized as SV
-import qualified Data.Vector.Storable.Sized as SSV
+import Data.Vector.Sized qualified as SV
+import Data.Vector.Storable.Sized qualified as SSV
 import Foreign
 import Foreign.GPU.Storable.Aligned
 import GHC.Generics
 import Hedgehog
-import qualified Hedgehog.Gen as Gen
+import Hedgehog.Gen qualified as Gen
 import Test.Tasty (TestTree)
 
 import Foreign.GPU.Storable.Aligned.Test.Glsl

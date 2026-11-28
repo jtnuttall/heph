@@ -38,13 +38,15 @@ library
       Paths_heph_aligned_storable_geomancy
   hs-source-dirs:
       src
+  default-extensions:
+      BlockArguments
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.20 && <5
     , geomancy ==0.4.*
     , heph-aligned-storable ==0.2.*
     , template-haskell >=2.22 && <2.25
-  default-language: Haskell2010
+  default-language: GHC2024
 
 test-suite heph-aligned-storable-geomancy-test
   type: exitcode-stdio-1.0
@@ -58,6 +60,8 @@ test-suite heph-aligned-storable-geomancy-test
       Paths_heph_aligned_storable_geomancy
   hs-source-dirs:
       test
+  default-extensions:
+      BlockArguments
   ghc-options: -Wall -Wcompat -threaded -rtsopts -with-rtsopts=-N -Wno-orphans
   build-tool-depends:
       tasty-discover:tasty-discover
@@ -71,4 +75,4 @@ test-suite heph-aligned-storable-geomancy-test
     , tasty >=1.4.1 && <1.6
     , tasty-discover >=4.2.1 && <6
     , tasty-inspection-testing >=0.1 && <0.3
-  default-language: Haskell2010
+  default-language: GHC2024

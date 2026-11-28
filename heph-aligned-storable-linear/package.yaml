@@ -23,6 +23,11 @@ dependencies:
   - heph-aligned-storable >= 0.2 && < 0.3
   - linear >= 1.20 && < 1.24
 
+language: GHC2024
+
+default-extensions:
+  - BlockArguments
+
 ghc-options:
   - -Wall
   - -Wcompat

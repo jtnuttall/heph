@@ -1,9 +1,4 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE BlockArguments #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 
 -- |
@@ -46,14 +41,14 @@ import Data.Int
 import Data.Kind (Type)
 import Data.Proxy
 import Data.Typeable (Typeable)
-import qualified Data.Vector.Generic as GV
-import qualified Data.Vector.Generic.Sized as SGV
+import Data.Vector.Generic qualified as GV
+import Data.Vector.Generic.Sized qualified as SGV
 import Data.Word
 import Foreign (Ptr, Storable, peekByteOff, pokeByteOff, sizeOf)
 import Foreign.GPU.Storable.Aligned (MemoryLayout (..))
 import GHC.TypeLits
 import Hedgehog (Gen)
-import qualified Hedgehog.Gen as Gen
+import Hedgehog.Gen qualified as Gen
 import Numeric.Half (Half)
 
 import Foreign.GPU.Storable.Aligned.Test.Harness

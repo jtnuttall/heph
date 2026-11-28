@@ -1,8 +1,4 @@
-{-# LANGUAGE ConstraintKinds #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeOperators #-}
 
 -- |
 -- Description : Shape groups: the vector and matrix types a library provides
@@ -69,13 +65,14 @@ type MatOf m e r c = (GlslMat m, MatElem m ~ e, MatVecs m ~ r, MatVecDim m ~ c, 
 -- @Data.Vector.Storable.Sized.Vector@).
 class
   ( Typeable lib
+  , Typeable k
   , VecOf (Vec2 lib) Float 2
   , VecOf (Vec3 lib) Float 3
   , Storable (Vec3 lib)
   , VecOf (Vec4 lib) Float 4
   , Storable (Vec4 lib)
   ) =>
-  FloatVecs lib
+  FloatVecs (lib :: k)
   where
   type Vec2 lib :: Type
   type Vec3 lib :: Type
@@ -103,19 +100,20 @@ class
 -- instance (any; it only backs a Haskell-side sized vector).
 class
   ( Typeable lib
+  , Typeable k
   , VecOf (DVec2 lib) Double 2
   , Storable (DVec2 lib)
   , VecOf (DVec3 lib) Double 3
   , VecOf (DVec4 lib) Double 4
   ) =>
-  DoubleVecs lib
+  DoubleVecs (lib :: k)
   where
   type DVec2 lib :: Type
   type DVec3 lib :: Type
   type DVec4 lib :: Type
 
 -- | @dmat4@.
-class (Typeable lib, MatOf (DMat4 lib) Double 4 4) => DoubleMat4 lib where
+class (Typeable lib, Typeable k, MatOf (DMat4 lib) Double 4 4) => DoubleMat4 (lib :: k) where
   type DMat4 lib :: Type
 
 -- | @dmat3@, @dmat3x4@, @dmat4x3@ and @dmat2x4@, with @row_major@ storage
@@ -138,12 +136,13 @@ class
 -- storage shapes 3×2, 2×3, 4×4 and 2×4.
 class
   ( Typeable lib
+  , Typeable k
   , MatOf (F16Mat2x3 lib) Half 3 2
   , MatOf (F16Mat3x2 lib) Half 2 3
   , MatOf (F16Mat4 lib) Half 4 4
   , MatOf (F16Mat4x2 lib) Half 2 4
   ) =>
-  HalfMats lib
+  HalfMats (lib :: k)
   where
   type F16Mat2x3 lib :: Type
   type F16Mat3x2 lib :: Type
@@ -152,17 +151,21 @@ class
 
 -- | @u16vec3@. Also needs a 'Storable' instance (any; it only backs a
 -- Haskell-side sized vector).
-class (Typeable lib, VecOf (U16Vec3 lib) Word16 3, Storable (U16Vec3 lib)) => SmallIntVecs lib where
+class
+  (Typeable lib, Typeable k, VecOf (U16Vec3 lib) Word16 3, Storable (U16Vec3 lib)) =>
+  SmallIntVecs (lib :: k)
+  where
   type U16Vec3 lib :: Type
 
 -- | @bvec3@.
-class (Typeable lib, VecOf (BVec3 lib) Bool 3) => BoolVecs lib where
+class (Typeable lib, Typeable k, VecOf (BVec3 lib) Bool 3) => BoolVecs (lib :: k) where
   type BVec3 lib :: Type
 
 -- | @ivec2@ to @ivec4@ and @uvec2@ to @uvec4@. @'IVec3' lib@ also needs a
 -- 'Storable' instance (any; it only backs a Haskell-side sized vector).
 class
   ( Typeable lib
+  , Typeable k
   , VecOf (IVec2 lib) Int32 2
   , VecOf (IVec3 lib) Int32 3
   , Storable (IVec3 lib)
@@ -171,7 +174,7 @@ class
   , VecOf (UVec3 lib) Word32 3
   , VecOf (UVec4 lib) Word32 4
   ) =>
-  Int32Vecs lib
+  Int32Vecs (lib :: k)
   where
   type IVec2 lib :: Type
   type IVec3 lib :: Type

@@ -21,6 +21,11 @@ description: Please see the README on GitHub at
   <https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-testlib#readme>
 homepage: https://github.com/jtnuttall/heph/tree/main/heph-aligned-storable-testlib#readme
 
+language: GHC2024
+
+default-extensions:
+  - BlockArguments
+
 dependencies:
   - base >= 4.20 && < 5
   - half >= 0.3 && < 0.5

@@ -1,6 +1,3 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
@@ -11,13 +8,15 @@
 -- Maintainer  : jeremy@jeremy-nuttall.com
 -- Stability   : experimental
 --
--- Derive @Storable@ instances that respect GPU memory layout rules (@std140@,
--- @std430@, @scalar@). Works with any product type that has a t'GHC.Generics.Generic' instance.
+-- Derive @Storable@ instances that adhere to GPU memory layout rules (@std140@,
+-- @std430@, @scalar@).
 --
--- The vector and matrix types in the example below are linear's; their instances
--- live in @heph-aligned-storable-linear@. @heph-aligned-storable-geomancy@ does
--- the same for geomancy, and "Foreign.GPU.Storable.Aligned.TH" lets other
--- packages bind other libraries.
+-- This mechanism should work with any record that:
+--
+-- 1. Has a t'GHC.Generics.Generic' instance.
+-- 2. Contains only types that have their own 'AlignedStorable' instances.
+--
+-- == Example
 --
 -- @
 -- data Uniforms = Uniforms
